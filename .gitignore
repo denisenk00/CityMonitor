@@ -1,0 +1,3 @@
+# Project exclude paths
+/city-monitor-bot/target/
+/city-monitor-web/target/
