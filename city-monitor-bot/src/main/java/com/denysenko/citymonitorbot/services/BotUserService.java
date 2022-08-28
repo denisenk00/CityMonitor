@@ -12,17 +12,12 @@ import java.util.Optional;
 
 @Service
 public class BotUserService {
-
-    private BotUserStateRepository botUserStateCacheRepository;
-    private BotUserRepository botUserCacheRepository;
-    private BotUserDAO botUserDAO;
-
     @Autowired
-    public BotUserService(BotUserStateRepository botUserStateRepository, BotUserDAO botUserDAO, BotUserRepository botUserCacheRepository) {
-        this.botUserStateCacheRepository = botUserStateRepository;
-        this.botUserDAO = botUserDAO;
-        this.botUserCacheRepository = botUserCacheRepository;
-    }
+    private BotUserStateRepository botUserStateCacheRepository;
+    @Autowired
+    private BotUserRepository botUserCacheRepository;
+    @Autowired
+    private BotUserDAO botUserDAO;
 
     //DataBase
     public Optional<BotUser> findBotUserByChatId(Long chatId){
@@ -62,6 +57,14 @@ public class BotUserService {
 
     public void removeBotUserByChatIdFromCache(Long chatId){
         botUserCacheRepository.removeBotUserByChatId(chatId);
+    }
+
+    public boolean deactivateBotUser(Long chatId){
+        Optional<BotUser> botUser = findBotUserByChatId(chatId);
+        if(botUser.isPresent()){
+            botUser.get().setActive(false);
+            return true;
+        }else return false;
     }
 
 

@@ -5,7 +5,7 @@ public enum Commands {
     PROFILE_COMMAND("Profile"),
     EDIT_PROFILE_COMMAND("Edit"),
     STOP_BOT_COMMAND("Stop bot"),
-    SEND_MESSAGE_COMMAND("Send message"),
+    SEND_APPEAL_COMMAND("Send appeal"),
     CANCEL_GENERAL_COMMAND("Cancel"),
     NEXT_STEP_COMMAND("Proceed"),
     PREVIOUS_STEP_COMMAND("Back");

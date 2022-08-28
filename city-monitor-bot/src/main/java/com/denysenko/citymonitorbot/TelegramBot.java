@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -14,7 +15,9 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
+import javax.annotation.PostConstruct;
 import java.util.Arrays;
 
 @Component
@@ -34,60 +37,28 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
+        LOG.info("botUSername = " + botUsername);
         return botUsername;
     }
 
     @Override
     public String getBotToken() {
+        LOG.info("botToken = " + botToken);
         return botToken;
+    }
+    @PostConstruct
+    private void startBot(){
+        try {
+            LOG.info("Registering bot..");
+            new TelegramBotsApi(DefaultBotSession.class).registerBot(this);
+        } catch (TelegramApiException e) {
+            LOG.error("Failed to register bot(check internet connection / bot token or make sure only one instance of bot is running).", e);
+        }
+        LOG.info("Telegram Bot is ready to receive updates from users..");
     }
 
     @Override
     public void onUpdateReceived(Update update) {
-        LOG.info("Update received.." + update.getMessage().getChatId() + "      " + update.getMessage().getFrom().getId());
         superUpdateHandler.handle(update);
-//        try {
-//            if (update.hasCallbackQuery()){
-//                CallbackQuery callbackQuery = update.getCallbackQuery();
-//                LOG.info("Callback: message = " + callbackQuery.getMessage() + " , " + callbackQuery.getInlineMessageId() + " , " + callbackQuery.getChatInstance() +
-//                        ", c" + callbackQuery.getData() + ", " + callbackQuery.getId() + " , ") ;
-//                User user = callbackQuery.getFrom();
-//                LOG.info(user.getId() + ", ");
-//            }
-//            if(update.hasMessage()){
-//                Message mes = update.getMessage();
-//                LOG.info("message: " + mes.getChatId());
-//                if(mes.hasContact()){
-//                    LOG.info("contact " + mes.getContact().getFirstName()+ ", " + mes.getContact().getLastName() + ", " +
-//                            mes.getContact().getPhoneNumber());
-//                }
-//                if(mes.hasLocation()){
-//                    LOG.info("loc: " + mes.getLocation().getLatitude() + ", " + mes.getLocation().getLatitude());
-//                }
-//            }
-//            //update.getCallbackQuery()
-//            if(" " == null ) throw new TelegramApiException();
-//            execute(new SendMessage(String.valueOf(update.getMessage().getChatId()), "Hii!"));
-//            InlineKeyboardMarkup.InlineKeyboardMarkupBuilder ikmBuilder = InlineKeyboardMarkup.builder();
-//            InlineKeyboardButton button = new InlineKeyboardButton();
-//            button.setText("1");
-//            button.setCallbackData("1");
-//            InlineKeyboardButton button2 = new InlineKeyboardButton();
-//            button2.setText("2");
-//            button2.setCallbackData("2");
-//            InlineKeyboardButton button3 = new InlineKeyboardButton();
-//            button3.setText("3");
-//            button3.setCallbackData("3");
-//            ikmBuilder.keyboardRow(Arrays.asList(button, button2, button3));
-//
-//            SendMessage.SendMessageBuilder message = SendMessage.builder();
-//            message.text("Привет житель, как ты оцениваешь чистоту в своем районе?");
-//            message.replyMarkup(ikmBuilder.build());
-//            message.chatId(String.valueOf(update.getMessage().getChatId()));
-//            execute(message.build());
-//        } catch (TelegramApiException e) {
-//            e.printStackTrace();
-//        }
-
     }
 }

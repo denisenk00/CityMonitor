@@ -6,7 +6,7 @@ public enum BotStates {
     EDITING_PROFILE_PHONE("profile:entering_phone"),
     EDITING_PROFILE_LOCATION("profile:entering_location"),
     PROFILE_MENU("profile"),
-    SEND_MESSAGE_MENU("send_message");
+    SEND_APPEAL_MENU("send_appeal");
 
     private String title;
 

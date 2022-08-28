@@ -15,6 +15,14 @@ public class LocationPoint {
     @Column(name = "longitude", precision = 11, scale = 8)
     private BigDecimal longitude;
 
+    public LocationPoint(BigDecimal latitude, BigDecimal longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    public LocationPoint() {
+    }
+
     public BigDecimal getLatitude() {
         return latitude;
     }

@@ -1,14 +1,13 @@
 package com.denysenko.citymonitorbot.commands.impl;
 
 import com.denysenko.citymonitorbot.commands.Command;
-import com.denysenko.citymonitorbot.commands.CommandUtils;
 import com.denysenko.citymonitorbot.commands.impl.profile.ProfileEnterNameCommand;
-import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.services.BotUserService;
 import com.denysenko.citymonitorbot.services.TelegramService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-
+@Component
 public class StartCommand implements Command <Long>{
     @Autowired
     private BotUserService botUserService;
@@ -16,6 +15,8 @@ public class StartCommand implements Command <Long>{
     private TelegramService telegramService;
     @Autowired
     private ProfileEnterNameCommand profileEnterNameCommand;
+    @Autowired
+    private MainMenuCommand mainMenuCommand;
 
     private String BASIC_MESSAGE = "Привіт! Раді вітати тебе в нашому чат-боті. Ми налаштовані на тісну співпрацю з тобою, тож будь активним!\nРазом ми зможемо зробити наше місто кращим)";
     private String NOT_ACTIVE_USER_MESSAGE = "Хмм.. Я тебе пам'ятаю, перевір будь-ласка свої дані. Якщо хочеш оновити, просто відправ нам нові";
@@ -31,8 +32,7 @@ public class StartCommand implements Command <Long>{
                 //we remember you..
                 //execute next comm
             }else {
-                botUserService.updateBotStateByChatId(chatId, BotStates.MAIN_MENU);
-                telegramService.sendMessage(chatId, null, CommandUtils.createMainMenuKeyboard());
+                executeMainMenuCommand(chatId);
                 //main menu
             }
         },
@@ -42,5 +42,9 @@ public class StartCommand implements Command <Long>{
                     profileEnterNameCommand.execute(chatId);
                 });
 
+    }
+
+    public void executeMainMenuCommand(Long chatId){
+        mainMenuCommand.execute(chatId);
     }
 }

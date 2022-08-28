@@ -1,6 +1,7 @@
 package com.denysenko.citymonitorbot.commands.impl.profile;
 
 import com.denysenko.citymonitorbot.commands.Command;
+import com.denysenko.citymonitorbot.commands.CommandSequence;
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.models.entities.BotUser;
@@ -20,22 +21,18 @@ import java.util.regex.Pattern;
 import static org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton.builder;
 
 @Component
-public class ProfileEnterNameCommand implements Command<Long> {
+public class ProfileEnterNameCommand implements CommandSequence<Long> {
+    @Autowired
     private BotUserService botUserService;
+    @Autowired
     private TelegramService telegramService;
+    @Autowired
     private ProfileEnterPhoneNumberCommand enterPhoneNumberCommand;
 
 
     private String NOT_ACTIVE_USER_MESSAGE = "Ваше ім'я - {0}? Якщо ні, змініть відправивши нове";
     private String NOT_REGISTERED_USER_MESSAGE = "Введіть ваше ім'я";
     private static final Pattern NAME_PATTERN = Pattern.compile("[a-zA-Zа-яА-я]");
-
-    @Autowired
-    public ProfileEnterNameCommand(BotUserService botUserService, TelegramService telegramService, ProfileEnterPhoneNumberCommand enterPhoneNumberCommand) {
-        this.botUserService = botUserService;
-        this.telegramService = telegramService;
-        this.enterPhoneNumberCommand = enterPhoneNumberCommand;
-    }
 
     @Override
     public void execute(Long chatId) {
@@ -80,7 +77,13 @@ public class ProfileEnterNameCommand implements Command<Long> {
         executeNext(chatId);
     }
 
+    @Override
     public void executeNext(Long chatId) {
         enterPhoneNumberCommand.execute(chatId);
     }
+
+    @Override
+    public void executePrevious(Long aLong) {
+    }
+
 }
