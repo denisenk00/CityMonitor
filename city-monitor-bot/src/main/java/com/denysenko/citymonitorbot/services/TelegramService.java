@@ -1,5 +1,6 @@
 package com.denysenko.citymonitorbot.services;
 
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.DefaultAbsSender;
@@ -32,8 +33,10 @@ public class TelegramService extends DefaultAbsSender {
     public void sendMessage(Long chatId, String text, ReplyKeyboardMarkup replyKeyboardMarkup){
         SendMessage.SendMessageBuilder messageBuilder = SendMessage.builder()
                 .chatId(String.valueOf(chatId));
-        if(text != null && !text.isEmpty()){
-            messageBuilder.text(text);
+        if(text == null){
+            messageBuilder.text(Strings.EMPTY);
+        }else {
+            messageBuilder.text(text.trim());
         }
         if(replyKeyboardMarkup != null){
             messageBuilder.replyMarkup(replyKeyboardMarkup);

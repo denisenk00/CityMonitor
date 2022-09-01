@@ -6,15 +6,15 @@ import javax.persistence.*;
 @Table(name = "ANSWERS")
 public class Answer {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "answer_id")
     private Long id;
     @Column(name = "option_id")
     private Integer optionId;
     @Column(name = "quiz_id")
     private Integer quizId;
-    @Column(name = "chat_id")
-    private Long chatId;
+    @Column(name = "local_id")
+    private Integer localId;
 
     public Long getId() {
         return id;
@@ -40,11 +40,11 @@ public class Answer {
         this.quizId = quizId;
     }
 
-    public Long getChatId() {
-        return chatId;
+    public Integer getLocalId() {
+        return localId;
     }
 
-    public void setChatId(Long chatId) {
-        this.chatId = chatId;
+    public void setLocalId(Integer localId) {
+        this.localId = localId;
     }
 }

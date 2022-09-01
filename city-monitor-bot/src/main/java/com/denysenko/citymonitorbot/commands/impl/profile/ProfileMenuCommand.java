@@ -27,7 +27,7 @@ public class ProfileMenuCommand implements Command<Long> {
     @Override
     public void execute(Long chatId) {
         botUserService.updateBotStateByChatId(chatId, BotStates.PROFILE_MENU);
-        telegramService.sendMessage(chatId, null, createProfileMenuKeyboard());
+        telegramService.sendMessage(chatId, "Управління профілем:", createProfileMenuKeyboard());
     }
 
     private ReplyKeyboardMarkup createProfileMenuKeyboard(){

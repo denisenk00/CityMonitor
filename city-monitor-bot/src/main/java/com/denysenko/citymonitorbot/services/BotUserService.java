@@ -21,12 +21,12 @@ public class BotUserService {
 
     //DataBase
     public Optional<BotUser> findBotUserByChatId(Long chatId){
-        return botUserDAO.findById(chatId);
+        return botUserDAO.findByChatId(chatId);
     }
 
-    public boolean userIsRegistered(Long chatId){
-        return botUserDAO.existsById(chatId);
-    }
+    //public boolean userIsRegistered(Long chatId){
+    //    return botUserDAO.existsById(chatId);
+    //}
 
     public void saveBotUserToDB(BotUser botUser){
         botUserDAO.save(botUser);
@@ -63,6 +63,7 @@ public class BotUserService {
         Optional<BotUser> botUser = findBotUserByChatId(chatId);
         if(botUser.isPresent()){
             botUser.get().setActive(false);
+            saveBotUserToDB(botUser.get());
             return true;
         }else return false;
     }

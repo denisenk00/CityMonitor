@@ -10,11 +10,11 @@ import java.time.LocalDateTime;
 @Table(name = "APPEALS")
 public class Appeal {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "appeal_id")
     private Integer id;
-    @Column(name = "chat_id")
-    private Long chatId;
+    @Column(name = "local_id")
+    private Long botUserId;
     @Column(name = "text")
     private String text;
     @Column(name = "status")
@@ -38,12 +38,12 @@ public class Appeal {
         this.id = id;
     }
 
-    public Long getChatId() {
-        return chatId;
+    public Long getBotUserId() {
+        return botUserId;
     }
 
-    public void setChatId(Long chatId) {
-        this.chatId = chatId;
+    public void setBotUserId(Long chatId) {
+        this.botUserId = chatId;
     }
 
     public String getText() {

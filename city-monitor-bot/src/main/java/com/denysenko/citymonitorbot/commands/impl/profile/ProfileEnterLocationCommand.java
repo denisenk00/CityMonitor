@@ -5,10 +5,12 @@ import com.denysenko.citymonitorbot.commands.CommandSequence;
 import com.denysenko.citymonitorbot.commands.impl.MainMenuCommand;
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.enums.Commands;
+import com.denysenko.citymonitorbot.handlers.impl.LocationHandler;
 import com.denysenko.citymonitorbot.models.entities.BotUser;
 import com.denysenko.citymonitorbot.models.entities.LocationPoint;
 import com.denysenko.citymonitorbot.services.BotUserService;
 import com.denysenko.citymonitorbot.services.TelegramService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -23,6 +25,8 @@ import static org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.K
 
 @Component
 public class ProfileEnterLocationCommand implements CommandSequence<Long> {
+
+    private static final Logger LOG = Logger.getLogger(ProfileEnterLocationCommand.class);
     @Autowired
     private TelegramService telegramService;
     @Autowired
@@ -32,7 +36,7 @@ public class ProfileEnterLocationCommand implements CommandSequence<Long> {
     @Autowired
     private ProfileEnterPhoneNumberCommand enterPhoneNumberCommand;
 
-    private String NOT_ACTIVE_USER_MESSAGE = "Ваше минуле місце проживання наведено зверху, для його зміни відправте нове або натисніть кнопку";
+    private String NOT_ACTIVE_USER_MESSAGE = "Ваше поточне місце проживання наведено зверху, для його зміни відправте нове або натисніть кнопку";
     private String NOT_REGISTERED_USER_MESSAGE = "Поділіться своїм місцем проживання";
 
     @Override
@@ -52,11 +56,16 @@ public class ProfileEnterLocationCommand implements CommandSequence<Long> {
     }
 
     public void saveLocation(Long chatId, Double latitude, Double longitude){
-        LocationPoint locationPoint = new LocationPoint(BigDecimal.valueOf(latitude), BigDecimal.valueOf(longitude));
+        LOG.info("lat = " + latitude + ", bigd" + BigDecimal.valueOf(latitude));
         Optional<BotUser> botUser = botUserService.findBotUserInCacheByChatId(chatId);
         botUser.ifPresentOrElse(existedBotUser -> {
-                    existedBotUser.setLocation(locationPoint);
+                    LOG.info("Existed in cache");
+                    LocationPoint locationPoint = existedBotUser.getLocation();
+                    locationPoint.setLatitude(latitude);
+                    locationPoint.setLongitude(longitude);
+                    LOG.info("set location");
                     botUserService.updateBotUserInCacheByChatId(chatId, existedBotUser);
+                    LOG.info("update cache");
                 },
                 () -> {
                     //LOG!!!

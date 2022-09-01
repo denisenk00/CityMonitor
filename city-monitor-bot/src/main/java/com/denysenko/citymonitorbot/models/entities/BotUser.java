@@ -1,19 +1,28 @@
 package com.denysenko.citymonitorbot.models.entities;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.NaturalId;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "LOCALS")
 public class BotUser {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "local_id")
+    private Long botUserId;
+    @NaturalId
     @Column(name = "chat_id")
     private Long chatId;
     @Column(name = "name")
     private String name;
     @Column(name = "phone")
     private String phone;
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @MapsId
+    @Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     @JoinColumn(name = "point_id")
     private LocationPoint location;
     @Column(name = "is_active")
@@ -24,6 +33,14 @@ public class BotUser {
     }
 
     public BotUser() {
+    }
+
+    public BotUser(Long chatId, String name, String phone, LocationPoint location, boolean isActive) {
+        this.chatId = chatId;
+        this.name = name;
+        this.phone = phone;
+        this.location = location;
+        this.isActive = isActive;
     }
 
     public Long getChatId() {

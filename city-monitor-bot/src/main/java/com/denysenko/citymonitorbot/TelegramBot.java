@@ -59,6 +59,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
+        LOG.info("Update: hasMessage " + update.hasMessage() + ", has Callback" + update.hasCallbackQuery());
         superUpdateHandler.handle(update);
     }
 }

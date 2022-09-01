@@ -31,7 +31,7 @@ public class ProfileEnterPhoneNumberCommand implements CommandSequence<Long> {
     @Autowired
     private BotUserService botUserService;
     private String NOT_ACTIVE_USER_MESSAGE = "Ваш телефон - {0}? Якщо ні, змініть ввівши новий або натиснувши кнопку";
-    private String NOT_REGISTERED_USER_MESSAGE = "Введіть ваш телефон або натисніть кнопку";
+    private String NOT_REGISTERED_USER_MESSAGE = "Введіть ваш телефон або натисніть кнопку для відправки поточного";
     private static final Pattern PHONE_NUMBER_PATTERN =
             Pattern.compile("^(\\s*)?(\\+)?([- _():=+]?\\d[- _():=+]?){10,14}(\\s*)?$");
 

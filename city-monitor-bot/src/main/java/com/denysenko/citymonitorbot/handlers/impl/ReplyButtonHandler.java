@@ -12,18 +12,25 @@ import com.denysenko.citymonitorbot.commands.impl.profile.ProfileMenuCommand;
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.handlers.Handler;
+import com.denysenko.citymonitorbot.models.entities.BotUser;
+import com.denysenko.citymonitorbot.models.entities.LocationPoint;
 import com.denysenko.citymonitorbot.services.BotUserService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import javax.annotation.PostConstruct;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 @Component
 public class ReplyButtonHandler implements Handler {
+
+    private static final Logger LOG = Logger.getLogger(ReplyButtonHandler.class);
     @Autowired
     private StartCommand startCommand;
     @Autowired
@@ -43,14 +50,14 @@ public class ReplyButtonHandler implements Handler {
     @Autowired
     private StopCommand stopCommand;
 
-    private Map<BotStates, CommandSequence<Long>> sequenceCommandMap = createActionMap();
+    private Map<BotStates, CommandSequence<Long>> sequenceCommandMap;
 
-    private Map<BotStates, CommandSequence<Long>> createActionMap(){
-        Map<BotStates, CommandSequence<Long>> map = new HashMap<>();
-        map.put(BotStates.EDITING_PROFILE_NAME, profileEnterNameCommand);
-        map.put(BotStates.EDITING_PROFILE_PHONE, profileEnterPhoneNumberCommand);
-        map.put(BotStates.EDITING_PROFILE_LOCATION, profileEnterLocationCommand);
-        return map;
+    @PostConstruct
+    private void assignActionMap(){
+        sequenceCommandMap = new HashMap<>();
+        sequenceCommandMap.put(BotStates.EDITING_PROFILE_NAME, profileEnterNameCommand);
+        sequenceCommandMap.put(BotStates.EDITING_PROFILE_PHONE, profileEnterPhoneNumberCommand);
+        sequenceCommandMap.put(BotStates.EDITING_PROFILE_LOCATION, profileEnterLocationCommand);
     }
 
     @Override
@@ -61,19 +68,29 @@ public class ReplyButtonHandler implements Handler {
                 || text.equalsIgnoreCase(Commands.NEXT_STEP_COMMAND.getTitle())
                 || text.equalsIgnoreCase(Commands.PREVIOUS_STEP_COMMAND.getTitle())
                 || text.equalsIgnoreCase(Commands.PROFILE_COMMAND.getTitle())
-                || text.equalsIgnoreCase(Commands.SEND_APPEAL_COMMAND.getTitle());
+                || text.equalsIgnoreCase(Commands.SEND_APPEAL_COMMAND.getTitle())
+                || text.equalsIgnoreCase(Commands.CANCEL_GENERAL_COMMAND.getTitle())
+                || text.equalsIgnoreCase(Commands.STOP_BOT_COMMAND.getTitle())
+                || text.equalsIgnoreCase(Commands.EDIT_PROFILE_COMMAND.getTitle())
+                || text.equalsIgnoreCase(Commands.COMEBACK_COMMAND.getTitle());
     }
 
     @Override
     public void handle(Update update) {
+
         Message message = update.getMessage();
         Long chatId = message.getChatId();
         String text = message.getText();
-        if(text.equalsIgnoreCase(Commands.START_COMMAND.getTitle())){
+        if(text.equalsIgnoreCase(Commands.START_COMMAND.getTitle()) || text.equalsIgnoreCase(Commands.COMEBACK_COMMAND.getTitle())){
             startCommand.execute(chatId);
         }else if(text.equalsIgnoreCase(Commands.NEXT_STEP_COMMAND.getTitle())){
             Optional<BotStates> botUserState = botUserService.findBotStateByChatId(chatId);
             botUserState.ifPresentOrElse(existingBotState -> {
+                LOG.info("next bot state = " + botUserState.get().getTitle());
+                for(Map.Entry<BotStates, CommandSequence<Long>> entry : sequenceCommandMap.entrySet()){
+                    LOG.info("key = " + entry.getKey().getTitle() + ", value = " + entry.getValue());
+                    LOG.info("equals with existing " + entry.getKey().equals(existingBotState));
+                }
                 sequenceCommandMap.get(existingBotState).executeNext(chatId);
             },
                     ()->{});
@@ -91,6 +108,8 @@ public class ReplyButtonHandler implements Handler {
             mainMenuCommand.execute(chatId);
         }else if(text.equalsIgnoreCase(Commands.STOP_BOT_COMMAND.getTitle())){
             stopCommand.execute(chatId);
+        }else if(text.equalsIgnoreCase(Commands.EDIT_PROFILE_COMMAND.getTitle())){
+            profileEnterNameCommand.execute(chatId);
         }
     }
 }

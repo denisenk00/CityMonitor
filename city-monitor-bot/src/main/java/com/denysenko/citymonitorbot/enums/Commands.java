@@ -2,13 +2,14 @@ package com.denysenko.citymonitorbot.enums;
 
 public enum Commands {
     START_COMMAND ("/start"),
-    PROFILE_COMMAND("Profile"),
-    EDIT_PROFILE_COMMAND("Edit"),
-    STOP_BOT_COMMAND("Stop bot"),
-    SEND_APPEAL_COMMAND("Send appeal"),
-    CANCEL_GENERAL_COMMAND("Cancel"),
-    NEXT_STEP_COMMAND("Proceed"),
-    PREVIOUS_STEP_COMMAND("Back");
+    PROFILE_COMMAND("Профіль"),
+    EDIT_PROFILE_COMMAND("Редагувати"),
+    STOP_BOT_COMMAND("Вимкнути"),
+    SEND_APPEAL_COMMAND("Написати звернення"),
+    CANCEL_GENERAL_COMMAND("Назад"),
+    NEXT_STEP_COMMAND("Далі"),
+    PREVIOUS_STEP_COMMAND("Попередній крок"),
+    COMEBACK_COMMAND("Повернутися");
 
     private String title;
 

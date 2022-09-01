@@ -8,16 +8,12 @@ import com.denysenko.citymonitorbot.services.AppealService;
 import com.denysenko.citymonitorbot.services.TelegramService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.objects.*;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
-import java.io.File;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,7 +49,7 @@ public class SendAppealMenuCommand implements Command<Long> {
 
     public void saveAppeal(Long chatId, Message message){
         Appeal appeal = new Appeal();
-        appeal.setChatId(chatId);
+        appeal.setBotUserId(chatId);
         appeal.setStatus("POSTED");
         appeal.setPostDate(LocalDateTime.now());
         if(message.hasText()){
@@ -61,8 +57,8 @@ public class SendAppealMenuCommand implements Command<Long> {
         }
         if(message.hasLocation()){
             Location sentLocation = message.getLocation();
-            BigDecimal latitude = BigDecimal.valueOf(sentLocation.getLatitude());
-            BigDecimal longitude = BigDecimal.valueOf(sentLocation.getLongitude());
+            Double latitude = sentLocation.getLatitude();
+            Double longitude = sentLocation.getLongitude();
             appeal.setLocationPoint(new LocationPoint(latitude, longitude));
         }
         if(message.hasPhoto()){

@@ -7,6 +7,7 @@ import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.models.entities.BotUser;
 import com.denysenko.citymonitorbot.services.BotUserService;
 import com.denysenko.citymonitorbot.services.TelegramService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -22,6 +23,7 @@ import static org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.K
 
 @Component
 public class ProfileEnterNameCommand implements CommandSequence<Long> {
+    private static final Logger LOG = Logger.getLogger(ProfileEnterNameCommand.class);
     @Autowired
     private BotUserService botUserService;
     @Autowired
@@ -30,8 +32,8 @@ public class ProfileEnterNameCommand implements CommandSequence<Long> {
     private ProfileEnterPhoneNumberCommand enterPhoneNumberCommand;
 
 
-    private String NOT_ACTIVE_USER_MESSAGE = "Ваше ім'я - {0}? Якщо ні, змініть відправивши нове";
-    private String NOT_REGISTERED_USER_MESSAGE = "Введіть ваше ім'я";
+    private String NOT_ACTIVE_USER_MESSAGE = "Ваше ім''я - {0}? Якщо ні, змініть відправивши нове";
+    private String NOT_REGISTERED_USER_MESSAGE = "Як до вас звертатися? Напишіть своє ім'я";
     private static final Pattern NAME_PATTERN = Pattern.compile("[a-zA-Zа-яА-я]");
 
     @Override
@@ -40,6 +42,7 @@ public class ProfileEnterNameCommand implements CommandSequence<Long> {
         botUser.ifPresentOrElse(notActiveUser -> {
             String oldName = notActiveUser.getName();
             ReplyKeyboardMarkup keyboardMarkup = createNextStepKeyboard();
+            LOG.info("Old name = " + oldName);
             telegramService.sendMessage(chatId, MessageFormat.format(NOT_ACTIVE_USER_MESSAGE, oldName), keyboardMarkup);
         },
         ()->{
