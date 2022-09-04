@@ -1,7 +1,7 @@
 package com.denysenko.citymonitorbot.services;
 
 import com.denysenko.citymonitorbot.enums.BotStates;
-import com.denysenko.citymonitorbot.models.entities.BotUser;
+import com.denysenko.citymonitorbot.models.BotUser;
 import com.denysenko.citymonitorbot.repositories.cache.BotUserRepository;
 import com.denysenko.citymonitorbot.repositories.cache.BotUserStateRepository;
 import com.denysenko.citymonitorbot.repositories.hibernate.BotUserDAO;
@@ -19,19 +19,30 @@ public class BotUserService {
     @Autowired
     private BotUserDAO botUserDAO;
 
-    //DataBase
+    //Database
     public Optional<BotUser> findBotUserByChatId(Long chatId){
         return botUserDAO.findByChatId(chatId);
     }
 
-    //public boolean userIsRegistered(Long chatId){
-    //    return botUserDAO.existsById(chatId);
-    //}
+    public boolean userIsRegistered(Long chatId){
+        return botUserDAO.existsById(chatId);
+    }
 
     public void saveBotUserToDB(BotUser botUser){
         botUserDAO.save(botUser);
     }
+    public boolean existsUserByPhone(String phone){
+        return botUserDAO.existsByPhone(phone);
+    }
 
+    public boolean deactivateBotUser(Long chatId){
+        Optional<BotUser> botUser = findBotUserByChatId(chatId);
+        if(botUser.isPresent()){
+            botUser.get().setActive(false);
+            saveBotUserToDB(botUser.get());
+            return true;
+        }else return false;
+    }
 
     //Cache BotUserState
     public Optional<BotStates> findBotStateByChatId(Long chatId){
@@ -58,15 +69,5 @@ public class BotUserService {
     public void removeBotUserByChatIdFromCache(Long chatId){
         botUserCacheRepository.removeBotUserByChatId(chatId);
     }
-
-    public boolean deactivateBotUser(Long chatId){
-        Optional<BotUser> botUser = findBotUserByChatId(chatId);
-        if(botUser.isPresent()){
-            botUser.get().setActive(false);
-            saveBotUserToDB(botUser.get());
-            return true;
-        }else return false;
-    }
-
 
 }

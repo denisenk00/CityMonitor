@@ -1,10 +1,9 @@
 package com.denysenko.citymonitorbot.commands.impl.profile;
 
-import com.denysenko.citymonitorbot.commands.Command;
 import com.denysenko.citymonitorbot.commands.CommandSequence;
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.enums.Commands;
-import com.denysenko.citymonitorbot.models.entities.BotUser;
+import com.denysenko.citymonitorbot.models.BotUser;
 import com.denysenko.citymonitorbot.services.BotUserService;
 import com.denysenko.citymonitorbot.services.TelegramService;
 import org.apache.log4j.Logger;
@@ -23,6 +22,7 @@ import static org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.K
 
 @Component
 public class ProfileEnterNameCommand implements CommandSequence<Long> {
+
     private static final Logger LOG = Logger.getLogger(ProfileEnterNameCommand.class);
     @Autowired
     private BotUserService botUserService;
@@ -31,25 +31,28 @@ public class ProfileEnterNameCommand implements CommandSequence<Long> {
     @Autowired
     private ProfileEnterPhoneNumberCommand enterPhoneNumberCommand;
 
+    private static final String NOT_ACTIVE_USER_MESSAGE = "Ваше ім''я - {0}? Якщо ні, змініть відправивши нове";
+    private static final String NOT_REGISTERED_USER_MESSAGE = "Як до вас звертатися? Напишіть своє ім''я";
+    private static final String INCORRECT_NAME_MESSAGE = "Дані не схожі на ім''я, будь-ласка, перевірте та повторіть спробу";
 
-    private String NOT_ACTIVE_USER_MESSAGE = "Ваше ім''я - {0}? Якщо ні, змініть відправивши нове";
-    private String NOT_REGISTERED_USER_MESSAGE = "Як до вас звертатися? Напишіть своє ім'я";
     private static final Pattern NAME_PATTERN = Pattern.compile("[a-zA-Zа-яА-я]");
 
     @Override
     public void execute(Long chatId) {
+        LOG.info("Entering name command started: chatId = " + chatId);
+        botUserService.updateBotStateByChatId(chatId, BotStates.EDITING_PROFILE_NAME);
         Optional<BotUser> botUser = botUserService.findBotUserByChatId(chatId);
         botUser.ifPresentOrElse(notActiveUser -> {
-            String oldName = notActiveUser.getName();
-            ReplyKeyboardMarkup keyboardMarkup = createNextStepKeyboard();
-            LOG.info("Old name = " + oldName);
-            telegramService.sendMessage(chatId, MessageFormat.format(NOT_ACTIVE_USER_MESSAGE, oldName), keyboardMarkup);
-        },
-        ()->{
-            telegramService.sendMessage(chatId, NOT_REGISTERED_USER_MESSAGE, null);
-        });
+                LOG.info("User with chatId = " + chatId + " has already registered");
+                String oldName = notActiveUser.getName();
+                ReplyKeyboardMarkup keyboardMarkup = createNextStepKeyboard();
+                telegramService.sendMessage(chatId, MessageFormat.format(NOT_ACTIVE_USER_MESSAGE, oldName), keyboardMarkup);
+            },
+            ()->{
+                LOG.info("User with chatId = " + chatId + " isn't registered - new User");
+                telegramService.sendMessage(chatId, NOT_REGISTERED_USER_MESSAGE, null);
+            });
         botUserService.updateBotUserInCacheByChatId(chatId, botUser.orElse(new BotUser(chatId)));
-        botUserService.updateBotStateByChatId(chatId, BotStates.EDITING_PROFILE_NAME);
     }
 
     private ReplyKeyboardMarkup createNextStepKeyboard(){
@@ -64,9 +67,15 @@ public class ProfileEnterNameCommand implements CommandSequence<Long> {
     }
 
     public void saveUserName(Long chatId, String name){
+        LOG.info("Saving user name: chatId = " + chatId + ", name = " + name);
         Matcher matcher = NAME_PATTERN.matcher(name);
         if (!matcher.find()) {
-            telegramService.sendMessage(chatId, "You entered the incorrect name, try again.", null);
+            LOG.info("Incorrect name");
+            if(botUserService.userIsRegistered(chatId)){
+                telegramService.sendMessage(chatId, INCORRECT_NAME_MESSAGE, createNextStepKeyboard());
+            }else {
+                telegramService.sendMessage(chatId, INCORRECT_NAME_MESSAGE, null);
+            }
             return;
         }
         Optional<BotUser> botUser = botUserService.findBotUserInCacheByChatId(chatId);
@@ -74,9 +83,7 @@ public class ProfileEnterNameCommand implements CommandSequence<Long> {
             existedBotUser.setName(name);
             botUserService.updateBotUserInCacheByChatId(chatId, existedBotUser);
         },
-        () -> {
-            //LOG!!!
-        });
+        () -> LOG.error("User with chatId = " + chatId + " was not found in cache repository"));
         executeNext(chatId);
     }
 
@@ -84,9 +91,7 @@ public class ProfileEnterNameCommand implements CommandSequence<Long> {
     public void executeNext(Long chatId) {
         enterPhoneNumberCommand.execute(chatId);
     }
-
     @Override
-    public void executePrevious(Long aLong) {
-    }
+    public void executePrevious(Long chatId) { }
 
 }

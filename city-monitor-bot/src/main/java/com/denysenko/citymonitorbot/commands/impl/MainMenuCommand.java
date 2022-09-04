@@ -1,7 +1,6 @@
 package com.denysenko.citymonitorbot.commands.impl;
 
 import com.denysenko.citymonitorbot.commands.Command;
-import com.denysenko.citymonitorbot.commands.impl.profile.ProfileEnterLocationCommand;
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.services.BotUserService;
@@ -18,19 +17,18 @@ import static org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.K
 
 @Component
 public class MainMenuCommand implements Command<Long> {
+
+    private static final Logger LOG = Logger.getLogger(MainMenuCommand.class);
     @Autowired
     private BotUserService botUserService;
     @Autowired
     private TelegramService telegramService;
 
-    private static final Logger LOG = Logger.getLogger(MainMenuCommand.class);
-
     @Override
     public void execute(Long chatId) {
-        LOG.info("Main Execute");
+        LOG.info("Main menu command started: chatId = " + chatId);
         botUserService.updateBotStateByChatId(chatId, BotStates.MAIN_MENU);
         telegramService.sendMessage(chatId, "Головне меню:", createMainMenuKeyboard());
-        LOG.info("Main execute end");
     }
 
     private ReplyKeyboardMarkup createMainMenuKeyboard(){

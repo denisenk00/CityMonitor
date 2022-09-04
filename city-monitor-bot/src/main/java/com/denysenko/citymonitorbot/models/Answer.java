@@ -1,4 +1,4 @@
-package com.denysenko.citymonitorbot.models.entities;
+package com.denysenko.citymonitorbot.models;
 
 import javax.persistence.*;
 

@@ -1,7 +1,6 @@
-package com.denysenko.citymonitorbot.models.entities;
+package com.denysenko.citymonitorbot.models;
 
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
@@ -81,5 +80,13 @@ public class BotUser {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public Long getBotUserId() {
+        return botUserId;
+    }
+
+    public void setBotUserId(Long botUserId) {
+        this.botUserId = botUserId;
     }
 }

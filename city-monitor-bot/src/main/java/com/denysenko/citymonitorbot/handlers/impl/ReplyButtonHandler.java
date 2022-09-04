@@ -12,8 +12,6 @@ import com.denysenko.citymonitorbot.commands.impl.profile.ProfileMenuCommand;
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.handlers.Handler;
-import com.denysenko.citymonitorbot.models.entities.BotUser;
-import com.denysenko.citymonitorbot.models.entities.LocationPoint;
 import com.denysenko.citymonitorbot.services.BotUserService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +20,6 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import javax.annotation.PostConstruct;
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -62,44 +59,43 @@ public class ReplyButtonHandler implements Handler {
 
     @Override
     public boolean isApplicable(Update update) {
-        if(!update.hasMessage() && !update.getMessage().hasText()) return false;
-        String text = update.getMessage().getText();
-        return text.startsWith(Commands.START_COMMAND.getTitle())
-                || text.equalsIgnoreCase(Commands.NEXT_STEP_COMMAND.getTitle())
-                || text.equalsIgnoreCase(Commands.PREVIOUS_STEP_COMMAND.getTitle())
-                || text.equalsIgnoreCase(Commands.PROFILE_COMMAND.getTitle())
-                || text.equalsIgnoreCase(Commands.SEND_APPEAL_COMMAND.getTitle())
-                || text.equalsIgnoreCase(Commands.CANCEL_GENERAL_COMMAND.getTitle())
-                || text.equalsIgnoreCase(Commands.STOP_BOT_COMMAND.getTitle())
-                || text.equalsIgnoreCase(Commands.EDIT_PROFILE_COMMAND.getTitle())
-                || text.equalsIgnoreCase(Commands.COMEBACK_COMMAND.getTitle());
+        if(!update.hasMessage() || !update.getMessage().hasText()) return false;
+        Message message = update.getMessage();
+        String text = message.getText();
+        Long chatId = message.getChatId();
+        Optional<BotStates> botUserState = botUserService.findBotStateByChatId(chatId);
+
+        if(botUserState.isPresent()){
+            BotStates botState = botUserState.get();
+            return (text.equalsIgnoreCase(Commands.NEXT_STEP_COMMAND.getTitle()) && sequenceCommandMap.containsKey(botState))
+                    || (text.equalsIgnoreCase(Commands.PREVIOUS_STEP_COMMAND.getTitle()) && sequenceCommandMap.containsKey(botState))
+                    || (text.equalsIgnoreCase(Commands.PROFILE_COMMAND.getTitle()) && botState.equals(BotStates.MAIN_MENU))
+                    || (text.equalsIgnoreCase(Commands.SEND_APPEAL_COMMAND.getTitle()) && botState.equals(BotStates.MAIN_MENU))
+                    || (text.equalsIgnoreCase(Commands.CANCEL_GENERAL_COMMAND.getTitle())
+                            && (botState.equals(BotStates.SEND_APPEAL_MENU) || botState.equals(BotStates.PROFILE_MENU)))
+                    || (text.equalsIgnoreCase(Commands.STOP_BOT_COMMAND.getTitle()) && botState.equals(BotStates.PROFILE_MENU))
+                    || (text.equalsIgnoreCase(Commands.EDIT_PROFILE_COMMAND.getTitle()) && botState.equals(BotStates.PROFILE_MENU));
+        }else {
+            return text.startsWith(Commands.START_COMMAND.getTitle()) || text.equalsIgnoreCase(Commands.COMEBACK_COMMAND.getTitle());
+        }
     }
 
     @Override
     public void handle(Update update) {
-
         Message message = update.getMessage();
         Long chatId = message.getChatId();
+        LOG.info("Update handled by ReplyButtonHandler: updateId = " + update.getUpdateId() + ", chatId = " + chatId.toString());
         String text = message.getText();
+
         if(text.equalsIgnoreCase(Commands.START_COMMAND.getTitle()) || text.equalsIgnoreCase(Commands.COMEBACK_COMMAND.getTitle())){
             startCommand.execute(chatId);
-        }else if(text.equalsIgnoreCase(Commands.NEXT_STEP_COMMAND.getTitle())){
+        }else if(text.equalsIgnoreCase(Commands.NEXT_STEP_COMMAND.getTitle())) {
             Optional<BotStates> botUserState = botUserService.findBotStateByChatId(chatId);
-            botUserState.ifPresentOrElse(existingBotState -> {
-                LOG.info("next bot state = " + botUserState.get().getTitle());
-                for(Map.Entry<BotStates, CommandSequence<Long>> entry : sequenceCommandMap.entrySet()){
-                    LOG.info("key = " + entry.getKey().getTitle() + ", value = " + entry.getValue());
-                    LOG.info("equals with existing " + entry.getKey().equals(existingBotState));
-                }
-                sequenceCommandMap.get(existingBotState).executeNext(chatId);
-            },
-                    ()->{});
+            LOG.info("next bot state = " + botUserState.get().getTitle());
+            sequenceCommandMap.get(botUserState.get()).executeNext(chatId);
         }else if(text.equalsIgnoreCase(Commands.PREVIOUS_STEP_COMMAND.getTitle())){
             Optional<BotStates> botUserState = botUserService.findBotStateByChatId(chatId);
-            botUserState.ifPresentOrElse(existingBotState -> {
-                        sequenceCommandMap.get(existingBotState).executePrevious(chatId);
-                    },
-                    ()->{});
+            sequenceCommandMap.get(botUserState.get()).executePrevious(chatId);
         }else if(text.equalsIgnoreCase(Commands.PROFILE_COMMAND.getTitle())){
             profileMenuCommand.execute(chatId);
         }else if(text.equalsIgnoreCase(Commands.SEND_APPEAL_COMMAND.getTitle())){

@@ -9,6 +9,7 @@ import java.util.Optional;
 
 @Repository
 public class BotUserStateRepository {
+
     private final Map<Long, BotStates> userStates = new HashMap<>();
 
     public Optional<BotStates> findBotStateByChatId(Long chatId){

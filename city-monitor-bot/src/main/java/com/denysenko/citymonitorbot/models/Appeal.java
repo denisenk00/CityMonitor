@@ -1,11 +1,12 @@
-package com.denysenko.citymonitorbot.models.entities;
+package com.denysenko.citymonitorbot.models;
 
-
-
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import javax.sql.rowset.serial.SerialBlob;
 import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "APPEALS")
 public class Appeal {
@@ -21,14 +22,15 @@ public class Appeal {
     private String status;
     @Column(name = "post_date")
     private LocalDateTime postDate;
-    @OneToOne
-    @MapsId
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, optional = true)
+    @Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     @JoinColumn(name = "point_id")
     private LocationPoint locationPoint;
     @Column(name = "image")
     @Type(type = "org.hibernate.type.BlobType")
     @Lob
-    private byte[] image;
+
+    private SerialBlob image;
 
     public Integer getId() {
         return id;
@@ -78,11 +80,24 @@ public class Appeal {
         this.locationPoint = locationPoint;
     }
 
-    public byte[] getImage() {
+    public SerialBlob getImage() {
         return image;
     }
 
-    public void setImage(byte[] image) {
+    public void setImage(SerialBlob image) {
         this.image = image;
+    }
+
+    @Override
+    public String toString() {
+        return "Appeal{" +
+                "id=" + id +
+                ", botUserId=" + botUserId +
+                ", text='" + text + '\'' +
+                ", status='" + status + '\'' +
+                ", postDate=" + postDate.toString() +
+                ", locationPoint=" + locationPoint +
+                ", image=" + image +
+                '}';
     }
 }

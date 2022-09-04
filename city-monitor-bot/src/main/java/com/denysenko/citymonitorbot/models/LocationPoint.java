@@ -1,8 +1,6 @@
-package com.denysenko.citymonitorbot.models.entities;
+package com.denysenko.citymonitorbot.models;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
 
 @Entity
 @Table(name = "POINTS")
@@ -22,12 +20,6 @@ public class LocationPoint {
     }
 
     public LocationPoint() {
-    }
-
-    public LocationPoint(Long id, Double latitude, Double longitude) {
-        this.id = id;
-        this.latitude = latitude;
-        this.longitude = longitude;
     }
 
     public Double getLatitude() {
@@ -52,5 +44,14 @@ public class LocationPoint {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "LocationPoint{" +
+                "id=" + id +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                '}';
     }
 }
