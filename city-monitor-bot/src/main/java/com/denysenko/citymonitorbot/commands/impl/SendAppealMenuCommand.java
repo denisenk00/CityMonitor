@@ -39,6 +39,7 @@ public class SendAppealMenuCommand implements Command<Long> {
     private BotUserService botUserService;
 
     private static final String MESSAGE = "Тут ви можете написати звернення, прикріпивши до нього фото, зазначивши локацію";
+    private static final String SUCCESS_SENDING_APPEAL_MESSAGE = "Ваше звернення збережено та буде оброблено найближчим часом. Наш працівник обов''язково зв''яжеться з вами якщо буде потреба";
 
     @Override
     public void execute(Long chatId) {
@@ -97,6 +98,7 @@ public class SendAppealMenuCommand implements Command<Long> {
 
         if(!appealIsEmpty) {
             appealService.saveAppeal(appeal);
+            telegramService.sendMessage(chatId, SUCCESS_SENDING_APPEAL_MESSAGE, null);
             executeMainMenuCommand(chatId);
         }
     }
