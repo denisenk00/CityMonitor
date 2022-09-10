@@ -1,7 +1,6 @@
 package com.denysenko.citymonitorbot.commands.impl.profile;
 
 import com.denysenko.citymonitorbot.commands.Command;
-import com.denysenko.citymonitorbot.commands.impl.MainMenuCommand;
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.services.BotUserService;

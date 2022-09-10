@@ -1,11 +1,9 @@
 package com.denysenko.citymonitorbot.models;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Type;
-
 import javax.persistence.*;
-import javax.sql.rowset.serial.SerialBlob;
 import java.time.LocalDateTime;
+import java.util.LinkedList;
+import java.util.List;
 
 @Entity
 @Table(name = "APPEALS")
@@ -13,7 +11,7 @@ public class Appeal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "appeal_id")
-    private Integer id;
+    private Long id;
     @Column(name = "local_id")
     private Long botUserId;
     @Column(name = "text")
@@ -22,21 +20,26 @@ public class Appeal {
     private String status;
     @Column(name = "post_date")
     private LocalDateTime postDate;
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, optional = true)
-    @Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "point_id")
     private LocationPoint locationPoint;
-    @Column(name = "image")
-    @Type(type = "org.hibernate.type.BlobType")
-    @Lob
 
-    private SerialBlob image;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "appeal_id", nullable = false)
+    private List<File> files = new LinkedList<>();
 
-    public Integer getId() {
+    @PrePersist
+    protected void onCreate(){
+        status = "POSTED";
+        postDate = LocalDateTime.now();
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -80,24 +83,12 @@ public class Appeal {
         this.locationPoint = locationPoint;
     }
 
-    public SerialBlob getImage() {
-        return image;
+
+    public List<File> getFiles() {
+        return files;
     }
 
-    public void setImage(SerialBlob image) {
-        this.image = image;
-    }
-
-    @Override
-    public String toString() {
-        return "Appeal{" +
-                "id=" + id +
-                ", botUserId=" + botUserId +
-                ", text='" + text + '\'' +
-                ", status='" + status + '\'' +
-                ", postDate=" + postDate.toString() +
-                ", locationPoint=" + locationPoint +
-                ", image=" + image +
-                '}';
+    public void setFiles(List<File> files) {
+        this.files = files;
     }
 }

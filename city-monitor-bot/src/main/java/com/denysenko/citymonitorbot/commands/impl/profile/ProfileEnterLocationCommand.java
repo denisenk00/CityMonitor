@@ -33,7 +33,7 @@ public class ProfileEnterLocationCommand implements CommandSequence<Long> {
     private ProfileEnterPhoneNumberCommand enterPhoneNumberCommand;
 
     private static final String NOT_ACTIVE_USER_MESSAGE = "Ваше поточне місце проживання наведено зверху, для його зміни відправте нове або натисніть кнопку";
-    private static final String NOT_REGISTERED_USER_MESSAGE = "Поділіться своїм місцем проживання";
+    private static final String NOT_REGISTERED_USER_MESSAGE = "Поділіться своїм місцем проживання, натиснувши кнопку або відправивши вручну";
 
     @Override
     public void execute(Long chatId) {
@@ -59,6 +59,10 @@ public class ProfileEnterLocationCommand implements CommandSequence<Long> {
         Optional<BotUser> botUser = botUserService.findBotUserInCacheByChatId(chatId);
         botUser.ifPresentOrElse(existedBotUser -> {
                 LocationPoint locationPoint = existedBotUser.getLocation();
+                if(locationPoint == null){
+                    locationPoint = new LocationPoint();
+                    existedBotUser.setLocation(locationPoint);
+                }
                 locationPoint.setLatitude(latitude);
                 locationPoint.setLongitude(longitude);
                 botUserService.updateBotUserInCacheByChatId(chatId, existedBotUser);
@@ -74,7 +78,7 @@ public class ProfileEnterLocationCommand implements CommandSequence<Long> {
         keyboardBuilder.selective(true);
 
         keyboardBuilder.keyboardRow(new KeyboardRow(Arrays.asList(
-                builder().text("Відправити локацію").requestLocation(true).build()
+                builder().text("\uD83D\uDEA9 Відправити локацію").requestLocation(true).build()
         )));
 
         KeyboardRow nextPreviousRow = new KeyboardRow();

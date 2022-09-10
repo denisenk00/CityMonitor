@@ -1,6 +1,5 @@
 package com.denysenko.citymonitorbot.models;
 
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
@@ -19,9 +18,7 @@ public class BotUser {
     private String name;
     @Column(name = "phone")
     private String phone;
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
-    @MapsId
-    @Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    @OneToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "point_id")
     private LocationPoint location;
     @Column(name = "is_active")

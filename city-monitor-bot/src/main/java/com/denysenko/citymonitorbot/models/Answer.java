@@ -11,8 +11,6 @@ public class Answer {
     private Long id;
     @Column(name = "option_id")
     private Integer optionId;
-    @Column(name = "quiz_id")
-    private Integer quizId;
     @Column(name = "local_id")
     private Integer localId;
 
@@ -30,14 +28,6 @@ public class Answer {
 
     public void setOptionId(Integer optionId) {
         this.optionId = optionId;
-    }
-
-    public Integer getQuizId() {
-        return quizId;
-    }
-
-    public void setQuizId(Integer quizId) {
-        this.quizId = quizId;
     }
 
     public Integer getLocalId() {

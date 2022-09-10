@@ -1,5 +1,6 @@
 package com.denysenko.citymonitorbot.handlers.impl;
 
+import com.denysenko.citymonitorbot.commands.impl.appeal.AppealEnterLocationCommand;
 import com.denysenko.citymonitorbot.commands.impl.profile.ProfileEnterLocationCommand;
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.handlers.Handler;
@@ -21,6 +22,8 @@ public class LocationHandler implements Handler {
     private BotUserService botUserService;
     @Autowired
     private ProfileEnterLocationCommand profileEnterLocationCommand;
+    @Autowired
+    private AppealEnterLocationCommand appealEnterLocationCommand;
 
     @Override
     public boolean isApplicable(Update update) {
@@ -30,7 +33,7 @@ public class LocationHandler implements Handler {
         Optional<BotStates> botUserState = botUserService.findBotStateByChatId(chatId);
         if(botUserState.isPresent()){
             BotStates botState = botUserState.get();
-            return botState.equals(BotStates.EDITING_PROFILE_LOCATION);
+            return botState.equals(BotStates.EDITING_PROFILE_LOCATION) || botState.equals(BotStates.APPEAL_ENTERING_LOCATION);
         } else return false;
     }
 
@@ -41,6 +44,11 @@ public class LocationHandler implements Handler {
         LOG.info("Handled update by LocationHandler: updateId = " + update.getUpdateId() + ", chatId = " + chatId.toString());
 
         Location location = message.getLocation();
-        profileEnterLocationCommand.saveLocation(chatId, location.getLatitude(), location.getLongitude());
+        BotStates botUserState = botUserService.findBotStateByChatId(chatId).get();
+        if(botUserState.equals(BotStates.EDITING_PROFILE_LOCATION)){
+            profileEnterLocationCommand.saveLocation(chatId, location.getLatitude(), location.getLongitude());
+        }else if(botUserState.equals(BotStates.APPEAL_ENTERING_LOCATION)){
+            appealEnterLocationCommand.saveLocation(chatId, location.getLatitude(), location.getLongitude());
+        }
     }
 }

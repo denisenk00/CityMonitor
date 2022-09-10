@@ -69,8 +69,7 @@ public class ProfileEnterNameCommand implements CommandSequence<Long> {
     public void saveUserName(Long chatId, String name){
         LOG.info("Saving user name: chatId = " + chatId + ", name = " + name);
         Matcher matcher = NAME_PATTERN.matcher(name);
-        if (!matcher.find()) {
-            LOG.info("Incorrect name");
+        if (!matcher.find() || name.length() > 75) {
             if(botUserService.userIsRegistered(chatId)){
                 telegramService.sendMessage(chatId, INCORRECT_NAME_MESSAGE, createNextStepKeyboard());
             }else {

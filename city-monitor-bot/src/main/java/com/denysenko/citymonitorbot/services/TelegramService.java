@@ -6,15 +6,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.DefaultAbsSender;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
-import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Optional;
 
 @Service
 public class TelegramService extends DefaultAbsSender {
@@ -62,21 +57,6 @@ public class TelegramService extends DefaultAbsSender {
             LOG.error("Failed sending location to chatId = " + chatId + "\n" + e);
             e.printStackTrace();
         }
-    }
-
-    public Optional<byte[]> downloadFileByFileID(String fileId){
-        GetFile getFile = new GetFile();
-        getFile.setFileId(fileId);
-        byte[] fileInBytes = null;
-        try {
-            String filePath = execute(getFile).getFilePath();
-            InputStream inputStream = downloadFileAsStream(filePath);
-            fileInBytes = inputStream.readAllBytes();
-        } catch (TelegramApiException | IOException e) {
-            LOG.error("Failed downloadingFile: fileId = " + fileId + "\n" + e);
-            e.printStackTrace();
-        }
-        return Optional.ofNullable(fileInBytes);
     }
 
 }

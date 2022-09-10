@@ -61,7 +61,7 @@ public class ProfileEnterPhoneNumberCommand implements CommandSequence<Long> {
     public void savePhoneNumber(Long chatId, String phoneNumber){
         LOG.info("Saving phone number: chatId = " + chatId + ", phoneNumber = " + phoneNumber);
         Matcher matcher = PHONE_NUMBER_PATTERN.matcher(phoneNumber);
-        if (!matcher.find()) {
+        if (!matcher.find() || phoneNumber.length() > 13) {
             LOG.info("Incorrect phone number");
             ReplyKeyboardMarkup replyKeyboardMarkup = botUserService.userIsRegistered(chatId) ? createKeyboard(true) : createKeyboard(false);
             telegramService.sendMessage(chatId, INCORRECT_PHONE_MESSAGE, replyKeyboardMarkup);

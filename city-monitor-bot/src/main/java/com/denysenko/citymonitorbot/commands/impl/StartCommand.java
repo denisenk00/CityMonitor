@@ -25,8 +25,8 @@ public class StartCommand implements Command <Long>{
     private MainMenuCommand mainMenuCommand;
 
     private static final String BASIC_MESSAGE = "Привіт! Раді вітати тебе в нашому чат-боті. Ми налаштовані на тісну співпрацю з тобою, тож будь активним!\nРазом ми зможемо зробити наше місто кращим)";
-    private static final String NOT_ACTIVE_USER_MESSAGE = "Хмм.. Я тебе пам'ятаю, перевір будь-ласка свої дані. Якщо хочеш оновити, просто відправ нам нові";
-    private static final String NOT_REGISTERED_USER_MESSAGE = "Введіть особисті дані";
+    private static final String NOT_ACTIVE_USER_MESSAGE = "Хмм.. Я тебе пам'ятаю, перевір будь-ласка свої дані.";
+    private static final String NOT_REGISTERED_USER_MESSAGE = "Введіть свої особисті дані для реєстрації";
 
     @Override
     public void execute(Long chatId) {
@@ -43,12 +43,12 @@ public class StartCommand implements Command <Long>{
                     LOG.info("User is active");
                     executeMainMenuCommand(chatId);
                 }
-            },
-            ()->{
+        },
+        ()->{
                 LOG.info("User is not registered");
                 telegramService.sendMessage(chatId, NOT_REGISTERED_USER_MESSAGE, null);
                 profileEnterNameCommand.execute(chatId);
-            });
+        });
 
     }
 

@@ -23,7 +23,7 @@ public class StopCommand implements Command<Long> {
     @Autowired
     private TelegramService telegramService;
 
-    private static final String STOP_MESSAGE = "Твій профіль деактивовано. Ти більше не будеш отримувати опитування і тим самим впливати на прийняття важливих для тебе рішень. Якщо надумаєш - ми на тебе завжди чекаємо!";
+    private static final String STOP_MESSAGE = "Ваш профіль деактивовано. Ви більше не будете отримувати опитування і тим самим впливати на прийняття важливих для вас рішень. Якщо надумаєте - ми на вас завжди чекаємо!";
 
     @Override
     public void execute(Long chatId) {
@@ -40,6 +40,5 @@ public class StopCommand implements Command<Long> {
         keyboardBuilder.keyboardRow(new KeyboardRow(Arrays.asList(builder().text(Commands.COMEBACK_COMMAND.getTitle()).build())));
         return keyboardBuilder.build();
     }
-
 
 }

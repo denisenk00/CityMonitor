@@ -1,5 +1,6 @@
 package com.denysenko.citymonitorbot.handlers.impl;
 
+import com.denysenko.citymonitorbot.commands.impl.appeal.AppealEnterDescriptionCommand;
 import com.denysenko.citymonitorbot.commands.impl.profile.ProfileEnterNameCommand;
 import com.denysenko.citymonitorbot.commands.impl.profile.ProfileEnterPhoneNumberCommand;
 import com.denysenko.citymonitorbot.enums.BotStates;
@@ -23,6 +24,8 @@ public class TextHandler implements Handler {
     private ProfileEnterNameCommand profileEnterNameCommand;
     @Autowired
     private ProfileEnterPhoneNumberCommand profileEnterPhoneNumberCommand;
+    @Autowired
+    private AppealEnterDescriptionCommand appealEnterDescriptionCommand;
 
     @Override
     public boolean isApplicable(Update update) {
@@ -32,7 +35,8 @@ public class TextHandler implements Handler {
         Optional<BotStates> botUserState = botUserService.findBotStateByChatId(chatId);
         if(botUserState.isPresent()){
             BotStates botState = botUserState.get();
-            return botState.equals(BotStates.EDITING_PROFILE_NAME) || botState.equals(BotStates.EDITING_PROFILE_PHONE);
+            return botState.equals(BotStates.EDITING_PROFILE_NAME) || botState.equals(BotStates.EDITING_PROFILE_PHONE)
+                    || botState.equals(BotStates.APPEAL_ENTERING_DESCRIPTION);
         } else return false;
     }
 
@@ -47,6 +51,8 @@ public class TextHandler implements Handler {
             profileEnterNameCommand.saveUserName(chatId, message.getText());
         }else if(botState.equals(BotStates.EDITING_PROFILE_PHONE)){
             profileEnterPhoneNumberCommand.savePhoneNumber(chatId, message.getText());
+        }else if(botState.equals(BotStates.APPEAL_ENTERING_DESCRIPTION)){
+            appealEnterDescriptionCommand.saveDescription(chatId, message.getText());
         }
     }
 }
