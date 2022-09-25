@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Index page</title>
+</head>
+<body class="bg-secondary">
+    <div th:insert="header.html"></div>
+    <div class="container-fluid">
+        <table class="table-dark">
+            <thead>
+                <tr>
+                    <th>Тема</th>
+                    <th>Назва макету</th>
+                    <th>Дата початку</th>
+                    <th>Дата закінчення</th>
+                    <th>Статус</th>
+                    <th/><--Завершити опитування-->
+                    <th/><--Огляд-->
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="quiz : ${quizzes}">
+                    <td th:text="${quiz.title}"></td>
+                    <td th:text="${quiz.startDate}"></td>
+                    <td th:text="${quiz.endDate}"></td>
+                    <td th:text="${quiz.status.title}"></td>
+                    <input type="button" name="Огляд">
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

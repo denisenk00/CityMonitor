@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quizzes</title>
+</head>
+<body>
+    <div th:insert="header.html"></div>
+
+    <div class="container-fluid">
+        <h1>Всі опитування</h1>
+        <table class="table-dark">
+            <thead>
+            <tr>
+                <th>Тема</th>
+                <th>Назва макету</th>
+                <th>Дата початку</th>
+                <th>Дата закінчення</th>
+                <th>Статус</th>
+                <th/><--Завершити опитування-->
+                <th/><--Огляд-->
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="quiz : ${quizzes.page}">
+                <td th:text="${quiz.title}"></td>
+                <td th:text="${quiz.startDate}"></td>
+                <td th:text="${quiz.endDate}"></td>
+                <td th:text="${quiz.status.title}"></td>
+                <input type="button" name="Огляд">
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <nav aria-label="Page navigation" class="paging">
+        <ul class="pagination justify-content-center" th:if="${quizzes.page.totalPages > 1}">
+            <li class="page-item" th:classappend="${!quizzes.paging.isPrevEnabled()? 'disabled' : ''}">
+                <a class="page-link" th:href="@{'/?pageNumber=' + ${quizzes.paging.pageNumber - 1}}"
+                   tabindex="-1">Previous</a>
+            </li>
+            <th:block th:each="item : ${quizzes.paging.getItems()}">
+                <li class="page-item" th:classappend="${item.index == quizzes.paging.pageNumber? 'active' : ''}"
+                    th:if="${item.pageItemType.name() == 'PAGE'}">
+                    <a class="page-link" th:href="@{'/?pageNumber=' + ${item.index}}"
+                       th:text="${item.index}"></a>
+                </li>
+                <li class="page-item disabled" th:if="${item.pageItemType.name() == 'DOTS'}">
+                    <a class="page-link" href="#">...</a>
+                </li>
+            </th:block>
+            <li class="page-item" th:classappend="${!quizzes.paging.isNextEnabled()? 'disabled' : ''}">
+                <a class="page-link" th:href="@{'/?pageNumber=' + ${quizzes.paging.pageNumber + 1}}">Next</a>
+            </li>
+        </ul>
+    </nav>
+</body>
+</html>
