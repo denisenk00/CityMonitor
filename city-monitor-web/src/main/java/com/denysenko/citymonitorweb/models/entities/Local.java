@@ -1,4 +1,4 @@
-package com.denysenko.citymonitorweb.models;
+package com.denysenko.citymonitorweb.models.entities;
 
 import com.vividsolutions.jts.geom.Point;
 import lombok.Data;

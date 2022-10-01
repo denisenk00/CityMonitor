@@ -1,6 +1,6 @@
 package com.denysenko.citymonitorweb.controllers;
 
-import com.denysenko.citymonitorweb.models.Quiz;
+import com.denysenko.citymonitorweb.models.entities.Quiz;
 import com.denysenko.citymonitorweb.services.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

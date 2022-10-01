@@ -1,4 +1,4 @@
-package com.denysenko.citymonitorweb.models;
+package com.denysenko.citymonitorweb.models.entities;
 
 import com.denysenko.citymonitorweb.enums.LayoutStatus;
 import lombok.Data;

@@ -1,7 +1,6 @@
-package com.denysenko.citymonitorweb.models;
+package com.denysenko.citymonitorweb.models.entities;
 
 import com.denysenko.citymonitorweb.enums.AppealStatus;
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 import lombok.Data;
 

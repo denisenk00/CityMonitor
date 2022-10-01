@@ -1,4 +1,4 @@
-package com.denysenko.citymonitorweb.models.paging;
+package com.denysenko.citymonitorweb.models.domain.paging;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

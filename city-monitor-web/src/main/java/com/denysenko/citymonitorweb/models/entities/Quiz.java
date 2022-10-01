@@ -1,7 +1,12 @@
-package com.denysenko.citymonitorweb.models;
+package com.denysenko.citymonitorweb.models.entities;
 
 import com.denysenko.citymonitorweb.enums.QuizStatus;
+import com.denysenko.citymonitorweb.models.entities.File;
+import com.denysenko.citymonitorweb.models.entities.Layout;
+import com.denysenko.citymonitorweb.models.entities.Option;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,6 +17,8 @@ import java.util.Objects;
 @Entity
 @Table(name = "QUIZZES")
 @Data
+@NoArgsConstructor
+@Builder
 public class Quiz {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +40,10 @@ public class Quiz {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "quiz_id", nullable = false)
     private List<File> files = new LinkedList<>();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "quiz_id", nullable = false)
+    private List<Option> options = new LinkedList<>();
 
     @PrePersist
     void onCreate(){

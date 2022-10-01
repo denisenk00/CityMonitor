@@ -1,13 +1,17 @@
-package com.denysenko.citymonitorweb.models;
+package com.denysenko.citymonitorweb.models.entities;
 
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "FILES")
 @Data
+@Builder
+@NoArgsConstructor
 public class File {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,5 +25,5 @@ public class File {
 
     @Lob
     @Column(name = "file_object")
-    private byte[] fileObject;
+    private byte[] content;
 }

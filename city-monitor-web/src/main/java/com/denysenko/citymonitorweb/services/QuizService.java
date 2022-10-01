@@ -1,7 +1,7 @@
 package com.denysenko.citymonitorweb.services;
 
-import com.denysenko.citymonitorweb.models.Quiz;
-import com.denysenko.citymonitorweb.models.paging.Paged;
+import com.denysenko.citymonitorweb.models.entities.Quiz;
+import com.denysenko.citymonitorweb.models.domain.paging.Paged;
 
 import java.util.List;
 
