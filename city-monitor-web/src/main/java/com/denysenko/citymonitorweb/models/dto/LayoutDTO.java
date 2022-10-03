@@ -1,14 +1,10 @@
 package com.denysenko.citymonitorweb.models.dto;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class LayoutDTO {
     private Long id;
     private String name;

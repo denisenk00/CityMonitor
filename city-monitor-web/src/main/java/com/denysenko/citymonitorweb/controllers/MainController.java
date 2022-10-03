@@ -1,5 +1,6 @@
 package com.denysenko.citymonitorweb.controllers;
 
+import com.denysenko.citymonitorweb.models.dto.QuizDTO;
 import com.denysenko.citymonitorweb.models.entities.Quiz;
 import com.denysenko.citymonitorweb.services.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ public class MainController {
 
     @GetMapping("/")
     public String index(Model model){
-        List<Quiz> lastQuizzes = quizService.getFirstNQuizzes(10);
+        List<QuizDTO> lastQuizzes = quizService.getFirstNQuizzes(10);
         model.addAttribute("quizzes", lastQuizzes);
         return "index";
     }

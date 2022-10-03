@@ -2,11 +2,12 @@ package com.denysenko.citymonitorweb.models.dto;
 
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Builder
 public class PolygonDTO {
+    private long id;
+
 
 }

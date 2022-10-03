@@ -4,6 +4,7 @@ import com.denysenko.citymonitorweb.enums.QuizStatus;
 import com.denysenko.citymonitorweb.models.entities.File;
 import com.denysenko.citymonitorweb.models.entities.Layout;
 import com.denysenko.citymonitorweb.models.entities.Option;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.Objects;
 @Table(name = "QUIZZES")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Quiz {
     @Id

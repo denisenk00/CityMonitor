@@ -1,7 +1,9 @@
 package com.denysenko.citymonitorweb.models.entities;
 
 import com.denysenko.citymonitorweb.enums.LayoutStatus;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.LinkedList;
@@ -10,6 +12,8 @@ import java.util.List;
 @Entity
 @Table(name = "LAYOUTS")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Layout {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

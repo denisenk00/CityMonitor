@@ -2,10 +2,9 @@ package com.denysenko.citymonitorweb.models.dto;
 
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Builder
 public class OptionDTO {
     private Long id;

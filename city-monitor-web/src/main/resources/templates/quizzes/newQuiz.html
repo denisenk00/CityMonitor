@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="uk" xmlns:th="http://thymeleaf.org">
+<html lang="uk" xmlns:th="http://thymeleaf.org" xmlns:form="http://www.w3.org/1999/xhtml">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Creating quiz</title>
@@ -27,10 +27,10 @@
             <div id="optionsFragment">
                 <div th:each="option, rowStat : *{optionDTOs}">
                     <input type="text" th:field="*{optionDTOs[__${rowStat.index}__].title}">
-                    <button type="button" id="removeOption" th:formaction="@{/quizzes/new/AddOption}"><i class="bi bi-dash-circle"></i></button>
+                    <button type="submit" id="removeOption" th:formmethod="get" th:formaction="@{/quizzes/new}" name="removeOption" th:if="${rowStat.index > 1}" th:value="${rowStat.index}" th:method="get"><i class="bi bi-dash-circle"></i></button>
                 </div>
             </div>
-            <button type="submit" id="addOption"><i class="bi bi-plus-circle"></i></button>
+            <button type="submit" id="addOption"  th:formmethod="get" th:formaction="@{/quizzes/new}" name="addOption"><i class="bi bi-plus-circle"></i></button>
             <div>
                 <input class="form-check-input" type="checkbox" id="startImmediate" checked>
                 <label class="form-check-label" for="startImmediate">Почати опитування відразу</label>
@@ -44,43 +44,42 @@
                 <label for="endDatePicker" class="form-label">Час завершення</label>
                 <input type='datetime-local' class="form-control" id='endDatePicker' th:field="*{endDate}"/>
             </div>
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="control-label">Upload File</label>
-                                    <div class="preview-zone hidden">
-                                        <div class="box box-solid">
-                                            <div class="box-header with-border">
-                                                <div><b>Preview</b></div>
-                                                <div class="box-tools pull-right">
-                                                    <button type="button" class="btn btn-danger btn-xs remove-preview">
-                                                        <i class="fa fa-times"></i> Reset This Form
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="box-body"></div>
-                                        </div>
-                                    </div>
-                                    <div class="dropzone-wrapper">
-                                        <div class="dropzone-desc">
-                                            <i class="glyphicon glyphicon-download-alt"></i>
-                                            <p>Choose an image file or drag it here.</p>
-                                        </div>
-                                        <input type="file" name="img_logo" class="dropzone" multiple th:field="*{multipartFiles}">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <div class="container">
+                 <div class="row">
+                     <div class="col-md-12">
+                         <div class="form-group">
+                             <label class="control-label">Upload File</label>
+                             <div class="preview-zone hidden">
+                                 <div class="box box-solid">
+                                     <div class="box-header with-border">
+                                         <div><b>Preview</b></div>
+                                         <div class="box-tools pull-right">
+                                             <button type="button" class="btn btn-danger btn-xs remove-preview">
+                                                 <i class="fa fa-times"></i> Reset This Form
+                                             </button>
+                                         </div>
+                                     </div>
+                                     <div class="box-body"></div>
+                                 </div>
+                             </div>
+                             <div class="dropzone-wrapper">
+                                 <div class="dropzone-desc">
+                                     <i class="glyphicon glyphicon-download-alt"></i>
+                                     <p>Choose an image file or drag it here.</p>
+                                 </div>
+                                 <input type="file" name="files" class="dropzone" multiple="multiple">
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+            </div>
             <div>
                 <label class="form-select-label" for="layoutSelector">Макет місцевості</label>
                 <select class="form-select" id="layoutSelector" data-live-search="true" th:field="*{layoutId}">
                     <option th:each="layout : ${layouts}" th:text="${layout.name}" value="${layout.id}"></option>
                 </select>
             </div>
-            <input type="submit" title="Створити">
-
+            <input type="submit" title="Створити" value="Створити">
         </form>
     </div>
 </body>
@@ -91,7 +90,7 @@
 </html>
 
 
-<script>
+<!--script>
 
     var index = 1;
 
@@ -100,7 +99,7 @@
 
         $(
             '<div class="col-10" >' +
-            ' <input class="form-control" id="option' + index + '.title" name="options[' + index + '].title" type="text" value="' + title + '"> ' +
+            ' <input class="form-control" id="optionDTOs' + index + '.title" name="optionDTOs[' + index + '].title" type="text" value="' + title + '"> ' +
             '</div>'
         ).appendTo('#optionsFragment');
         index++;
@@ -141,9 +140,8 @@
             $('#startDatePicker').data("DateTimePicker").maxDate(e.date);
         });
     });
-</script>
+</script-->
 
-<script>$('.file-upload').file_upload();</script>
 
 <script>
     $('#startImmediate').on("click", function (){

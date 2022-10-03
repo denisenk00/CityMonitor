@@ -1,9 +1,9 @@
 package com.denysenko.citymonitorweb.controllers;
 
+import com.denysenko.citymonitorweb.models.dto.FileDTO;
 import com.denysenko.citymonitorweb.models.dto.OptionDTO;
 import com.denysenko.citymonitorweb.models.dto.QuizDTO;
-import com.denysenko.citymonitorweb.models.entities.Option;
-import com.denysenko.citymonitorweb.models.entities.Quiz;
+import com.denysenko.citymonitorweb.services.FileService;
 import com.denysenko.citymonitorweb.services.LayoutService;
 import com.denysenko.citymonitorweb.services.QuizService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Objects;
+
 @Slf4j
 @Controller
 @RequestMapping("/quizzes")
@@ -23,53 +25,64 @@ public class QuizController {
     private QuizService quizService;
     @Autowired
     private LayoutService layoutService;
+    @Autowired
+    private FileService fileService;
 
     @GetMapping()
     public String quizzesPage(Model model, @RequestParam(defaultValue = "1", required = false) int page, @RequestParam(defaultValue = "30", required = false) int size){
+        System.out.println("quizzesPage");
         model.addAttribute("quizzes", quizService.getPageOfQuizzes(page, size));
         return "quizzes/quizzes";
     }
 
     @GetMapping("/{id}")
     public String quizPage(Model model, @PathVariable("id") int id){
-
         return "quizzes/quiz";
     }
 
     @GetMapping("/new")
-    public String newQuiz(@ModelAttribute(name = "quiz") QuizDTO quiz, Model model){
+    public String newQuiz(@ModelAttribute(name = "quiz") QuizDTO quiz, @ModelAttribute(name = "files") List<MultipartFile> files, Model model){
+        System.out.println("newQuiz");
         quiz.setOptionDTOs(List.of(new OptionDTO(), new OptionDTO()));
         model.addAttribute("layouts", layoutService.getAllLayouts());
         return "quizzes/newQuiz";
     }
 
-    @GetMapping("/new/addOption")
-    public String addOption(@ModelAttribute(name = "quiz") Quiz quiz,
-                            @ModelAttribute(name = "files") List<MultipartFile> files,
-                            @RequestParam(name = "files", required = false) List<MultipartFile> f){
+    @GetMapping(value = "/new", params = "addOption")
+    public String addOption(@ModelAttribute(name = "quiz") QuizDTO quizDTO, @ModelAttribute("files") List<MultipartFile> files){
+        System.out.println("addOption");
+        if(Objects.isNull(quizDTO)) throw new RuntimeException();
         System.out.println("Add option");
-        quiz.getOptions().add(new Option());
+        quizDTO.getOptionDTOs().add(new OptionDTO());
         return "quizzes/newQuiz";
     }
 
-    @GetMapping("/new/removeOption")
-    public String removeOption(@RequestParam("oindex") int oIndex,
-                               @ModelAttribute(name = "files") List<MultipartFile> files){
-        return "";
+    @GetMapping(value = "/new", params = "removeOption")
+    public String removeOption(@RequestParam("removeOption") int oIndex, @ModelAttribute(name = "quiz") QuizDTO quizDTO, @ModelAttribute("files") List<MultipartFile> files){
+        System.out.println("removeOption");
+        if(Objects.isNull(quizDTO)) throw new RuntimeException();
+        quizDTO.getOptionDTOs().remove(oIndex);
+        return "quizzes/newQuiz";
     }
 
-    @PostMapping()
-    public void addQuiz(@ModelAttribute(name = "quiz") QuizDTO quizDTO){
-
+    @PostMapping("/")
+    public String saveQuiz(@ModelAttribute("quiz") QuizDTO quizDTO, @ModelAttribute("files") List<MultipartFile> files){
+        System.out.println("saving + " + quizDTO);
+        List<FileDTO> fileDTOs = fileService.convertListOfMultipartFileToDTO(files);
+        quizDTO.setFileDTOs(fileDTOs);
+        quizService.saveQuiz(quizDTO);
+        return "redirect:/";
     }
 
     @DeleteMapping("/{id}")
     public void removeQuiz(@PathVariable Long id){
 
+        return;
     }
 
     @PatchMapping("/{id}/finish")
     public void finishQuiz(@PathVariable Long id){
-
+        System.out.println("3");
     }
+
 }

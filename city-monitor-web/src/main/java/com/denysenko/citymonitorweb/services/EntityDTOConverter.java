@@ -1,13 +1,15 @@
 package com.denysenko.citymonitorweb.services;
 
+import org.springframework.core.convert.ConversionFailedException;
+
 import java.util.LinkedList;
 import java.util.List;
 
 public interface EntityDTOConverter<Entity, DTO>{
-    Entity convertDTOToEntity(DTO dto) throws Exception;
-    DTO convertEntityToDTO(Entity entity) throws Exception;
+    Entity convertDTOToEntity(DTO dto) throws ConversionFailedException;
+    DTO convertEntityToDTO(Entity entity) throws ConversionFailedException;
 
-    default List<Entity> convertListsDTOToEntity(List<DTO> dtos) throws Exception{
+    default List<Entity> convertListsDTOToEntity(List<DTO> dtos) throws ConversionFailedException{
         List<Entity> entities = new LinkedList<>();
         for(DTO dto : dtos) {
             entities.add(convertDTOToEntity(dto));
@@ -15,7 +17,7 @@ public interface EntityDTOConverter<Entity, DTO>{
         return entities;
     }
 
-    default List<DTO> convertListsEntityToDTO(List<Entity> entities) throws Exception{
+    default List<DTO> convertListsEntityToDTO(List<Entity> entities) throws ConversionFailedException{
         List<DTO> dtos = new LinkedList<>();
         for(Entity entity : entities){
             dtos.add(convertEntityToDTO(entity));
