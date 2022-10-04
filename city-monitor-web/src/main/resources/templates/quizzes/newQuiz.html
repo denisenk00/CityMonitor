@@ -1,19 +1,12 @@
 <!DOCTYPE html>
-<html lang="uk" xmlns:th="http://thymeleaf.org" xmlns:form="http://www.w3.org/1999/xhtml">
+<html lang="uk" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Creating quiz</title>
     <link type="text/css" rel="stylesheet" th:href="@{/css/uploadFileArea.css}">
-
-    <style>
-        .form-floating > .bi-calendar-date + .datepicker_input + label {
-            padding-left: 3.5rem;
-            z-index: 3;
-        }
-    </style>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
 </head>
 <body class="bg-light">
     <div th:insert="header.html"></div>
@@ -21,28 +14,32 @@
         <h2>Нове опитування</h2>
         <form th:action="@{/quizzes/}" th:object="${quiz}" th:method="POST" enctype="multipart/form-data">
             <div class="form-floating">
-                <textarea class="form-control" placeholder="Введіть тему опитування" id="titleInput" style="height: 100px" th:field="*{title}"></textarea>
                 <label for="titleInput" class="form-label">Тема опитування</label>
+                <textarea class="form-control" placeholder="Введіть тему опитування" id="titleInput" style="height: 100px" th:field="*{title}"></textarea>
+                <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
             </div>
             <div id="optionsFragment">
                 <div th:each="option, rowStat : *{optionDTOs}">
                     <input type="text" th:field="*{optionDTOs[__${rowStat.index}__].title}">
+                    <div th:if="${#fields.hasErrors('${quiz.optionDTOs[__${rowStat.index}__].title}')}" th:errors="*{optionDTOs[__${rowStat.index}__].title}"></div>
                     <button type="submit" id="removeOption" th:formmethod="get" th:formaction="@{/quizzes/new}" name="removeOption" th:if="${rowStat.index > 1}" th:value="${rowStat.index}" th:method="get"><i class="bi bi-dash-circle"></i></button>
                 </div>
             </div>
             <button type="submit" id="addOption"  th:formmethod="get" th:formaction="@{/quizzes/new}" name="addOption"><i class="bi bi-plus-circle"></i></button>
             <div>
-                <input class="form-check-input" type="checkbox" id="startImmediate" checked>
+                <input class="form-check-input" type="checkbox" id="startImmediate" th:field="*{startImmediate}">
                 <label class="form-check-label" for="startImmediate">Почати опитування відразу</label>
             </div>
 
-            <div id="startDateFragment" style="display: none">
+            <div id="startDateFragment" th:attr="style = *{startImmediate} ? 'display: none;'">
                 <label for="startDatePicker" class="form-label">Час початку</label>
                 <input type='datetime-local' class="form-control" id="startDatePicker" th:field="*{startDate}"/>
+                <div th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></div>
             </div>
             <div id="endDateFragment">
                 <label for="endDatePicker" class="form-label">Час завершення</label>
                 <input type='datetime-local' class="form-control" id='endDatePicker' th:field="*{endDate}"/>
+                <div th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></div>
             </div>
             <div class="container">
                  <div class="row">
@@ -78,6 +75,7 @@
                 <select class="form-select" id="layoutSelector" data-live-search="true" th:field="*{layoutId}">
                     <option th:each="layout : ${layouts}" th:text="${layout.name}" value="${layout.id}"></option>
                 </select>
+                <div th:if="${#fields.hasErrors('layoutId')}" th:errors="*{layoutId}"></div>
             </div>
             <input type="submit" title="Створити" value="Створити">
         </form>
@@ -86,68 +84,38 @@
 <script src="https://kit.fontawesome.com/97125d9c6b.js" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.0/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
 <script type="text/javascript" rel="script" th:src="@{/js/uploadFileArea.js}"></script>
 </html>
 
-
-<!--script>
-
-    var index = 1;
-
-    function addToOptionsList() {
-        var title = $("#optionTitle").val();
-
-        $(
-            '<div class="col-10" >' +
-            ' <input class="form-control" id="optionDTOs' + index + '.title" name="optionDTOs[' + index + '].title" type="text" value="' + title + '"> ' +
-            '</div>'
-        ).appendTo('#optionsFragment');
-        index++;
-    }
-
-    var rating = 0;
-
-    document.getElementById('addRating').addEventListener('click', function () {
-        var ratingsElem = document.getElementById('ratings');
-
-        var sourceElem = document.createElement("input");
-        sourceElem.setAttribute('type', 'text');
-        sourceElem.setAttribute('placeholder', 'Source');
-        sourceElem.setAttribute('name', 'Ratings[' + rating + '][Source]');
-
-        var valueElem = document.createElement("input");
-        valueElem.setAttribute('type', 'text');
-        valueElem.setAttribute('placeholder', 'value');
-        valueElem.setAttribute('name', 'Ratings[' + rating +  '][Value]');
-
-        ratingsElem.appendChild(sourceElem);
-        ratingsElem.appendChild(valueElem);
-
-        rating++;
-    });
-</script>
-
 <script type="text/javascript">
     $(function () {
-        $('#startDatePicker').datetimepicker();
-        $('#endDateFragment').datetimepicker({
-            useCurrent: false //Important! See issue #1075
+        let currentTime = new Date();
+        currentTime.setSeconds(0, 0);
+        currentTime = currentTime.toISOString().split('.')[0]
+        $("#startDatePicker").attr('min', currentTime);
+        $("#endDatePicker").attr('min', currentTime);
+
+        $("#startDatePicker").change(function () {
+            $('#endDatePicker').attr('min', $(this).val())
         });
-        $("#startDatePicker").on("dp.change", function (e) {
-            $('#endDateFragment').data("DateTimePicker").minDate(e.date);
-        });
-        $("#endDateFragment").on("dp.change", function (e) {
-            $('#startDatePicker').data("DateTimePicker").maxDate(e.date);
+        $("#endDatePicker").change(function () {
+            $('#startDatePicker').attr('max', $(this).val());
         });
     });
-</script-->
 
-
-<script>
     $('#startImmediate').on("click", function (){
+        let currentTime = new Date();
+        currentTime.setSeconds(0, 0);
+        currentTime = currentTime.toISOString().split('.')[0]
         if($("#startImmediate").is(':checked')) {
             $("#startDateFragment").hide();
+            $("#startDatePicker").val('');
+            $("#endDatePicker").attr('min', currentTime);
         }else {
+            $("#startDatePicker").attr('min', currentTime);
+            $('#startDatePicker').attr('max', $("#endDatePicker").val());
             $("#startDateFragment").show();
         }
     });

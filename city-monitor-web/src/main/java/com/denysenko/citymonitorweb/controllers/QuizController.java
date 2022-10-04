@@ -10,9 +10,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -43,6 +47,7 @@ public class QuizController {
     @GetMapping("/new")
     public String newQuiz(@ModelAttribute(name = "quiz") QuizDTO quiz, @ModelAttribute(name = "files") List<MultipartFile> files, Model model){
         System.out.println("newQuiz");
+        quiz.setStartImmediate(true);
         quiz.setOptionDTOs(List.of(new OptionDTO(), new OptionDTO()));
         model.addAttribute("layouts", layoutService.getAllLayouts());
         return "quizzes/newQuiz";
@@ -66,8 +71,18 @@ public class QuizController {
     }
 
     @PostMapping("/")
-    public String saveQuiz(@ModelAttribute("quiz") QuizDTO quizDTO, @ModelAttribute("files") List<MultipartFile> files){
-        System.out.println("saving + " + quizDTO);
+    public String saveQuiz(@Valid @ModelAttribute("quiz") QuizDTO quizDTO, BindingResult bindingResult, @ModelAttribute("files") List<MultipartFile> files){
+        System.out.println("saving + " + quizDTO + ", files = " + files.size());
+        if(!quizDTO.isStartImmediate() && Objects.isNull(quizDTO.getStartDate())){
+            String message = "Визначте час початку опитування";
+            FieldError incorrectStartDate = new FieldError("quiz", "startDate", message);
+            bindingResult.addError(incorrectStartDate);
+        }
+        if(bindingResult.hasErrors())
+            return "quizzes/newQuiz";
+
+        if(!isQuizPeriodCorrect(quizDTO)) throw new IllegalArgumentException();
+
         List<FileDTO> fileDTOs = fileService.convertListOfMultipartFileToDTO(files);
         quizDTO.setFileDTOs(fileDTOs);
         quizService.saveQuiz(quizDTO);
@@ -83,6 +98,14 @@ public class QuizController {
     @PatchMapping("/{id}/finish")
     public void finishQuiz(@PathVariable Long id){
         System.out.println("3");
+    }
+
+    private boolean isQuizPeriodCorrect(QuizDTO quizDTO){
+        boolean startImmediate = quizDTO.isStartImmediate();
+        LocalDateTime startDate = quizDTO.getStartDate();
+        LocalDateTime endDate = quizDTO.getEndDate();
+        return (startImmediate && endDate.isAfter(LocalDateTime.now()))
+                || (startDate.isAfter(LocalDateTime.now()) && startDate.isBefore(endDate));
     }
 
 }

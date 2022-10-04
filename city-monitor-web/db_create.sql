@@ -38,7 +38,7 @@ CREATE TABLE POLYGONS(
 
 CREATE TABLE QUIZZES(
                         quiz_id Integer GENERATED ALWAYS AS IDENTITY,
-                        title Varchar(400) NOT NULL,
+                        title Varchar(2200) NOT NULL,
                         status VARCHAR(80) NOT NULL,
                         start_date TIMESTAMP NOT NULL,
                         end_date TIMESTAMP NOT NULL,
@@ -51,7 +51,7 @@ CREATE TABLE QUIZZES(
 
 CREATE TABLE OPTIONS(
                         option_id Integer GENERATED ALWAYS AS IDENTITY,
-                        title Varchar(400) NOT NULL,
+                        title Varchar(1100) NOT NULL,
                         quiz_id Integer NOT NULL,
                         PRIMARY KEY (option_id)
 );
