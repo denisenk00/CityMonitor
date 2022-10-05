@@ -71,15 +71,20 @@ public class QuizController {
     }
 
     @PostMapping("/")
-    public String saveQuiz(@Valid @ModelAttribute("quiz") QuizDTO quizDTO, BindingResult bindingResult, @ModelAttribute("files") List<MultipartFile> files){
+    public String saveQuiz(@Valid @ModelAttribute("quiz") QuizDTO quizDTO, BindingResult bindingResult, @ModelAttribute("files") List<MultipartFile> files, Model model){
         System.out.println("saving + " + quizDTO + ", files = " + files.size());
+        files.forEach(a -> System.out.println(a.getOriginalFilename() + ", "));
         if(!quizDTO.isStartImmediate() && Objects.isNull(quizDTO.getStartDate())){
             String message = "Визначте час початку опитування";
             FieldError incorrectStartDate = new FieldError("quiz", "startDate", message);
             bindingResult.addError(incorrectStartDate);
         }
-        if(bindingResult.hasErrors())
+        model.asMap().entrySet().forEach(a -> System.out.println("key " + a.getKey() + ", value = " + a.getValue()));
+        if(bindingResult.hasErrors()) {
+            model.addAttribute("files", files);
+            System.out.println("hasErrors");
             return "quizzes/newQuiz";
+        }
 
         if(!isQuizPeriodCorrect(quizDTO)) throw new IllegalArgumentException();
 

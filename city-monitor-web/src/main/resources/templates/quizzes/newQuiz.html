@@ -5,87 +5,136 @@
     <title>Creating quiz</title>
     <link type="text/css" rel="stylesheet" th:href="@{/css/uploadFileArea.css}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+    <style>
+        .btn {
+            background: #ffffff; /* Blue background */
+            border: none; /* Remove borders */
+            color: black; /* White text */
+            padding: 7px 7px; /* Some padding */
+            font-size: 16px; /* Set a font size */
+            cursor: pointer; /* Mouse pointer on hover */
+        }
+
+        /* Darker background on mouse-over */
+        .btn:hover {
+            background-color: #a70000;
+        }
+
+        .submit-btn {
+            background: #dc3545;
+            border: none; /* Remove borders */
+            color: #fff;
+            padding: 7px 7px; /* Some padding */
+            font-size: 16px; /* Set a font size */
+            cursor: pointer; /* Mouse pointer on hover */
+        }
+        .submit-btn:hover {
+            background-color: #a70000;
+            color: #fff;
+        }
+    </style>
 </head>
 <body class="bg-light">
     <div th:insert="header.html"></div>
-    <div class="container-fluid" >
+    <div class="container max-width-90" >
         <h2>Нове опитування</h2>
+        <br>
         <form th:action="@{/quizzes/}" th:object="${quiz}" th:method="POST" enctype="multipart/form-data">
-            <div class="form-floating">
+            <div class="mb-4">
                 <label for="titleInput" class="form-label">Тема опитування</label>
-                <textarea class="form-control" placeholder="Введіть тему опитування" id="titleInput" style="height: 100px" th:field="*{title}"></textarea>
-                <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+                <textarea class="form-control" id="titleInput" rows="3" th:field="*{title}"></textarea>
+                <div class="notification-div row"></div>
             </div>
-            <div id="optionsFragment">
+            <div id="optionsFragment" class="mb-4">
                 <div th:each="option, rowStat : *{optionDTOs}">
-                    <input type="text" th:field="*{optionDTOs[__${rowStat.index}__].title}">
-                    <div th:if="${#fields.hasErrors('${quiz.optionDTOs[__${rowStat.index}__].title}')}" th:errors="*{optionDTOs[__${rowStat.index}__].title}"></div>
-                    <button type="submit" id="removeOption" th:formmethod="get" th:formaction="@{/quizzes/new}" name="removeOption" th:if="${rowStat.index > 1}" th:value="${rowStat.index}" th:method="get"><i class="bi bi-dash-circle"></i></button>
+                    <div class="mb-2 row">
+                        <label class="col-md-2 col-form-label" for="option-title" th:text="'Варіант відповіді №' + ${rowStat.index + 1} + ':'"></label>
+                        <div class="col-md-10">
+                            <input class="form-control" type="text" id="option-title" th:field="*{optionDTOs[__${rowStat.index}__].title}">
+                        </div>
+                    </div>
+                    <div class="notification-div row"></div>
+                </div>
+                <div class="row">
+                    <div class="col-2"></div>
+                    <div class="col-10">
+                        <button type="submit" id="removeOption" class="btn" th:formmethod="get" th:formaction="@{/quizzes/new}" name="removeOption"  th:method="get"><i class="bi bi-dash-circle"></i></button>
+                        <button type="submit" id="addOption" class="btn"  th:formmethod="get" th:formaction="@{/quizzes/new}" name="addOption"><i class="bi bi-plus-circle"></i></button>
+                    </div>
                 </div>
             </div>
-            <button type="submit" id="addOption"  th:formmethod="get" th:formaction="@{/quizzes/new}" name="addOption"><i class="bi bi-plus-circle"></i></button>
-            <div>
-                <input class="form-check-input" type="checkbox" id="startImmediate" th:field="*{startImmediate}">
-                <label class="form-check-label" for="startImmediate">Почати опитування відразу</label>
+            <div class="mb-3">
+                <div class="row">
+                    <label class="col-md-2 form-select-label" for="layoutSelector">Макет місцевості</label>
+                    <div class="col-md-10">
+                        <select class="form-select" id="layoutSelector" data-live-search="true" th:field="*{layoutId}">
+                            <option th:each="layout : ${layouts}" th:text="${layout.name}" value="${layout.id}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="notification-div row"></div>
+            </div>
+            <div class="mb-4">
+                <div class="mb-3">
+                    <input class="form-check-input" type="checkbox" id="startImmediate" th:field="*{startImmediate}">
+                    <label class="form-check-label" for="startImmediate">Почати опитування відразу</label>
+                </div>
+
+                <div id="startDateFragment" class="mb-2" th:attr="style = *{startImmediate} ? 'display: none;'">
+                    <div class="row">
+                        <label for="startDatePicker" class="col-md-2 col-form-label">Час початку</label>
+                        <div class="col-md-10">
+                            <input type='datetime-local' class="form-control" id="startDatePicker" th:field="*{startDate}"/>
+                        </div>
+                    </div>
+                </div>
+                <div id="endDateFragment" class="mb-2">
+                    <div class="row">
+                        <label for="endDatePicker" class="col-md-2 col-form-label">Час завершення</label>
+                        <div class="col-md-10">
+                            <input type='datetime-local' class="form-control" id='endDatePicker' th:field="*{endDate}"/>
+                        </div>
+                    </div>
+                    <div class="notification-div row"></div>
+                </div>
             </div>
 
-            <div id="startDateFragment" th:attr="style = *{startImmediate} ? 'display: none;'">
-                <label for="startDatePicker" class="form-label">Час початку</label>
-                <input type='datetime-local' class="form-control" id="startDatePicker" th:field="*{startDate}"/>
-                <div th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></div>
-            </div>
-            <div id="endDateFragment">
-                <label for="endDatePicker" class="form-label">Час завершення</label>
-                <input type='datetime-local' class="form-control" id='endDatePicker' th:field="*{endDate}"/>
-                <div th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></div>
-            </div>
             <div class="container">
-                 <div class="row">
-                     <div class="col-md-12">
-                         <div class="form-group">
-                             <label class="control-label">Upload File</label>
-                             <div class="preview-zone hidden">
-                                 <div class="box box-solid">
-                                     <div class="box-header with-border">
-                                         <div><b>Preview</b></div>
-                                         <div class="box-tools pull-right">
-                                             <button type="button" class="btn btn-danger btn-xs remove-preview">
-                                                 <i class="fa fa-times"></i> Reset This Form
-                                             </button>
-                                         </div>
-                                     </div>
-                                     <div class="box-body"></div>
-                                 </div>
-                             </div>
-                             <div class="dropzone-wrapper">
-                                 <div class="dropzone-desc">
-                                     <i class="glyphicon glyphicon-download-alt"></i>
-                                     <p>Choose an image file or drag it here.</p>
-                                 </div>
-                                 <input type="file" name="files" class="dropzone" multiple="multiple">
-                             </div>
-                         </div>
-                     </div>
-                 </div>
+                <div class="form-group">
+                    <div class="dropzone-wrapper">
+                        <div class="dropzone-desc">
+                            <i class="glyphicon glyphicon-download-alt"></i>
+                            <p>Виберіть або перетягніть сюди файли.</p>
+                        </div>
+                        <input type="file" name="files" class="dropzone" multiple="multiple">
+                    </div>
+                    <div class="preview-zone hidden">
+                        <div class="box box-solid">
+                            <div class="box-header with-border">
+                                <div><b>Превью</b></div>
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-danger btn-xs remove-preview">
+                                        <i class="fa fa-times"></i> Очистити форму
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="box-body"></div>
+                        </div>
+                    </div>
+                    <div id="fileErrorZone"></div>
+                </div>
             </div>
-            <div>
-                <label class="form-select-label" for="layoutSelector">Макет місцевості</label>
-                <select class="form-select" id="layoutSelector" data-live-search="true" th:field="*{layoutId}">
-                    <option th:each="layout : ${layouts}" th:text="${layout.name}" value="${layout.id}"></option>
-                </select>
-                <div th:if="${#fields.hasErrors('layoutId')}" th:errors="*{layoutId}"></div>
+            <div class="d-flex justify-content-start">
+                <input type="submit" class="btn submit-btn" title="Створити" value="Створити" onclick="checkFilesSelected()">
             </div>
-            <input type="submit" title="Створити" value="Створити">
         </form>
     </div>
 </body>
 <script src="https://kit.fontawesome.com/97125d9c6b.js" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.0/moment.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
 <script type="text/javascript" rel="script" th:src="@{/js/uploadFileArea.js}"></script>
 </html>
 
@@ -98,9 +147,17 @@
         $("#endDatePicker").attr('min', currentTime);
 
         $("#startDatePicker").change(function () {
+            if($(this).val() <= new Date()){
+                alert("Початок опитування не може бути в минулому, для негайного початку поставте відповідну галку");
+            }
             $('#endDatePicker').attr('min', $(this).val())
         });
         $("#endDatePicker").change(function () {
+            if($(this).val() <= new Date()){
+                if($(this).val() <= new Date()){
+                    alert("Початок опитування не може бути в минулому, для негайного початку поставте відповідну галку");
+                }
+            }
             $('#startDatePicker').attr('max', $(this).val());
         });
     });
