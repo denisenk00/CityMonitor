@@ -50,23 +50,7 @@ public class QuizController {
         quiz.setStartImmediate(true);
         quiz.setOptionDTOs(List.of(new OptionDTO(), new OptionDTO()));
         model.addAttribute("layouts", layoutService.getAllLayouts());
-        return "quizzes/newQuiz";
-    }
-
-    @GetMapping(value = "/new", params = "addOption")
-    public String addOption(@ModelAttribute(name = "quiz") QuizDTO quizDTO, @ModelAttribute("files") List<MultipartFile> files){
-        System.out.println("addOption");
-        if(Objects.isNull(quizDTO)) throw new RuntimeException();
-        System.out.println("Add option");
-        quizDTO.getOptionDTOs().add(new OptionDTO());
-        return "quizzes/newQuiz";
-    }
-
-    @GetMapping(value = "/new", params = "removeOption")
-    public String removeOption(@RequestParam("removeOption") int oIndex, @ModelAttribute(name = "quiz") QuizDTO quizDTO, @ModelAttribute("files") List<MultipartFile> files){
-        System.out.println("removeOption");
-        if(Objects.isNull(quizDTO)) throw new RuntimeException();
-        quizDTO.getOptionDTOs().remove(oIndex);
+        model.addAttribute("appealCnt", 10);
         return "quizzes/newQuiz";
     }
 

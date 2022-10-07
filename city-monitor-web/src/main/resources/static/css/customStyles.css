@@ -1,0 +1,26 @@
+.btn {
+    background: #ffffff; /* Blue background */
+    border: none; /* Remove borders */
+    color: black; /* White text */
+    padding: 7px 7px; /* Some padding */
+    font-size: 16px; /* Set a font size */
+    cursor: pointer; /* Mouse pointer on hover */
+}
+
+/* Darker background on mouse-over */
+.btn:hover {
+    background-color: #a70000;
+}
+
+.submit-btn {
+    background: #dc3545;
+    border: none; /* Remove borders */
+    color: #fff;
+    padding: 7px 7px; /* Some padding */
+    font-size: 16px; /* Set a font size */
+    cursor: pointer; /* Mouse pointer on hover */
+}
+.submit-btn:hover {
+    background-color: #a70000;
+    color: #fff;
+}
