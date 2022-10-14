@@ -1,10 +1,122 @@
 <!DOCTYPE html>
-<html lang="uk" xmlns:th="http://thymeleaf.org">
+<html lang="uk" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Creating layout</title>
+    <title>СМ - Створення макету</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+    <script src="https://kit.fontawesome.com/97125d9c6b.js" crossorigin="anonymous" async></script>
+    <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous" async></script>
+
 </head>
 <body>
+    <input hidden="hidden" id="mapCenterLat" th:value="${mapCenterLat}">
+    <input hidden="hidden" id="mapCenterLng" th:value="${mapCenterLng}">
+    <input hidden="hidden" id="mapZoom" th:value="${mapZoom}">
     <div th:insert="header.html"></div>
+    <div class="container max-width-90" >
+        <h2>Новий макет</h2>
+        <br>
+        <div id="map" style="height: 800px; width: 100%"></div>
+
+
+        <script>
+
+            var map; // Global declaration of the map
+            var drawingManager;
+            function initMap(){
+                let element = $('#map')[0];
+                let mapCenterLat = Number($('#mapCenterLat').val());
+                let mapCenterLng = Number($('#mapCenterLng').val());
+                let mapZoom = Number($('#mapZoom').val());
+
+                let options = {
+                    zoom : mapZoom,
+                    center : {lat: mapCenterLat, lng : mapCenterLng}
+                }
+                map = new google.maps.Map(element, options);
+                drawingManager = new google.maps.drawing.DrawingManager({
+                    drawingMode: google.maps.drawing.OverlayType.POLYGON,
+                    drawingControl: true,
+                    drawingControlOptions: {
+                        position: google.maps.ControlPosition.TOP_CENTER,
+                        drawingModes: [google.maps.drawing.OverlayType.POLYGON]
+                    },
+                    polygonOptions: {
+                        editable: true,
+                        draggable: true,
+                        clickable: true,
+                        fillOpacity: 0.6,
+                        strokeWeight: 2
+                    }
+                });
+                drawingManager.setMap(map);
+
+                google.maps.event.addListener(drawingManager, "polygoncomplete", function (polygon){
+                    let randomColor = "#" + Math.floor(Math.random()*16777215).toString(16);
+                    let options = {
+                        fillColor: randomColor,
+                    }
+                    polygon.setOptions(options);
+
+                    // Switch back to non-drawing mode after drawing a shape.
+                    drawingManager.setDrawingMode(null);
+                    google.maps.event.addListener(polygon, 'click', function (e) {
+                         var path = polygon.getPath().getArray();
+                         console.log(path.length);
+                         if (path.length < 3) {
+                             polygon.setMap(null);
+                         }
+                         setSelection(polygon);
+                    });
+                    setSelection(polygon);
+                });
+
+                function setSelection (polygon) {
+                    clearSelection();
+                    let options = {
+                        editable: true,
+                        fillOpacity: 0.4,
+                        strokeWeight: 1
+                    }
+                    polygon.setOptions(options);
+                    selectedShape = polygon;
+                }
+
+                function clearSelection () {
+                    if (selectedShape) {
+                        let options = {
+                            editable: false,
+                            fillOpacity: 0.6,
+                            strokeWeight: 2
+                        }
+                        selectedShape.setOptions(options);
+                        selectedShape = null;
+                    }
+                }
+
+                var selectedShape;
+
+                function deleteSelectedShape () {
+                    if (selectedShape) {
+                        selectedShape.setMap(null);
+                    }
+                }
+
+                // google.maps.event.addListener(drawingManager, "overlaycomplete", function(event) {
+                //     var newShape = event.overlay;
+                //     newShape.type = event.type;
+                // });
+                //
+                // google.maps.event.addListener(drawingManager, 'overlaycomplete', function(event) {
+                //     $('#vertices').val(event.overlay.getPath().getArray());
+                // });
+            }
+
+        </script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDi-Q6Rm3K9Qh_7DG0iQCVI0i_OIE22cqs&libraries=drawing&callback=initMap"></script>
+    </div>
 </body>
 </html>

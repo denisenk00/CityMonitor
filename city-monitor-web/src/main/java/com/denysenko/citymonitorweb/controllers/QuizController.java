@@ -50,7 +50,7 @@ public class QuizController {
         quiz.setStartImmediate(true);
         quiz.setOptionDTOs(List.of(new OptionDTO(), new OptionDTO()));
         model.addAttribute("layouts", layoutService.getAllLayouts());
-        model.addAttribute("appealCnt", 10);
+        model.addAttribute("unreadAppealsCnt", 10);
         return "quizzes/newQuiz";
     }
 

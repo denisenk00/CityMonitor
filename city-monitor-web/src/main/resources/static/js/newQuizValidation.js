@@ -97,6 +97,7 @@ $(function(){
     });
 
     $('#startImmediate').on("click", function (){
+        alert('dsdaas')
         let currentTime = getCurrentTime();
         if($("#startImmediate").is(':checked')) {
             $("#startDateFragment").hide();
