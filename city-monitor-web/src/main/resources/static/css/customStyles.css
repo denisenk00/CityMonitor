@@ -24,3 +24,11 @@
     background-color: #a70000;
     color: #fff;
 }
+.container {
+    padding: 50px 10%;
+}
+
+#map{
+    height: 800px;
+    width: 100%
+}

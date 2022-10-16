@@ -9,5 +9,5 @@ public class LayoutDTO {
     private Long id;
     private String name;
     private String status;
-
+    private String polygonsGeoJson;
 }

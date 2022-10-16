@@ -18,7 +18,7 @@ CREATE TABLE LOCALS(
 
 CREATE TABLE LAYOUTS(
                         layout_id Integer GENERATED ALWAYS AS IDENTITY,
-                        name Varchar(100) NOT NULL,
+                        name Varchar(200) NOT NULL,
                         status VARCHAR(80) NOT NULL,
                         PRIMARY KEY (layout_id),
                         CHECK (status IN ('IN_USE', 'AVAILABLE'))
@@ -28,7 +28,7 @@ CREATE TABLE LAYOUTS(
 
 CREATE TABLE POLYGONS(
                          polygon_id Integer GENERATED ALWAYS AS IDENTITY,
-                         name Varchar(100) NOT NULL,
+                         name Varchar(200) NOT NULL,
                          polygon GEOMETRY NOT NULL,
                          layout_id Integer NOT NULL,
                          PRIMARY KEY (polygon_id)
