@@ -15,7 +15,7 @@ public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "answer_id")
-    private Long answerId;
+    private Long id;
     @JoinColumn(name = "option_id")
     @OneToOne
     private Option option;

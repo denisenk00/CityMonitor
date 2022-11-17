@@ -17,7 +17,7 @@ public class Local {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "local_id")
-    private Long botUserId;
+    private Long id;
     @NaturalId
     @Column(name = "chat_id")
     private Long chatId;

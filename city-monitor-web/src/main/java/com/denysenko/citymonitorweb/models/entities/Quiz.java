@@ -25,7 +25,7 @@ public class Quiz {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "quiz_id")
-    private Long quizId;
+    private Long id;
     @Column(name = "title")
     private String title;
     @Column(name = "status")

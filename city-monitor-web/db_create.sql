@@ -1,6 +1,16 @@
 
 -- Create tables section -------------------------------------------------
 
+-- Table USERS
+
+CREATE TABLE USERS(
+    user_id Integer GENERATED ALWAYS AS IDENTITY,
+    username VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(300) NOT NULL,
+    role VARCHAR(100) NOT NULL CHECK ( role IN ('SUPER_ADMIN', 'ADMIN', 'VIEWER')),
+    account_status VARCHAR(100) NOT NULL CHECK ( account_status IN ('ACTIVE', 'NOT_ACTIVE'))
+);
+
 -- Table LOCALS
 
 

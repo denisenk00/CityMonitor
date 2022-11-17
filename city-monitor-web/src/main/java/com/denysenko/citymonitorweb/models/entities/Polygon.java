@@ -15,7 +15,7 @@ public class Polygon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "polygon_id")
-    private Long polygonId;
+    private Long id;
     @Column(name = "name")
     private String name;
     @Column(name = "polygon")

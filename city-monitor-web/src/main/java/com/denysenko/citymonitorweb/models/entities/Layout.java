@@ -18,7 +18,7 @@ public class Layout {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "layout_id")
-    private Long layoutId;
+    private Long id;
     @Column(name = "name")
     private String name;
     @Column(name = "status")

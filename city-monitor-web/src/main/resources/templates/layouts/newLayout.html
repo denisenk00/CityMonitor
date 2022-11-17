@@ -334,19 +334,26 @@
                 validateInput($(this));
             })
 
-            //submit validation
+            //validation on submitting
             $('#layoutForm').submit((ev) => {
+                ev.preventDefault();
                 validateInput($('#layout-title'));
                 validateInput($('#polygons-json'));
-                if (!$('.is-invalid').length == 0) {
-                    ev.preventDefault();
-                } else {
-                    //not working!!!!!!!!!!
-                    getPolygonsGeoJson().then(result => {return;})
+
+                if ($('.is-invalid').length == 0) {
+                    getPolygonsGeoJson()
+                        .done(function (json) {
+                            $('#polygons-json').val(json);
+                            $('#layoutForm')[0].submit();
+                        })
+                        .fail(function (){
+                            console.log("Getting polygons is failed")
+                        });
                 }
             });
 
             function getPolygonsGeoJson(){
+                let dfrd = $.Deferred();
                 dataLayer = new google.maps.Data();
                 polygons.forEach((poly) => {
                     let paths = [];
@@ -366,14 +373,13 @@
                         properties: {"title" : title}
                     }));
                 })
-                let json;
+                let json = null;
+                dataLayer.toGeoJson(function(obj) {
+                    json = JSON.stringify(obj);
+                    dfrd.resolve(json);
+                });
 
-                const promise = new Promise(
-                    dataLayer.toGeoJson(function(obj) {
-                        json = JSON.stringify(obj);
-                        $('#polygons-json').val(json);
-                }));
-                return promise;
+                return dfrd;
             }
         </script>
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDi-Q6Rm3K9Qh_7DG0iQCVI0i_OIE22cqs&libraries=drawing,geometry,visualization&callback=initMap"></script>

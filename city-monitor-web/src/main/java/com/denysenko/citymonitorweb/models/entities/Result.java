@@ -15,7 +15,7 @@ public class Result {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "result_id")
-    private Long resultId;
+    private Long id;
     @Column(name = "option_id")
     private Long optionId;
     @Column(name = "polygon_id")
