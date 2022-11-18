@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -24,7 +25,11 @@ public class MainController {
     }
 
     @GetMapping("/login")
-    public String login(){
+    public String login(@RequestParam(value = "error", required = false) boolean loginError, Model model){
+        if(loginError){
+            String failedLoginMessage = "Ім'я користувача або пароль не вірні. Спробуйте ще раз";
+            model.addAttribute("error", failedLoginMessage);
+        }
         return "login";
     }
 

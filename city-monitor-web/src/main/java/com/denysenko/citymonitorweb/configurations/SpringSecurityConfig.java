@@ -35,7 +35,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity
                 .csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/login").permitAll()
+                    .antMatchers("/login", "/css/*").permitAll()
                     .antMatchers("/users/**").hasAuthority(Permission.USERS_RW.getTitle())
                     .antMatchers(HttpMethod.POST, "/appeals/**").hasAuthority(Permission.APPEALS_WRITE.getTitle())
                     .antMatchers(HttpMethod.GET, "/appeals/new").hasAuthority(Permission.APPEALS_WRITE.getTitle())
@@ -47,6 +47,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                     .formLogin()
                         .loginPage("/login")
                         .defaultSuccessUrl("/")
+                        .failureUrl("/login?error=true")
                 .and()
                     .logout()
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
