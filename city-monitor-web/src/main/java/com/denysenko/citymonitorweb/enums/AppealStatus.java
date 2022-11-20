@@ -2,7 +2,7 @@ package com.denysenko.citymonitorweb.enums;
 
 public enum AppealStatus {
 
-    POSTED("Опубліковано"),
+    UNREAD("Непрочитано"),
     VIEWED("Переглянуто"),
     PROCESSED("Опрацьовано");
 

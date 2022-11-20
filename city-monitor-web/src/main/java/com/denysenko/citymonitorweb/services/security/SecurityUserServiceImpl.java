@@ -1,4 +1,4 @@
-package com.denysenko.citymonitorweb.services.impl;
+package com.denysenko.citymonitorweb.services.security;
 
 import com.denysenko.citymonitorweb.models.domain.security.SecurityUser;
 import com.denysenko.citymonitorweb.repositories.hibernate.UserRepository;

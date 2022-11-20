@@ -3,9 +3,12 @@ package com.denysenko.citymonitorweb.controllers;
 import com.denysenko.citymonitorweb.models.dto.FileDTO;
 import com.denysenko.citymonitorweb.models.dto.OptionDTO;
 import com.denysenko.citymonitorweb.models.dto.QuizDTO;
-import com.denysenko.citymonitorweb.services.FileService;
-import com.denysenko.citymonitorweb.services.LayoutService;
-import com.denysenko.citymonitorweb.services.QuizService;
+import com.denysenko.citymonitorweb.models.entities.Quiz;
+import com.denysenko.citymonitorweb.services.converters.impl.MultiFileToDTOConverter;
+import com.denysenko.citymonitorweb.services.converters.impl.QuizEntityToDTOConverter;
+import com.denysenko.citymonitorweb.services.entity.AppealService;
+import com.denysenko.citymonitorweb.services.entity.LayoutService;
+import com.denysenko.citymonitorweb.services.entity.QuizService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,7 +33,16 @@ public class QuizController {
     @Autowired
     private LayoutService layoutService;
     @Autowired
-    private FileService fileService;
+    private AppealService appealService;
+    @Autowired
+    private MultiFileToDTOConverter mFileToDTOConverter;
+    @Autowired
+    private QuizEntityToDTOConverter quizEntityToDTOConverter;
+
+    @ModelAttribute("unreadAppealsCnt")
+    public long getCountOfUnreadAppeals(){
+        return appealService.countOfUnreadAppeals();
+    }
 
     @GetMapping()
     public String quizzesPage(Model model, @RequestParam(defaultValue = "1", required = false) int page, @RequestParam(defaultValue = "30", required = false) int size){
@@ -50,7 +62,6 @@ public class QuizController {
         quiz.setStartImmediate(true);
         quiz.setOptionDTOs(List.of(new OptionDTO(), new OptionDTO()));
         model.addAttribute("layouts", layoutService.getAllLayouts());
-        model.addAttribute("unreadAppealsCnt", 10);
         return "quizzes/newQuiz";
     }
 
@@ -72,9 +83,12 @@ public class QuizController {
 
         if(!isQuizPeriodCorrect(quizDTO)) throw new IllegalArgumentException();
 
-        List<FileDTO> fileDTOs = fileService.convertListOfMultipartFileToDTO(files);
+        List<FileDTO> fileDTOs = mFileToDTOConverter.convertListOfMultipartFileToDTO(files);
         quizDTO.setFileDTOs(fileDTOs);
-        quizService.saveQuiz(quizDTO);
+
+        Quiz quiz = quizEntityToDTOConverter.convertDTOToEntity(quizDTO);
+        quizService.saveQuiz(quiz);
+
         return "redirect:/";
     }
 

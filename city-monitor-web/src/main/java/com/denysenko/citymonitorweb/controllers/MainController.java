@@ -1,14 +1,14 @@
 package com.denysenko.citymonitorweb.controllers;
 
 import com.denysenko.citymonitorweb.models.dto.QuizDTO;
-import com.denysenko.citymonitorweb.services.QuizService;
+import com.denysenko.citymonitorweb.models.entities.Quiz;
+import com.denysenko.citymonitorweb.services.converters.impl.QuizEntityToDTOConverter;
+import com.denysenko.citymonitorweb.services.entity.AppealService;
+import com.denysenko.citymonitorweb.services.entity.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,11 +16,21 @@ import java.util.List;
 public class MainController {
     @Autowired
     private QuizService quizService;
+    @Autowired
+    private QuizEntityToDTOConverter converter;
+    @Autowired
+    private AppealService appealService;
+
+    @ModelAttribute("unreadAppealsCnt")
+    public long getCountOfUnreadAppeals(){
+        return appealService.countOfUnreadAppeals();
+    }
 
     @GetMapping("/")
     public String index(Model model){
-        List<QuizDTO> lastQuizzes = quizService.getFirstNQuizzes(10);
-        model.addAttribute("quizzes", lastQuizzes);
+        List<Quiz> lastQuizzes = quizService.getLast10Quizzes();
+        List<QuizDTO> quizDTOs = converter.convertListsEntityToDTO(lastQuizzes);
+        model.addAttribute("quizzes", quizDTOs);
         return "index";
     }
 
@@ -42,4 +52,5 @@ public class MainController {
     public String profilesPage(){
         return "";
     }
+
 }

@@ -2,15 +2,14 @@ package com.denysenko.citymonitorweb.models.entities;
 
 import com.denysenko.citymonitorweb.enums.UserAccountStatus;
 import com.denysenko.citymonitorweb.enums.UserRole;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "USERS")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {

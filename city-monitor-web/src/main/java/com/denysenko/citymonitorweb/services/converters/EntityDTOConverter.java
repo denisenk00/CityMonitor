@@ -1,4 +1,4 @@
-package com.denysenko.citymonitorweb.services;
+package com.denysenko.citymonitorweb.services.converters;
 
 import org.springframework.core.convert.ConversionFailedException;
 

@@ -1,14 +1,13 @@
 package com.denysenko.citymonitorweb.models.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "POLYGONS")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Polygon {
@@ -16,10 +15,16 @@ public class Polygon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "polygon_id")
     private Long id;
+
     @Column(name = "name")
     private String name;
+
     @Column(name = "polygon")
-    private com.vividsolutions.jts.geom.Polygon polygon;
-    @Column(name = "layout_id")
-    private Long layoutId;
+    private org.locationtech.jts.geom.Polygon polygon;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "layout_id")
+    private Layout layout;
+
 }
+

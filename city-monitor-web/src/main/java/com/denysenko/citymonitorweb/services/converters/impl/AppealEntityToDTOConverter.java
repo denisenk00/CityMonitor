@@ -1,11 +1,13 @@
-package com.denysenko.citymonitorweb.services.impl;
+package com.denysenko.citymonitorweb.services.converters.impl;
 
 import com.denysenko.citymonitorweb.models.dto.AppealDTO;
 import com.denysenko.citymonitorweb.models.entities.Appeal;
-import com.denysenko.citymonitorweb.services.AppealService;
+import com.denysenko.citymonitorweb.services.converters.EntityDTOConverter;
 import org.springframework.core.convert.ConversionFailedException;
+import org.springframework.stereotype.Service;
 
-public class AppealServiceImpl implements AppealService {
+@Service
+public class AppealEntityToDTOConverter implements EntityDTOConverter<Appeal, AppealDTO> {
     @Override
     public Appeal convertDTOToEntity(AppealDTO appealDTO) throws ConversionFailedException {
         return null;

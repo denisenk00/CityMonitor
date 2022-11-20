@@ -1,10 +1,9 @@
 package com.denysenko.citymonitorweb.models.entities;
 
 import com.denysenko.citymonitorweb.enums.AppealStatus;
-import com.vividsolutions.jts.geom.Point;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+//import com.vividsolutions.jts.geom.Point;
+import lombok.*;
+import org.locationtech.jts.geom.Point;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -13,7 +12,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "APPEALS")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Appeal {

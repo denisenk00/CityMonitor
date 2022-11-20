@@ -31,7 +31,7 @@ CREATE TABLE LAYOUTS(
                         name Varchar(200) NOT NULL,
                         status VARCHAR(80) NOT NULL,
                         PRIMARY KEY (layout_id),
-                        CHECK (status IN ('IN_USE', 'AVAILABLE'))
+                        CHECK (status IN ('IN_USE', 'AVAILABLE', 'DEPRECATED'))
 );
 
 -- Table POLYGONS
@@ -85,7 +85,7 @@ CREATE TABLE APPEALS(
                         point_id GEOMETRY,
                         local_id Integer NOT NULL,
                         PRIMARY KEY (appeal_id),
-                        CHECK ( status IN ('POSTED', 'VIEWED', 'PROCESSED'))
+                        CHECK ( status IN ('UNREAD', 'VIEWED', 'PROCESSED'))
 );
 
 -- Create indexes for table APPEALS

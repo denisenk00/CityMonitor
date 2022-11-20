@@ -1,16 +1,16 @@
 package com.denysenko.citymonitorweb.models.entities;
 
-import com.vividsolutions.jts.geom.Point;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
 import org.hibernate.annotations.NaturalId;
+import org.locationtech.jts.geom.Point;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "LOCALS")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Local {

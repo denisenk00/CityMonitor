@@ -1,9 +1,12 @@
 package com.denysenko.citymonitorweb.enums;
 
+import javassist.NotFoundException;
+
 public enum LayoutStatus {
 
-    IN_USE("Переглянуто"),
-    AVAILABLE("Опрацьовано");
+    IN_USE("Використовується"),
+    AVAILABLE("Доступний для використання"),
+    DEPRECATED("Застарілий");
 
     private String title;
 
@@ -13,6 +16,13 @@ public enum LayoutStatus {
 
     public String getTitle() {
         return title;
+    }
+
+    public static LayoutStatus getByTitle(String title) throws NotFoundException {
+        for (LayoutStatus status : values()){
+            if(status.getTitle().equals(title)) return status;
+        }
+        throw new NotFoundException("Статусу - " + title + " не існує");
     }
 
 }

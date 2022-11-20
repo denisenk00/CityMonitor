@@ -1,7 +1,13 @@
 package com.denysenko.citymonitorweb.controllers;
 
 import com.denysenko.citymonitorweb.models.dto.LayoutDTO;
+import com.denysenko.citymonitorweb.models.entities.Layout;
+import com.denysenko.citymonitorweb.services.converters.impl.LayoutEntityToDTOConverter;
+import com.denysenko.citymonitorweb.services.entity.AppealService;
+import com.denysenko.citymonitorweb.services.entity.LayoutService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,9 +25,21 @@ public class LayoutController {
     private String mapCenterLng;
     @Value("${citymonitor.maps.zoom}")
     private String mapZoom;
+    @Autowired
+    private LayoutService layoutService;
+    @Autowired
+    private LayoutEntityToDTOConverter entityDTOConverter;
+    @Autowired
+    private AppealService appealService;
+
+    @ModelAttribute("unreadAppealsCnt")
+    public long getCountOfUnreadAppeals(){
+        return appealService.countOfUnreadAppeals();
+    }
 
 
     @GetMapping("/new")
+    @PreAuthorize("hasAuthority('layouts:write')")
     public String newLayout(@ModelAttribute("layout") LayoutDTO layoutDTO,  Model model){
         model.addAttribute("mapCenterLat", mapCenterLat);
         model.addAttribute("mapCenterLng", mapCenterLng);
@@ -30,11 +48,14 @@ public class LayoutController {
     }
 
     @PostMapping("/")
+    @PreAuthorize("hasAuthority('layouts:write')")
     public String saveLayout(@ModelAttribute("layout") LayoutDTO layoutDTO){
-        System.out.println(layoutDTO.toString());
+        Layout layout = entityDTOConverter.convertDTOToEntity(layoutDTO);
+        layoutService.saveLayout(layout);
         return "redirect:/";
     }
 
     @GetMapping()
+    @PreAuthorize("hasAuthority('layouts:read')")
     public String layouts() { return "layouts/layouts";}
 }

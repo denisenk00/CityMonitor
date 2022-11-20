@@ -1,13 +1,12 @@
 package com.denysenko.citymonitorweb.configurations;
 
-import com.denysenko.citymonitorweb.enums.Permission;
-import com.denysenko.citymonitorweb.services.impl.SecurityUserServiceImpl;
+import com.denysenko.citymonitorweb.services.security.SecurityUserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -18,6 +17,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -36,10 +36,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                     .antMatchers("/login", "/css/*").permitAll()
-                    .antMatchers("/users/**").hasAuthority(Permission.USERS_RW.getTitle())
-                    .antMatchers(HttpMethod.POST, "/appeals/**").hasAuthority(Permission.APPEALS_WRITE.getTitle())
-                    .antMatchers(HttpMethod.GET, "/appeals/new").hasAuthority(Permission.APPEALS_WRITE.getTitle())
-                    .antMatchers(HttpMethod.GET, "/appeals/**").hasAuthority(Permission.APPEALS_READ.getTitle())
+//                    .antMatchers("/users/**").hasAuthority(Permission.USERS_RW.getTitle())
+//                    .antMatchers(HttpMethod.POST, "/appeals/**").hasAuthority(Permission.APPEALS_WRITE.getTitle())
+//                    .antMatchers(HttpMethod.GET, "/appeals/new").hasAuthority(Permission.APPEALS_WRITE.getTitle())
+//                    .antMatchers(HttpMethod.GET, "/appeals/**").hasAuthority(Permission.APPEALS_READ.getTitle())
 
 
                     .anyRequest().authenticated()
@@ -58,8 +58,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .headers()
                         .xssProtection();
-//                        .and()
-//                        .contentSecurityPolicy("script-src 'self'");
 
     }
 

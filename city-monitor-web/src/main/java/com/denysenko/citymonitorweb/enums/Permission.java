@@ -12,7 +12,8 @@ public enum Permission {
     LAYOUTS_WRITE("layouts:write"),
     QUIZZES_READ("quizzes:read"),
     QUIZZES_WRITE("quizzes:write"),
-    USERS_RW("users:rw");
+    USERS_READ("users:read"),
+    USERS_WRITE("users:write");
 
     private String title;
 

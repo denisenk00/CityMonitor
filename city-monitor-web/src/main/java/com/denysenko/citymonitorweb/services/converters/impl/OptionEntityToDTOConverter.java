@@ -1,17 +1,12 @@
-package com.denysenko.citymonitorweb.services.impl;
+package com.denysenko.citymonitorweb.services.converters.impl;
 
 import com.denysenko.citymonitorweb.models.dto.OptionDTO;
 import com.denysenko.citymonitorweb.models.entities.Option;
-import com.denysenko.citymonitorweb.repositories.hibernate.OptionRepository;
-import com.denysenko.citymonitorweb.services.OptionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.denysenko.citymonitorweb.services.converters.EntityDTOConverter;
 import org.springframework.stereotype.Service;
 
 @Service
-public class OptionServiceImpl implements OptionService {
-    @Autowired
-    private OptionRepository optionRepository;
-
+public class OptionEntityToDTOConverter implements EntityDTOConverter<Option, OptionDTO> {
     @Override
     public Option convertDTOToEntity(OptionDTO optionDTO) {
         return Option.builder()
@@ -27,5 +22,4 @@ public class OptionServiceImpl implements OptionService {
                 .title(option.getTitle())
                 .build();
     }
-
 }

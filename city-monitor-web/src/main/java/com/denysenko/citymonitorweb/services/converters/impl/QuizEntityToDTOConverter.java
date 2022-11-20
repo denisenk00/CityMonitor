@@ -1,50 +1,28 @@
-package com.denysenko.citymonitorweb.services.impl;
+package com.denysenko.citymonitorweb.services.converters.impl;
 
 import com.denysenko.citymonitorweb.enums.QuizStatus;
 import com.denysenko.citymonitorweb.models.dto.QuizDTO;
 import com.denysenko.citymonitorweb.models.entities.Quiz;
-import com.denysenko.citymonitorweb.models.domain.paging.Paged;
-import com.denysenko.citymonitorweb.models.domain.paging.Paging;
-import com.denysenko.citymonitorweb.repositories.hibernate.QuizRepository;
-import com.denysenko.citymonitorweb.services.*;
+import com.denysenko.citymonitorweb.services.converters.EntityDTOConverter;
+import com.denysenko.citymonitorweb.services.entity.LayoutService;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Optional;
 
 @Service
-public class QuizServiceImpl implements QuizService, EntityDTOConverter<Quiz, QuizDTO> {
+public class QuizEntityToDTOConverter implements EntityDTOConverter<Quiz, QuizDTO> {
     @Autowired
-    private QuizRepository quizRepository;
+    @Qualifier("fileEntityToDTOConverter")
+    private EntityDTOConverter fileConverter;
     @Autowired
-    private FileService fileService;
-    @Autowired
-    private OptionService optionService;
+    @Qualifier("optionEntityToDTOConverter")
+    private EntityDTOConverter optionConverter;
     @Autowired
     private LayoutService layoutService;
 
-    @Override
-    public List<QuizDTO> getFirstNQuizzes(int n) {
-        return null;
-    }
-
-    @Override
-    public Paged<QuizDTO> getPageOfQuizzes(int pageNumber, int size){
-        PageRequest request = PageRequest.of(pageNumber - 1, size, Sort.by(Sort.Direction.DESC, "startDate"));
-        Page<Quiz> quizzesPage = quizRepository.findAll(request);
-        Page<QuizDTO> dtoPage = quizzesPage.map(quiz -> convertEntityToDTO(quiz));
-        return new Paged<QuizDTO>(dtoPage, Paging.of(dtoPage.getTotalPages(), pageNumber, size));
-    }
-
-    @Override
-    public void saveQuiz(QuizDTO quizDTO){
-        Quiz quiz = convertDTOToEntity(quizDTO);
-        quizRepository.save(quiz);
-    }
 
     @Override
     public Quiz convertDTOToEntity(QuizDTO quizDTO) {
@@ -52,8 +30,8 @@ public class QuizServiceImpl implements QuizService, EntityDTOConverter<Quiz, Qu
         quizBuilder
                 .id(quizDTO.getId())
                 .title(quizDTO.getTitle())
-                .files(fileService.convertListsDTOToEntity(quizDTO.getFileDTOs()))
-                .options(optionService.convertListsDTOToEntity(quizDTO.getOptionDTOs()))
+                .files(fileConverter.convertListsDTOToEntity(quizDTO.getFileDTOs()))
+                .options(optionConverter.convertListsDTOToEntity(quizDTO.getOptionDTOs()))
                 .startDate(quizDTO.getStartDate())
                 .endDate(quizDTO.getEndDate());
         if(Optional.ofNullable(quizDTO.getStatus()).isPresent()) {
@@ -75,8 +53,8 @@ public class QuizServiceImpl implements QuizService, EntityDTOConverter<Quiz, Qu
         quizDTOBuilder
                 .id(quiz.getId())
                 .title(quiz.getTitle())
-                .fileDTOs(fileService.convertListsEntityToDTO(quiz.getFiles()))
-                .optionDTOs(optionService.convertListsEntityToDTO(quiz.getOptions()))
+                .fileDTOs(fileConverter.convertListsEntityToDTO(quiz.getFiles()))
+                .optionDTOs(optionConverter.convertListsEntityToDTO(quiz.getOptions()))
                 .startDate(quiz.getStartDate())
                 .endDate(quiz.getEndDate());
 

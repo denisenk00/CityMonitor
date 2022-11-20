@@ -1,8 +1,8 @@
-package com.denysenko.citymonitorweb.services.impl;
+package com.denysenko.citymonitorweb.services.entity.impl;
 
 
 import com.denysenko.citymonitorweb.repositories.hibernate.UserRepository;
-import com.denysenko.citymonitorweb.services.UserService;
+import com.denysenko.citymonitorweb.services.entity.UserService;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
