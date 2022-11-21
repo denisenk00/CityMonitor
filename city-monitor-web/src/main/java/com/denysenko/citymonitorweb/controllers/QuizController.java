@@ -11,6 +11,7 @@ import com.denysenko.citymonitorweb.services.entity.LayoutService;
 import com.denysenko.citymonitorweb.services.entity.QuizService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -45,6 +46,7 @@ public class QuizController {
     }
 
     @GetMapping()
+    @PreAuthorize("hasAnyAuthority('quizzes:read')")
     public String quizzesPage(Model model, @RequestParam(defaultValue = "1", required = false) int page, @RequestParam(defaultValue = "30", required = false) int size){
         System.out.println("quizzesPage");
         model.addAttribute("quizzes", quizService.getPageOfQuizzes(page, size));
@@ -52,13 +54,14 @@ public class QuizController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('quizzes:read')")
     public String quizPage(Model model, @PathVariable("id") int id){
         return "quizzes/quiz";
     }
 
     @GetMapping("/new")
+    @PreAuthorize("hasAnyAuthority('quizzes:write')")
     public String newQuiz(@ModelAttribute(name = "quiz") QuizDTO quiz, @ModelAttribute(name = "files") List<MultipartFile> files, Model model){
-        System.out.println("newQuiz");
         quiz.setStartImmediate(true);
         quiz.setOptionDTOs(List.of(new OptionDTO(), new OptionDTO()));
         model.addAttribute("layouts", layoutService.getAllLayouts());
@@ -66,22 +69,13 @@ public class QuizController {
     }
 
     @PostMapping("/")
+    @PreAuthorize("hasAnyAuthority('quizzes:write')")
     public String saveQuiz(@Valid @ModelAttribute("quiz") QuizDTO quizDTO, BindingResult bindingResult, @ModelAttribute("files") List<MultipartFile> files, Model model){
-        System.out.println("saving + " + quizDTO + ", files = " + files.size());
-        files.forEach(a -> System.out.println(a.getOriginalFilename() + ", "));
-        if(!quizDTO.isStartImmediate() && Objects.isNull(quizDTO.getStartDate())){
-            String message = "Визначте час початку опитування";
-            FieldError incorrectStartDate = new FieldError("quiz", "startDate", message);
-            bindingResult.addError(incorrectStartDate);
-        }
-        model.asMap().entrySet().forEach(a -> System.out.println("key " + a.getKey() + ", value = " + a.getValue()));
-        if(bindingResult.hasErrors()) {
-            model.addAttribute("files", files);
-            System.out.println("hasErrors");
-            return "quizzes/newQuiz";
-        }
 
-        if(!isQuizPeriodCorrect(quizDTO)) throw new IllegalArgumentException();
+        if((!quizDTO.isStartImmediate() && Objects.isNull(quizDTO.getStartDate()))
+                || bindingResult.hasErrors() || !isQuizPeriodCorrect(quizDTO)) {
+            throw new IllegalArgumentException();
+        }
 
         List<FileDTO> fileDTOs = mFileToDTOConverter.convertListOfMultipartFileToDTO(files);
         quizDTO.setFileDTOs(fileDTOs);
@@ -89,16 +83,20 @@ public class QuizController {
         Quiz quiz = quizEntityToDTOConverter.convertDTOToEntity(quizDTO);
         quizService.saveQuiz(quiz);
 
+        //NEED TO SEND QUIZ TO LOCALS IN BOT
+
         return "redirect:/";
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('quizzes:write')")
     public void removeQuiz(@PathVariable Long id){
 
         return;
     }
 
     @PatchMapping("/{id}/finish")
+    @PreAuthorize("hasAnyAuthority('quizzes:write')")
     public void finishQuiz(@PathVariable Long id){
         System.out.println("3");
     }

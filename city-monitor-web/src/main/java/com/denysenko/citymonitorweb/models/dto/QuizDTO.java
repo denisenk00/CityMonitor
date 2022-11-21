@@ -21,7 +21,7 @@ public class QuizDTO {
     private String status;
     private boolean startImmediate;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    @FutureOrPresent(message = "Дата початку опитування не може бути в минулому")
+    //@FutureOrPresent(message = "Дата початку опитування не може бути в минулому")
     private LocalDateTime startDate;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @NotNull(message = "Визначте дату завершення опитування")
@@ -29,7 +29,6 @@ public class QuizDTO {
     private LocalDateTime endDate;
     @NotNull(message = "Оберіть макет місцевості")
     private Long layoutId;
-    @NotNull
     private List<FileDTO> fileDTOs;
     @NotNull
     @Valid

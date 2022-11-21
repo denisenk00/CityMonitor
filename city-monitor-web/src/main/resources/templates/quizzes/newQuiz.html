@@ -50,7 +50,7 @@
                     <label class="col-md-2 form-select-label" for="layoutSelector">Макет місцевості</label>
                     <div class="col-md-10">
                         <select class="form-select" id="layoutSelector" data-live-search="true" th:field="*{layoutId}">
-                            <option th:each="layout : ${layouts}" th:text="${layout.name}" value="${layout.id}"></option>
+                            <option th:each="layout : ${layouts}" th:text="${layout.name}" th:value="${layout.id}"></option>
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
