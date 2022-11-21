@@ -30,7 +30,7 @@ public class LayoutEntityToDTOConverter implements EntityDTOConverter<Layout, La
 
     @Override
     public Layout convertDTOToEntity(LayoutDTO layoutDTO) throws ConversionFailedException {
-        if(layoutDTO == null) throw new NullPointerException();
+        if(layoutDTO == null) throw new IllegalArgumentException();
 
         Layout layout;
         if(layoutDTO.getId() != null){
@@ -76,7 +76,7 @@ public class LayoutEntityToDTOConverter implements EntityDTOConverter<Layout, La
 
     @Override
     public LayoutDTO convertEntityToDTO(Layout layout) throws ConversionFailedException {
-        if(layout == null) throw new NullPointerException();
+        if(layout == null) throw new IllegalArgumentException();
 
         LayoutDTO.LayoutDTOBuilder layoutDTOBuilder = LayoutDTO.builder();
         layoutDTOBuilder.id(layout.getId())

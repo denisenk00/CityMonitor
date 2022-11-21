@@ -15,7 +15,7 @@
 <body class="bg-light">
     <div th:insert="header.html"></div>
     <div class="container-fluid">
-        <table class="table-dark">
+        <table class="">
             <thead>
                 <tr>
                     <th>Тема</th>
@@ -23,17 +23,20 @@
                     <th>Дата початку</th>
                     <th>Дата закінчення</th>
                     <th>Статус</th>
-                    <th/><--Завершити опитування-->
-                    <th/><--Огляд-->
+                    <th></th>
+                    <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 <tr th:each="quiz : ${quizzes}">
-                    <td th:text="${quiz.title}"></td>
-                    <td th:text="${quiz.startDate}"></td>
-                    <td th:text="${quiz.endDate}"></td>
-                    <td th:text="${quiz.status}"></td>
-                    <input type="button" name="Огляд">
+                    <td><t th:text="${quiz.title}"></t></td>
+                    <td><t th:text="${quiz.layoutDTO.name}"></t></td>
+                    <td><t th:text="${quiz.startDate}"></t></td>
+                    <td><t th:text="${quiz.endDate}"></t></td>
+                    <td><t th:text="${quiz.status}"></t></td>
+                    <td><input type="button" title="Огляд" value="Огляд"></td>
+                    <td><input type="button" title="Завершити" value="Завершити"></td>
                 </tr>
             </tbody>
         </table>

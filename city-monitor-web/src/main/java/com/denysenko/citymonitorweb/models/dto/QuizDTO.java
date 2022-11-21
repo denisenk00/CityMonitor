@@ -16,19 +16,21 @@ import java.util.List;
 public class QuizDTO {
     private Long id;
     @NotEmpty(message = "Тема опитування не може бути пустою")
-    @Length(min = 30, max = 1000, message = "Мінімальна кількість символів - 30, максимальна - 1000")
+    @Length(min = 10, max = 100, message = "Мінімальна кількість символів - 10, максимальна - 100")
     private String title;
+    @NotEmpty(message = "Опис опитування не може бути пустим")
+    @Length(min = 30, max = 1000, message = "Мінімальна кількість символів - 30, максимальна - 1000")
+    private String description;
     private String status;
     private boolean startImmediate;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    //@FutureOrPresent(message = "Дата початку опитування не може бути в минулому")
+    @FutureOrPresent(message = "Дата початку опитування не може бути в минулому")
     private LocalDateTime startDate;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @NotNull(message = "Визначте дату завершення опитування")
     @Future(message = "Дата завершення не може бути в минулому")
     private LocalDateTime endDate;
-    @NotNull(message = "Оберіть макет місцевості")
-    private Long layoutId;
+    private LayoutDTO layoutDTO;
     private List<FileDTO> fileDTOs;
     @NotNull
     @Valid

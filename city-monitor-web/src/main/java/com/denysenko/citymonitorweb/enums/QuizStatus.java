@@ -5,7 +5,7 @@ import javassist.NotFoundException;
 public enum QuizStatus {
 
     PLANNED("Заплановано"),
-    IN_PROGRESS("В дії"),
+    IN_PROGRESS("В процесі"),
     FINISHED("Завершено");
 
     private String title;

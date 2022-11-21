@@ -48,7 +48,8 @@ CREATE TABLE POLYGONS(
 
 CREATE TABLE QUIZZES(
                         quiz_id Integer GENERATED ALWAYS AS IDENTITY,
-                        title Varchar(2200) NOT NULL,
+                        title Varchar(220) NOT NULL, --JUST FOR ADMIN PANEL
+                        description VARCHAR(2200) NOT NULL,
                         status VARCHAR(80) NOT NULL,
                         start_date TIMESTAMP NOT NULL,
                         end_date TIMESTAMP NOT NULL,

@@ -22,7 +22,12 @@
         <form id="quizForm" th:action="@{/quizzes/}" th:object="${quiz}" th:method="POST" enctype="multipart/form-data" class="needs-validation">
             <div class="mb-4">
                 <label for="title" class="form-label">Тема опитування</label>
-                <textarea class="form-control" id="title" rows="3" th:field="*{title}"></textarea>
+                <input type="text" class="form-control" id="title"  th:field="*{title}">
+                <div class="invalid-feedback"></div>
+            </div>
+            <div class="mb-4">
+                <label for="title" class="form-label">Опис</label>
+                <textarea class="form-control" id="description" rows="3" th:field="*{description}"></textarea>
                 <div class="invalid-feedback"></div>
             </div>
             <div id="optionsFragment" class="mb-4">
@@ -49,7 +54,7 @@
                 <div class="row">
                     <label class="col-md-2 form-select-label" for="layoutSelector">Макет місцевості</label>
                     <div class="col-md-10">
-                        <select class="form-select" id="layoutSelector" data-live-search="true" th:field="*{layoutId}">
+                        :<select class="form-select" id="layoutSelector" data-live-search="true" name="selectedLayoutId">
                             <option th:each="layout : ${layouts}" th:text="${layout.name}" th:value="${layout.id}"></option>
                         </select>
                         <div class="invalid-feedback"></div>

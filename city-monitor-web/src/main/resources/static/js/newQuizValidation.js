@@ -14,6 +14,16 @@ $(function(){
                 var size = val.trim().length;
                 if (size == 0) {
                     setInvalid(e, "Тема опитування не може бути пустою");
+                } else if (size < 10 || size > 100) {
+                    setInvalid(e, "Мінімальна кількість символів - 10, максимальна - 100");
+                } else {
+                    setValid(e);
+                }
+                break;
+            case 'description':
+                var size = val.trim().length;
+                if (size == 0) {
+                    setInvalid(e, "Опис опитування не може бути пустим");
                 } else if (size < 30 || size > 1000) {
                     setInvalid(e, "Мінімальна кількість символів - 30, максимальна - 1000");
                 } else {
@@ -73,7 +83,7 @@ $(function(){
 
     //submit validation
     $('#quizForm').submit(function (ev){
-        $('#title, #optionTitle, #layoutSelector, #startDatePicker, #endDatePicker').each(function (){
+        $('#title, #description, #optionTitle, #layoutSelector, #startDatePicker, #endDatePicker').each(function (){
             if(!($(this).attr('id') == 'startDatePicker' && $("#startImmediate").is(':checked'))){
                 validateQuizInput($(this));
             }
@@ -83,7 +93,7 @@ $(function(){
     });
 
     //dynamic fields validation
-    $('#title, #optionTitle, #layoutSelector, #startDatePicker, #endDatePicker').unbind().blur(function() {validateQuizInput($(this))});
+    $('#title, #description, #optionTitle, #layoutSelector, #startDatePicker, #endDatePicker').unbind().blur(function() {validateQuizInput($(this))});
 
     //datetime range picker managing
     $("#startDatePicker").attr('min', getCurrentTime());
@@ -132,7 +142,7 @@ $(function(){
         if(optionIndex > maxCountOfOption - 2){
             $('#addOption').attr('disabled', 'disabled');
         }
-        $('#title, #optionTitle, #layoutSelector, #startDatePicker, #endDatePicker').unbind().blur(function() {validateQuizInput($(this))});
+        $('#title, #description, #optionTitle, #layoutSelector, #startDatePicker, #endDatePicker').unbind().blur(function() {validateQuizInput($(this))});
     });
 
     $('#removeOption').click(function (){

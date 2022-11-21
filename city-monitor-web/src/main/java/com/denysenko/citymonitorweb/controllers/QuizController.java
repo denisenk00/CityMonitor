@@ -1,9 +1,12 @@
 package com.denysenko.citymonitorweb.controllers;
 
 import com.denysenko.citymonitorweb.models.dto.FileDTO;
+import com.denysenko.citymonitorweb.models.dto.LayoutDTO;
 import com.denysenko.citymonitorweb.models.dto.OptionDTO;
 import com.denysenko.citymonitorweb.models.dto.QuizDTO;
+import com.denysenko.citymonitorweb.models.entities.Layout;
 import com.denysenko.citymonitorweb.models.entities.Quiz;
+import com.denysenko.citymonitorweb.services.converters.impl.LayoutEntityToDTOConverter;
 import com.denysenko.citymonitorweb.services.converters.impl.MultiFileToDTOConverter;
 import com.denysenko.citymonitorweb.services.converters.impl.QuizEntityToDTOConverter;
 import com.denysenko.citymonitorweb.services.entity.AppealService;
@@ -15,7 +18,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,9 +38,11 @@ public class QuizController {
     @Autowired
     private AppealService appealService;
     @Autowired
-    private MultiFileToDTOConverter mFileToDTOConverter;
+    private MultiFileToDTOConverter mFileConverter;
     @Autowired
-    private QuizEntityToDTOConverter quizEntityToDTOConverter;
+    private QuizEntityToDTOConverter quizConverter;
+    @Autowired
+    private LayoutEntityToDTOConverter layoutConverter;
 
     @ModelAttribute("unreadAppealsCnt")
     public long getCountOfUnreadAppeals(){
@@ -61,7 +65,8 @@ public class QuizController {
 
     @GetMapping("/new")
     @PreAuthorize("hasAnyAuthority('quizzes:write')")
-    public String newQuiz(@ModelAttribute(name = "quiz") QuizDTO quiz, @ModelAttribute(name = "files") List<MultipartFile> files, Model model){
+    public String newQuiz(@ModelAttribute(name = "quiz") QuizDTO quiz, @ModelAttribute(name = "files") List<MultipartFile> files,
+                          @ModelAttribute(name = "selectedLayoutId") String layoutId, Model model){
         quiz.setStartImmediate(true);
         quiz.setOptionDTOs(List.of(new OptionDTO(), new OptionDTO()));
         model.addAttribute("layouts", layoutService.getAllLayouts());
@@ -70,17 +75,21 @@ public class QuizController {
 
     @PostMapping("/")
     @PreAuthorize("hasAnyAuthority('quizzes:write')")
-    public String saveQuiz(@Valid @ModelAttribute("quiz") QuizDTO quizDTO, BindingResult bindingResult, @ModelAttribute("files") List<MultipartFile> files, Model model){
-
+    public String saveQuiz(@Valid @ModelAttribute("quiz") QuizDTO quizDTO, BindingResult bindingResult,
+                           @ModelAttribute("files") List<MultipartFile> files,
+                           @ModelAttribute(name = "selectedLayoutId") String layoutId){
+        System.out.println("layout ID = " + layoutId);
         if((!quizDTO.isStartImmediate() && Objects.isNull(quizDTO.getStartDate()))
-                || bindingResult.hasErrors() || !isQuizPeriodCorrect(quizDTO)) {
+                || bindingResult.hasErrors() || !isQuizPeriodCorrect(quizDTO) || layoutId == null) {
             throw new IllegalArgumentException();
         }
 
-        List<FileDTO> fileDTOs = mFileToDTOConverter.convertListOfMultipartFileToDTO(files);
+        List<FileDTO> fileDTOs = mFileConverter.convertListOfMultipartFileToDTO(files);
         quizDTO.setFileDTOs(fileDTOs);
+        Layout layout = layoutService.getLayoutById(Long.valueOf(layoutId));
 
-        Quiz quiz = quizEntityToDTOConverter.convertDTOToEntity(quizDTO);
+        Quiz quiz = quizConverter.convertDTOToEntity(quizDTO);
+        quiz.setLayout(layout);
         quizService.saveQuiz(quiz);
 
         //NEED TO SEND QUIZ TO LOCALS IN BOT
