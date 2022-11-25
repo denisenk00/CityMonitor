@@ -9,5 +9,6 @@ import java.util.List;
 
 public interface FileService {
 
+    File getIOFileByID(Long id);
 
 }

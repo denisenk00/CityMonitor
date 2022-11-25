@@ -16,7 +16,7 @@ public class MultiFileToDTOConverter {
         if(multipartFile == null) throw new NullPointerException();
         if(multipartFile.isEmpty()) throw new FileNotFoundException();
         return FileDTO.builder()
-                .name(multipartFile.getName())
+                .name(multipartFile.getOriginalFilename())
                 .content(multipartFile.getBytes())
                 .build();
     }

@@ -39,7 +39,7 @@ public class QuizEntityToDTOConverter implements EntityDTOConverter<Quiz, QuizDT
 
         quiz.setId(quizDTO.getId());
         quiz.setTitle(quizDTO.getTitle());
-        quiz.setDescription(quiz.getDescription());
+        quiz.setDescription(quizDTO.getDescription());
         quiz.setFiles(fileConverter.convertListsDTOToEntity(quizDTO.getFileDTOs()));
         quiz.setOptions(optionConverter.convertListsDTOToEntity(quizDTO.getOptionDTOs()));
         quiz.setStartDate(quizDTO.getStartDate());

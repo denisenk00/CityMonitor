@@ -11,4 +11,5 @@ public interface QuizService {
     Paged<QuizDTO> getPageOfQuizzes(int pageNumber, int size);
     void saveQuiz(Quiz quiz);
 
+    Quiz getById(Long id);
 }

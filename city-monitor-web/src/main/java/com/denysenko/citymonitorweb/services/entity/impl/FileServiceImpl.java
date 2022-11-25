@@ -12,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 
 @Service
@@ -19,5 +21,10 @@ public class FileServiceImpl implements FileService{
     @Autowired
     private FileRepository fileRepository;
 
+    public File getIOFileByID(Long id){
+        if(id == null) throw new IllegalArgumentException("File id should not be NULL");
+        Optional<com.denysenko.citymonitorweb.models.entities.File> fileOpt = fileRepository.findById(id);
+        return fileOpt.orElseThrow(()-> new NoSuchElementException());
+    }
 
 }

@@ -52,7 +52,7 @@ public class QuizController {
     @GetMapping()
     @PreAuthorize("hasAnyAuthority('quizzes:read')")
     public String quizzesPage(Model model, @RequestParam(defaultValue = "1", required = false) int page, @RequestParam(defaultValue = "30", required = false) int size){
-        System.out.println("quizzesPage");
+        System.out.println("\n\n\n\n\n\n\n\n\nquizzesPage page = " + page + " , size = " + size);
         model.addAttribute("quizzes", quizService.getPageOfQuizzes(page, size));
         return "quizzes/quizzes";
     }
@@ -60,6 +60,10 @@ public class QuizController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('quizzes:read')")
     public String quizPage(Model model, @PathVariable("id") int id){
+        Quiz quiz = quizService.getById(Long.valueOf(id));
+        QuizDTO quizDTO = quizConverter.convertEntityToDTO(quiz);
+        model.addAttribute("quiz", quizDTO);
+        //need to add results if exist
         return "quizzes/quiz";
     }
 

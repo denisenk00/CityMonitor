@@ -8,6 +8,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -50,7 +51,7 @@ public class Quiz {
     @PrePersist
     void onCreate(){
         if(Objects.isNull(startDate)){
-            startDate = LocalDateTime.now();
+            startDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
             status = QuizStatus.IN_PROGRESS;
         }
     }

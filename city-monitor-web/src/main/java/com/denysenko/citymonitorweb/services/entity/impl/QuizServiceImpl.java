@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +48,13 @@ public class QuizServiceImpl implements QuizService {
     public void saveQuiz(Quiz quiz){
         if(quiz == null) throw new IllegalArgumentException("Quiz should be not NULL");
         quizRepository.save(quiz);
+    }
+
+    @Override
+    public Quiz getById(Long id){
+        if(id == null) throw new IllegalArgumentException("Id should be not NULL");
+        Optional<Quiz> optionalQuiz = quizRepository.findById(id);
+        return optionalQuiz.orElseThrow(() -> new NoSuchElementException(""));
     }
 
 
