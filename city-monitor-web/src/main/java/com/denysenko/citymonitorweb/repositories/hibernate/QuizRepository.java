@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
     List<Quiz> findFirst10ByOrderByStartDateDesc();
-
+    List<Quiz> findAllByLayoutId(Long layoutId);
 }

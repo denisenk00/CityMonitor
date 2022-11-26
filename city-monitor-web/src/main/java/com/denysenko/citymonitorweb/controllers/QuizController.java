@@ -1,5 +1,8 @@
 package com.denysenko.citymonitorweb.controllers;
 
+import com.denysenko.citymonitorweb.enums.LayoutStatus;
+import com.denysenko.citymonitorweb.models.domain.paging.Paged;
+import com.denysenko.citymonitorweb.models.domain.paging.Paging;
 import com.denysenko.citymonitorweb.models.dto.FileDTO;
 import com.denysenko.citymonitorweb.models.dto.LayoutDTO;
 import com.denysenko.citymonitorweb.models.dto.OptionDTO;
@@ -14,6 +17,7 @@ import com.denysenko.citymonitorweb.services.entity.LayoutService;
 import com.denysenko.citymonitorweb.services.entity.QuizService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -52,8 +56,12 @@ public class QuizController {
     @GetMapping()
     @PreAuthorize("hasAnyAuthority('quizzes:read')")
     public String quizzesPage(Model model, @RequestParam(defaultValue = "1", required = false) int page, @RequestParam(defaultValue = "30", required = false) int size){
-        System.out.println("\n\n\n\n\n\n\n\n\nquizzesPage page = " + page + " , size = " + size);
-        model.addAttribute("quizzes", quizService.getPageOfQuizzes(page, size));
+
+        Page<Quiz> quizzesPage = quizService.getPageOfQuizzes(page, size);
+        Page<QuizDTO> dtoPage = quizzesPage.map(quiz -> quizConverter.convertEntityToDTO(quiz));
+        Paged<QuizDTO> paged = new Paged(dtoPage, Paging.of(dtoPage.getTotalPages(), page, size));
+
+        model.addAttribute("quizzes", paged);
         return "quizzes/quizzes";
     }
 
@@ -73,7 +81,7 @@ public class QuizController {
                           @ModelAttribute(name = "selectedLayoutId") String layoutId, Model model){
         quiz.setStartImmediate(true);
         quiz.setOptionDTOs(List.of(new OptionDTO(), new OptionDTO()));
-        model.addAttribute("layouts", layoutService.getAllLayouts());
+        model.addAttribute("layouts", layoutService.getNotDeprecatedLayouts());
         return "quizzes/newQuiz";
     }
 
@@ -92,6 +100,9 @@ public class QuizController {
         quizDTO.setFileDTOs(fileDTOs);
         Layout layout = layoutService.getLayoutById(Long.valueOf(layoutId));
 
+        if(layout.getStatus().equals(LayoutStatus.DEPRECATED)) throw new IllegalArgumentException();
+
+        layout.setStatus(LayoutStatus.IN_USE);
         Quiz quiz = quizConverter.convertDTOToEntity(quizDTO);
         quiz.setLayout(layout);
         quizService.saveQuiz(quiz);
@@ -104,7 +115,7 @@ public class QuizController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('quizzes:write')")
     public void removeQuiz(@PathVariable Long id){
-
+        //update layout status
         return;
     }
 

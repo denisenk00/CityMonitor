@@ -1,23 +1,27 @@
 package com.denysenko.citymonitorweb.controllers;
 
-import com.denysenko.citymonitorweb.enums.LayoutStatus;
+import com.denysenko.citymonitorweb.models.domain.paging.Paged;
+import com.denysenko.citymonitorweb.models.domain.paging.Paging;
 import com.denysenko.citymonitorweb.models.dto.LayoutDTO;
+import com.denysenko.citymonitorweb.models.dto.QuizDTO;
 import com.denysenko.citymonitorweb.models.entities.Layout;
+import com.denysenko.citymonitorweb.models.entities.Quiz;
 import com.denysenko.citymonitorweb.services.converters.impl.LayoutEntityToDTOConverter;
+import com.denysenko.citymonitorweb.services.converters.impl.QuizEntityToDTOConverter;
 import com.denysenko.citymonitorweb.services.entity.AppealService;
 import com.denysenko.citymonitorweb.services.entity.LayoutService;
+import com.denysenko.citymonitorweb.services.entity.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 
 @Controller
@@ -32,7 +36,11 @@ public class LayoutController {
     @Autowired
     private LayoutService layoutService;
     @Autowired
-    private LayoutEntityToDTOConverter entityDTOConverter;
+    private QuizService quizService;
+    @Autowired
+    private QuizEntityToDTOConverter quizConverter;
+    @Autowired
+    private LayoutEntityToDTOConverter layoutConverter;
     @Autowired
     private AppealService appealService;
 
@@ -56,12 +64,33 @@ public class LayoutController {
     public String saveLayout(@Valid @ModelAttribute("layout") LayoutDTO layoutDTO, BindingResult bindingResult){
         if(bindingResult.hasErrors()) throw new IllegalArgumentException();
 
-        Layout layout = entityDTOConverter.convertDTOToEntity(layoutDTO);
+        Layout layout = layoutConverter.convertDTOToEntity(layoutDTO);
         layoutService.saveLayout(layout);
         return "redirect:/";
     }
 
     @GetMapping()
     @PreAuthorize("hasAuthority('layouts:read')")
-    public String layouts() { return "layouts/layouts";}
+    public String layouts(Model model, @RequestParam(defaultValue = "1", required = false) int page, @RequestParam(defaultValue = "30", required = false) int size) {
+        Page<Layout> layoutPage = layoutService.getPageOfLayouts(page, size);
+        Page<LayoutDTO> dtoPage = layoutPage.map(layout -> layoutConverter.convertEntityToDTO(layout));
+        Paged<LayoutDTO> paged = new Paged(dtoPage, Paging.of(dtoPage.getTotalPages(), page, size));
+
+        model.addAttribute("layouts", paged);
+        return "layouts/layouts";
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('layouts:read')")
+    public String layoutPage(@PathVariable(name = "id") long id, Model model){
+        Layout layout = layoutService.getLayoutById(id);
+        LayoutDTO layoutDTO = layoutConverter.convertEntityToDTO(layout);
+        List<Quiz> quizList = quizService.findQuizzesByLayoutId(layout.getId());
+        model.addAttribute("mapCenterLat", mapCenterLat);
+        model.addAttribute("mapCenterLng", mapCenterLng);
+        model.addAttribute("mapZoom", mapZoom);
+        model.addAttribute("layout", layoutDTO);
+        model.addAttribute("quizzes", quizList);
+        return "layouts/layout";
+    }
 }

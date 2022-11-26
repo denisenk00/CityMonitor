@@ -21,7 +21,7 @@ public class FileServiceImpl implements FileService{
     @Autowired
     private FileRepository fileRepository;
 
-    public File getIOFileByID(Long id){
+    public File getFileByID(Long id){
         if(id == null) throw new IllegalArgumentException("File id should not be NULL");
         Optional<com.denysenko.citymonitorweb.models.entities.File> fileOpt = fileRepository.findById(id);
         return fileOpt.orElseThrow(()-> new NoSuchElementException());

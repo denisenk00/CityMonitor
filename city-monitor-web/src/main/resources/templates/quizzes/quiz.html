@@ -16,7 +16,7 @@
     <div class="container py-5">
         <h2 th:text="${quiz.title}"></h2>
         <br>
-        <table>
+        <table class="table">
             <tbody>
                 <tr>
                     <td class="name">Опис</td>
@@ -51,8 +51,11 @@
                 </tr>
                 <tr>
                     <td class="name">Прикріплені файли</td>
-                    <td class="value" th:each="file : ${quiz.fileDTOs}">
-                        <a th:text="${file.name}" th:href="${'/files/' + file.id}"></a>
+                    <td class="value">
+                        <div th:each="file : ${quiz.fileDTOs}">
+                            <a th:text="${file.name}" th:href="${'/files/' + file.id}"></a>
+                        </div>
+
                     </td>
                 </tr>
             </tbody>
