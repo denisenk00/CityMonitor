@@ -1,6 +1,6 @@
 package com.denysenko.citymonitorweb.enums;
 
-import javassist.NotFoundException;
+import java.util.NoSuchElementException;
 
 public enum LayoutStatus {
 
@@ -18,11 +18,11 @@ public enum LayoutStatus {
         return title;
     }
 
-    public static LayoutStatus getByTitle(String title) throws NotFoundException {
+    public static LayoutStatus getByTitle(String title) throws NoSuchElementException {
         for (LayoutStatus status : values()){
             if(status.getTitle().equals(title)) return status;
         }
-        throw new NotFoundException("Статусу - " + title + " не існує");
+        throw new IllegalArgumentException("Статусу - " + title + " не існує");
     }
 
 }

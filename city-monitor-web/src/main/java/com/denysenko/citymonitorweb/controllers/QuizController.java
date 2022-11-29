@@ -18,6 +18,8 @@ import com.denysenko.citymonitorweb.services.entity.QuizService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -90,7 +92,6 @@ public class QuizController {
     public String saveQuiz(@Valid @ModelAttribute("quiz") QuizDTO quizDTO, BindingResult bindingResult,
                            @ModelAttribute("files") List<MultipartFile> files,
                            @ModelAttribute(name = "selectedLayoutId") String layoutId){
-        System.out.println("layout ID = " + layoutId);
         if((!quizDTO.isStartImmediate() && Objects.isNull(quizDTO.getStartDate()))
                 || bindingResult.hasErrors() || !isQuizPeriodCorrect(quizDTO) || layoutId == null) {
             throw new IllegalArgumentException();
@@ -114,15 +115,27 @@ public class QuizController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('quizzes:write')")
-    public void removeQuiz(@PathVariable Long id){
+    public ResponseEntity removeQuiz(@PathVariable Long id){
         //update layout status
-        return;
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"msg\":\"success\"}");
     }
 
     @PatchMapping("/{id}/finish")
     @PreAuthorize("hasAnyAuthority('quizzes:write')")
-    public void finishQuiz(@PathVariable Long id){
-        System.out.println("3");
+    public ResponseEntity finishQuiz(@PathVariable(name = "id") Long id) throws InterruptedException {
+        System.out.println("finishing quiz" + id);
+        for (int i = 1; i < 100; i++) {
+            System.out.println("iter = " + i);
+            System.out.println(Thread.currentThread().getName() + "  " + i);
+            try {
+                // в течение 1000 миллисекунд
+                Thread.sleep(2000);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+        System.out.println("finishing quiz END");
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"msg\":\"success\"}");
     }
 
     private boolean isQuizPeriodCorrect(QuizDTO quizDTO){

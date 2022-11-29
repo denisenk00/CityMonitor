@@ -44,7 +44,9 @@
                     <td><t th:text="${#temporals.format(quiz.startDate, 'dd-MM-yyyy HH:mm:ss')}"></t></td>
                     <td><t th:text="${#temporals.format(quiz.endDate, 'dd-MM-yyyy HH:mm:ss')}"></t></td>
                     <td><t th:text="${quiz.status}"></t></td>
-                    <td th:if="${quiz.status == 'В процесі'}" sec:authorize="hasAuthority('quizzes:write')"><a th:href="${'/quizzes/'+ quiz.id + '/finish'}" class="btn btn-primary submit-btn">Завершити</a></td>
+                    <td th:if="${quiz.status == 'В процесі'}" sec:authorize="hasAuthority('quizzes:write')">
+                        <button class="btn btn-primary submit-btn finishQuizBtn" th:data-id="${quiz.id}">Завершити</button>
+                    </td>
                 </tr>
                 </tbody>
             </table>

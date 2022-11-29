@@ -1,5 +1,7 @@
 package com.denysenko.citymonitorweb.controllers;
 
+import com.denysenko.citymonitorweb.enums.LayoutStatus;
+import com.denysenko.citymonitorweb.exceptions.RestException;
 import com.denysenko.citymonitorweb.models.domain.paging.Paged;
 import com.denysenko.citymonitorweb.models.domain.paging.Paging;
 import com.denysenko.citymonitorweb.models.dto.LayoutDTO;
@@ -14,6 +16,8 @@ import com.denysenko.citymonitorweb.services.entity.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 
 @Controller
@@ -37,8 +42,6 @@ public class LayoutController {
     private LayoutService layoutService;
     @Autowired
     private QuizService quizService;
-    @Autowired
-    private QuizEntityToDTOConverter quizConverter;
     @Autowired
     private LayoutEntityToDTOConverter layoutConverter;
     @Autowired
@@ -92,5 +95,30 @@ public class LayoutController {
         model.addAttribute("layout", layoutDTO);
         model.addAttribute("quizzes", quizList);
         return "layouts/layout";
+    }
+
+    @PatchMapping("/{id}/changeAvailability")
+    @PreAuthorize("hasAuthority('layouts:write')")
+    public ResponseEntity changeLayoutAvailability(@PathVariable(name = "id") long id, @RequestParam(name = "deprecated") boolean isDeprecated){
+        LayoutStatus newlayoutStatus;
+        try {
+            if(isDeprecated){
+                newlayoutStatus = layoutService.markLayoutAsDeprecated(id);
+            }
+            else{
+                newlayoutStatus = layoutService.markLayoutAsActual(id);
+            }
+        }catch (IllegalArgumentException e){
+            throw new RestException("", e);
+        }
+        String body = "{\"msg\":\"success\", \"newStatus\":\"" + newlayoutStatus.getTitle() + "\"}";
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(body);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('layouts:write')")
+    public ResponseEntity deleteLayout(@PathVariable(name = "id") long id){
+        layoutService.deleteLayout(id);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"msg\":\"success\"}");
     }
 }

@@ -44,11 +44,7 @@ public class LayoutEntityToDTOConverter implements EntityDTOConverter<Layout, La
         layout.setName(layoutDTO.getName());
 
         if(layoutDTO.getStatus() != null) {
-            try {
-                layout.setStatus(LayoutStatus.getByTitle(layoutDTO.getStatus()));
-            } catch (NotFoundException e) {
-                e.printStackTrace();
-            }
+            layout.setStatus(LayoutStatus.getByTitle(layoutDTO.getStatus()));
         }
 
         String geoJson = layoutDTO.getPolygonsGeoJson();

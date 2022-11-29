@@ -6,16 +6,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/customStyles.css}">
     <script src="https://kit.fontawesome.com/97125d9c6b.js" crossorigin="anonymous" async></script>
     <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous" async></script>
-    <script>
-        $(function($){
-            $(".clickable-row").click(function(e) {
-                window.document.location = $(this).data("href");
-            });
-        });
-    </script>
+    <script type="text/javascript" rel="script" th:src="@{/js/ajaxRequests.js}" defer></script>
+    <script type="text/javascript" rel="script" th:src="@{/js/layouts/layoutsPage.js}" defer></script>
 </head>
 <body>
     <div th:insert="header.html"></div>
@@ -32,10 +28,15 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr class="clickable-row" th:data-href="${'/layouts/' + layout.id}" th:each="layout : ${layouts.page}">
+                <tr class="clickable-row" th:id="${'tr_' + layout.id}" th:data-href="${'/layouts/' + layout.id}" th:each="layout : ${layouts.page}">
                     <td><t th:text="${layout.name}"></t></td>
-                    <td><t th:text="${layout.status}"></t></td>
-                    <!--td th:if="${quiz.status == 'В процесі'}" sec:authorize="hasAuthority('quizzes:write')"><a th:href="${'/quizzes/'+ quiz.id + '/finish'}" class="btn btn-primary submit-btn">Завершити</a></td-->
+                    <td><t class="statusValue" th:text="${layout.status}"></t></td>
+                    <td>
+                        <button type="button" class="btn btn-primary submit-btn mb-2 changeAvailabilityBtn"
+                                th:text="${layout.status != 'Застарілий' ? 'Позначити як застарілий' : 'Позначити як доступний для використання'}"
+                                th:value="${layout.status == 'Застарілий' ? 'set_active' : 'set_deprecated'}"
+                                th:data-id="${layout.id}"></button>
+                    </td>
                 </tr>
                 </tbody>
             </table>

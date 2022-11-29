@@ -12,7 +12,11 @@
     background-color: #a70000;
 }
 
-.submit-btn {
+.btn:disabled{
+    background-color: rgba(167, 0, 0, 0.31);
+}
+
+.submit-btn, .submit-btn:focus, .submit-btn:active  {
     background: #dc3545;
     border: none; /* Remove borders */
     color: #fff;
