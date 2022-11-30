@@ -15,10 +15,18 @@ public class Result {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "result_id")
     private Long id;
-    @Column(name = "option_id")
-    private Long optionId;
-    @Column(name = "polygon_id")
-    private Long polygonId;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "option_id")
+    private Option option;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "polygon_id")
+    private Polygon polygon;
     @Column(name = "answers_count")
     private Integer answersCount;
+
+    public Result(Option option, Polygon polygon, Integer answersCount) {
+        this.option = option;
+        this.polygon = polygon;
+        this.answersCount = answersCount;
+    }
 }

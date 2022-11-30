@@ -18,7 +18,7 @@ public class Option {
     private Long id;
     @Column(name = "title")
     private String title;
-//    @Column(name = "quiz_id")
-//    private Long quizId;
+    @Column(name = "quiz_id", insertable = false, updatable = false)
+    private Long quizId;
 
 }

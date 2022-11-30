@@ -1,5 +1,6 @@
 package com.denysenko.citymonitorweb.services.entity;
 
+import com.denysenko.citymonitorweb.enums.QuizStatus;
 import com.denysenko.citymonitorweb.models.dto.QuizDTO;
 import com.denysenko.citymonitorweb.models.domain.paging.Paged;
 import com.denysenko.citymonitorweb.models.entities.Quiz;
@@ -14,5 +15,6 @@ public interface QuizService {
     void saveQuiz(Quiz quiz);
     Quiz getById(Long id);
     List<Quiz> findQuizzesByLayoutId(Long id);
+    void setQuizStatusById(Long id, QuizStatus quizStatus);
 
 }

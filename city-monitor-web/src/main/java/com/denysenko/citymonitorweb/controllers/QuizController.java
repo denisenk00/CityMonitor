@@ -4,12 +4,12 @@ import com.denysenko.citymonitorweb.enums.LayoutStatus;
 import com.denysenko.citymonitorweb.models.domain.paging.Paged;
 import com.denysenko.citymonitorweb.models.domain.paging.Paging;
 import com.denysenko.citymonitorweb.models.dto.FileDTO;
-import com.denysenko.citymonitorweb.models.dto.LayoutDTO;
 import com.denysenko.citymonitorweb.models.dto.OptionDTO;
 import com.denysenko.citymonitorweb.models.dto.QuizDTO;
 import com.denysenko.citymonitorweb.models.entities.Layout;
 import com.denysenko.citymonitorweb.models.entities.Quiz;
-import com.denysenko.citymonitorweb.services.converters.impl.LayoutEntityToDTOConverter;
+import com.denysenko.citymonitorweb.services.QuizFinisher;
+import com.denysenko.citymonitorweb.services.QuizSender;
 import com.denysenko.citymonitorweb.services.converters.impl.MultiFileToDTOConverter;
 import com.denysenko.citymonitorweb.services.converters.impl.QuizEntityToDTOConverter;
 import com.denysenko.citymonitorweb.services.entity.AppealService;
@@ -48,7 +48,9 @@ public class QuizController {
     @Autowired
     private QuizEntityToDTOConverter quizConverter;
     @Autowired
-    private LayoutEntityToDTOConverter layoutConverter;
+    private QuizSender quizSender;
+    @Autowired
+    private QuizFinisher quizFinisher;
 
     @ModelAttribute("unreadAppealsCnt")
     public long getCountOfUnreadAppeals(){
@@ -108,7 +110,13 @@ public class QuizController {
         quiz.setLayout(layout);
         quizService.saveQuiz(quiz);
 
-        //NEED TO SEND QUIZ TO LOCALS IN BOT
+        if(quizDTO.isStartImmediate()){
+            quizSender.sendImmediate(quiz);
+        }else {
+            quizSender.schedule(quiz);
+        }
+
+        quizFinisher.schedule(quiz);
 
         return "redirect:/";
     }
@@ -117,24 +125,16 @@ public class QuizController {
     @PreAuthorize("hasAnyAuthority('quizzes:write')")
     public ResponseEntity removeQuiz(@PathVariable Long id){
         //update layout status
+        quizSender.removeScheduledQuiz(id);
+        quizFinisher.removeScheduledFinish(id);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"msg\":\"success\"}");
     }
 
     @PatchMapping("/{id}/finish")
     @PreAuthorize("hasAnyAuthority('quizzes:write')")
     public ResponseEntity finishQuiz(@PathVariable(name = "id") Long id) throws InterruptedException {
-        System.out.println("finishing quiz" + id);
-        for (int i = 1; i < 100; i++) {
-            System.out.println("iter = " + i);
-            System.out.println(Thread.currentThread().getName() + "  " + i);
-            try {
-                // в течение 1000 миллисекунд
-                Thread.sleep(2000);
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-        }
-        System.out.println("finishing quiz END");
+        Quiz quiz = quizService.getById(id);
+        quizFinisher.finishImmediate(quiz);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"msg\":\"success\"}");
     }
 

@@ -53,6 +53,8 @@ public class Quiz {
         if(Objects.isNull(startDate)){
             startDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
             status = QuizStatus.IN_PROGRESS;
+        }else {
+            status = QuizStatus.PLANNED;
         }
     }
 }

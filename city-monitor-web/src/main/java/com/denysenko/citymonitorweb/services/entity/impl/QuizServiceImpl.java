@@ -1,5 +1,8 @@
 package com.denysenko.citymonitorweb.services.entity.impl;
 
+import com.denysenko.citymonitorweb.enums.LayoutStatus;
+import com.denysenko.citymonitorweb.enums.QuizStatus;
+import com.denysenko.citymonitorweb.models.entities.Layout;
 import com.denysenko.citymonitorweb.models.entities.Quiz;
 
 import com.denysenko.citymonitorweb.repositories.hibernate.QuizRepository;
@@ -49,4 +52,19 @@ public class QuizServiceImpl implements QuizService {
         if(id == null) throw new IllegalArgumentException("Id should be not NULL");
         return quizRepository.findAllByLayoutId(id);
     }
+
+    public void setQuizStatusById(Long id, QuizStatus quizStatus) {
+        if(id == null) throw new IllegalArgumentException();
+        if(quizStatus == null) throw new IllegalArgumentException();
+
+        Optional<Quiz> quizOptional = quizRepository.findById(id);
+        quizOptional.ifPresentOrElse((q)->{
+            q.setStatus(quizStatus);
+            quizRepository.save(q);
+        }, ()->{
+            throw new NoSuchElementException();
+        });
+    }
+
+
 }
