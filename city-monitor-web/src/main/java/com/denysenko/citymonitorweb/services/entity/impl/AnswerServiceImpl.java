@@ -19,4 +19,9 @@ public class AnswerServiceImpl implements AnswerService {
         return answerRepository.findAllByOptionQuizId(quizId);
     }
 
+    public void deleteAnswersByQuizId(Long quizId){
+        if(quizId == null) throw new IllegalArgumentException();
+        answerRepository.deleteAllByOptionQuizId(quizId);
+    }
+
 }

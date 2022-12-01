@@ -25,7 +25,7 @@ public class Local {
     private String name;
     @Column(name = "phone")
     private String phone;
-    @Column(name = "point_id")
+    @Column(name = "location_point")
     private Point location;
     @Column(name = "is_active")
     private boolean isActive;

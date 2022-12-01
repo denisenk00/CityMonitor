@@ -2,7 +2,6 @@ package com.denysenko.citymonitorweb.services;
 
 import com.denysenko.citymonitorweb.models.entities.*;
 import com.denysenko.citymonitorweb.services.entity.AnswerService;
-import com.denysenko.citymonitorweb.services.entity.QuizService;
 import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,8 +12,6 @@ import java.util.Set;
 
 @Service
 public class ResultsGeneratorImpl implements ResultsGenerator{
-    @Autowired
-    private QuizService quizService;
     @Autowired
     private AnswerService answerService;
 

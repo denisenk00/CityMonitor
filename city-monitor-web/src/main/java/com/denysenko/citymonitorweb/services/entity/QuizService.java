@@ -16,5 +16,6 @@ public interface QuizService {
     Quiz getById(Long id);
     List<Quiz> findQuizzesByLayoutId(Long id);
     void setQuizStatusById(Long id, QuizStatus quizStatus);
+    void deleteQuizById(Long quizId);
 
 }

@@ -39,20 +39,19 @@ public class QuizSenderImpl implements QuizSender {
     @Override
     public void sendImmediate(Quiz quiz) {
         if(quiz == null) throw new IllegalArgumentException();
-        removeScheduledQuiz(quiz.getId());
+        removeScheduledSending(quiz.getId());
 
         Layout quizLayout = quiz.getLayout();
         List<Long> chatIDs = localService.getChatIdsLocatedWithinLayout(quizLayout);
 
-        chatIDs.forEach(chatId -> {
-            telegramService.sendQuizByChatId(chatId, quiz);
-        });
+        telegramService.sendQuizToLocals(chatIDs, quiz);
+
         if(!quiz.getStatus().equals(QuizStatus.IN_PROGRESS)) {
             quizService.setQuizStatusById(quiz.getId(), QuizStatus.IN_PROGRESS);
         }
     }
 
-    public void removeScheduledQuiz(Long quizId){
+    public void removeScheduledSending(Long quizId){
         if (quizId == null) throw new IllegalArgumentException();
 
         Timer timer = scheduledTasks.get(quizId);

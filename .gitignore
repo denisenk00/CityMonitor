@@ -1,3 +1,4 @@
 # Project exclude paths
 /city-monitor-bot/target/
 /city-monitor-web/target/
+/city-monitor-web/logs/console.log

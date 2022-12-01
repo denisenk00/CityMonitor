@@ -7,6 +7,7 @@ import com.denysenko.citymonitorweb.models.entities.Quiz;
 
 import com.denysenko.citymonitorweb.repositories.hibernate.QuizRepository;
 import com.denysenko.citymonitorweb.services.entity.QuizService;
+import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,7 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-
+@Log4j
 @Service
 public class QuizServiceImpl implements QuizService {
     @Autowired
@@ -64,6 +65,12 @@ public class QuizServiceImpl implements QuizService {
         }, ()->{
             throw new NoSuchElementException();
         });
+    }
+
+    public void deleteQuizById(Long quizId){
+        log.info("deleting quiz with id = " + quizId);
+        quizRepository.deleteById(quizId);
+        log.info("quiz with id = " + quizId + " was deleted successfully");
     }
 
 

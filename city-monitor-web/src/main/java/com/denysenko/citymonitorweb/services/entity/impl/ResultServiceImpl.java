@@ -16,4 +16,9 @@ public class ResultServiceImpl implements ResultService {
 
         resultRepository.saveAll(results);
     }
+
+    public void deleteResultById(Long id){
+        if(id == null) throw new IllegalArgumentException();
+        resultRepository.deleteById(id);
+    }
 }

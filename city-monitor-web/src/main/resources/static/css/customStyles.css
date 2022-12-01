@@ -12,7 +12,7 @@
     background-color: #a70000;
 }
 
-.btn:disabled{
+.submit-btn:disabled{
     background-color: rgba(167, 0, 0, 0.31);
 }
 

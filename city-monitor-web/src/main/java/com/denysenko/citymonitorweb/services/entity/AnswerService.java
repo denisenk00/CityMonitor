@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface AnswerService {
     List<Answer> getAnswersByQuizId(Long quizId);
+    void deleteAnswersByQuizId(Long quizId);
 }

@@ -4,6 +4,7 @@ import com.denysenko.citymonitorweb.enums.QuizStatus;
 import com.denysenko.citymonitorweb.models.domain.async.FinishQuizTask;
 import com.denysenko.citymonitorweb.models.entities.Quiz;
 import com.denysenko.citymonitorweb.models.entities.Result;
+import com.denysenko.citymonitorweb.services.entity.AnswerService;
 import com.denysenko.citymonitorweb.services.entity.QuizService;
 import com.denysenko.citymonitorweb.services.entity.ResultService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ public class QuizFinisherImpl implements QuizFinisher {
     private ResultService resultService;
     @Autowired
     private ResultsGenerator resultsGenerator;
+    @Autowired
+    private AnswerService answerService;
 
     @Override
     public void finishImmediate(Quiz quiz) {
@@ -29,6 +32,7 @@ public class QuizFinisherImpl implements QuizFinisher {
 
         Set<Result> resultSet = resultsGenerator.generateResultsOfQuiz(quiz);
         resultService.saveResults(resultSet);
+        answerService.deleteAnswersByQuizId(quiz.getId());
 
         quizService.setQuizStatusById(quiz.getId(), QuizStatus.FINISHED);
     }
