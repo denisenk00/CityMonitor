@@ -52,7 +52,7 @@ $(function(){
                     setInvalid(e, "Визначте час початку опитування");
                 } else if (val <= getCurrentTime()) {
                     setInvalid(e, "Час початку не може бути в минулому")
-                } else if(val >= e.attr('max')){
+                } else if(e.attr('max') && val >= e.attr('max')){
                     setInvalid(e, "Час початку більший за час завершення")
                 } else {
                     setValid(e);
@@ -63,7 +63,7 @@ $(function(){
                     setInvalid(e, "Визначте час завершення опитування");
                 }else if(val <= getCurrentTime()){
                     setInvalid(e, "Час завершення опитування не може бути в минулому");
-                }else if(val <= e.attr('min')){
+                }else if(e.attr('min') && val <= e.attr('min')){
                     setInvalid(e, "Час завершення опитування менший ніж час початку");
                 }else{
                     setValid(e);

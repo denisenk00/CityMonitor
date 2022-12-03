@@ -31,7 +31,7 @@ public class Layout {
     @Enumerated(EnumType.STRING)
     private LayoutStatus status;
 
-    @OneToMany(mappedBy = "layout", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "layout", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)//, fetch = FetchType.LAZY)
     private List<Polygon> polygons = new LinkedList<>();
 
     @PrePersist

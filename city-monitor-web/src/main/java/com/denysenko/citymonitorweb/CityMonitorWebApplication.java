@@ -10,15 +10,6 @@ public class CityMonitorWebApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(CityMonitorWebApplication.class, args);
-        //testmethod();
     }
-
-//    public static void testmethod(){
-//        try {
-//            LayoutServiceImpl.saveLayout(new LayoutDTO());
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
 }

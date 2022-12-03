@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.TimerTask;
 
 public class SendQuizTask extends TimerTask {
-    @Autowired
     private QuizSender quizSender;
     private Quiz quiz;
 
-    public SendQuizTask(Quiz quiz) {
+    public SendQuizTask(Quiz quiz, QuizSender quizSender) {
+        this.quizSender = quizSender;
         this.quiz = quiz;
     }
 

@@ -41,7 +41,7 @@ public class QuizFinisherImpl implements QuizFinisher {
     public void schedule(Quiz quiz) {
         if(quiz == null) throw new IllegalArgumentException();
 
-        FinishQuizTask finishQuizTask = new FinishQuizTask(quiz);
+        FinishQuizTask finishQuizTask = new FinishQuizTask(quiz, this);
         Timer timer = new Timer();
         Calendar calendar = Calendar.getInstance();
         calendar.set(quiz.getEndDate().getYear(), quiz.getEndDate().getMonthValue() - 1, quiz.getEndDate().getDayOfMonth(),

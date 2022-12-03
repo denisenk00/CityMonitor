@@ -4,6 +4,7 @@ import com.denysenko.citymonitorweb.models.entities.File;
 import com.denysenko.citymonitorweb.models.entities.Option;
 import com.denysenko.citymonitorweb.models.entities.Quiz;
 import lombok.extern.log4j.Log4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.DefaultAbsSender;
@@ -45,9 +46,10 @@ public class TelegramServiceImpl extends DefaultAbsSender implements TelegramSer
         for(Option option : quiz.getOptions()){
             InlineKeyboardButton button = new InlineKeyboardButton();
             button.setText(option.getTitle());
-            button.setCallbackData("vote:quiz_id=" + option.getQuizId() + ",option_id=" + option.getId());
+            button.setCallbackData("answer:quiz_id=" + quiz.getId() + ",option_id=" + option.getId());
             replyKeyboardBuilder.keyboardRow(List.of(button));
         }
+
         messageBuilder.text(quiz.getDescription());
         messageBuilder.replyMarkup(replyKeyboardBuilder.build());
         List<SendDocument> sendDocumentList = new LinkedList<>();
@@ -56,6 +58,7 @@ public class TelegramServiceImpl extends DefaultAbsSender implements TelegramSer
             InputFile inputFile = new InputFile();
             inputFile.setMedia(new ByteArrayInputStream(file.getContent()), file.getName());
             SendDocument sendDocument = SendDocument.builder()
+                    .chatId(Strings.EMPTY)
                     .document(inputFile)
                     .build();
             sendDocumentList.add(sendDocument);
@@ -65,7 +68,7 @@ public class TelegramServiceImpl extends DefaultAbsSender implements TelegramSer
             for(Long chatId : chatIds){
                 execute(messageBuilder.chatId(String.valueOf(chatId)).build());
                 for(SendDocument document: sendDocumentList){
-                    document.setChatId(String.valueOf(document));
+                    document.setChatId(String.valueOf(chatId));
                     execute(document);
                 }
             }

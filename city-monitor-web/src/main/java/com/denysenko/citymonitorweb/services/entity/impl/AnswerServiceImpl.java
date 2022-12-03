@@ -6,6 +6,7 @@ import com.denysenko.citymonitorweb.services.entity.AnswerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -19,6 +20,7 @@ public class AnswerServiceImpl implements AnswerService {
         return answerRepository.findAllByOptionQuizId(quizId);
     }
 
+    @Transactional
     public void deleteAnswersByQuizId(Long quizId){
         if(quizId == null) throw new IllegalArgumentException();
         answerRepository.deleteAllByOptionQuizId(quizId);

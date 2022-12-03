@@ -20,7 +20,7 @@ CREATE TABLE LOCALS(
                        name Varchar(100) NOT NULL,
                        phone Varchar(35) NOT NULL UNIQUE,
                        location_point GEOMETRY NOT NULL,
-                       is_active SMALLINT DEFAULT 1 NOT NULL,
+                       is_active BOOLEAN NOT NULL,
                        PRIMARY KEY (local_id)
 );
 
@@ -73,6 +73,7 @@ CREATE TABLE ANSWERS(
                         answer_id BIGINT GENERATED ALWAYS AS IDENTITY,
                         option_id Integer NOT NULL,
                         local_id Integer NOT NULL,
+                        quiz_id Integer NOT NULL,
                         PRIMARY KEY (answer_id)
 );
 
@@ -83,7 +84,7 @@ CREATE TABLE APPEALS(
                         text Varchar(4000),
                         status Varchar(80) NOT NULL,
                         post_date TIMESTAMP NOT NULL,
-                        point_id GEOMETRY,
+                        point GEOMETRY,
                         local_id Integer NOT NULL,
                         PRIMARY KEY (appeal_id),
                         CHECK ( status IN ('UNREAD', 'VIEWED', 'PROCESSED'))
@@ -91,7 +92,7 @@ CREATE TABLE APPEALS(
 
 -- Create indexes for table APPEALS
 
-CREATE INDEX IX_Relationship12 ON APPEALS (point_id);
+CREATE INDEX IX_Relationship12 ON APPEALS (point);
 
 -- Table RESULTS
 
@@ -135,7 +136,10 @@ ALTER TABLE RESULTS ADD CONSTRAINT for_polygon FOREIGN KEY (polygon_id) REFERENC
 
 ALTER TABLE FILES ADD CONSTRAINT file_quiz_fk FOREIGN KEY (quiz_id) REFERENCES QUIZZES ON DELETE CASCADE;
 
+ALTER TABLE ANSWERS ADD CONSTRAINT  answer_quiz_fk FOREIGN KEY (quiz_id) REFERENCES QUIZZES ON DELETE CASCADE;
 
+
+INSERT INTO USERS VALUES (DEFAULT, 'sysadm', '$2y$12$fa1H8AwmY42d0B3nBAusLOvOdk7O1GGPOKBhkmonqvLCMAM8IszAy', 'SUPER_ADMIN', 'ACTIVE');
 
 
 

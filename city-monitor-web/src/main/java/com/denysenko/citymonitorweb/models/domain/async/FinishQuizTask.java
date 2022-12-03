@@ -8,11 +8,11 @@ import java.util.TimerTask;
 
 public class FinishQuizTask extends TimerTask {
     private Quiz quiz;
-    @Autowired
     private QuizFinisher quizFinisher;
 
-    public FinishQuizTask(Quiz quiz) {
+    public FinishQuizTask(Quiz quiz, QuizFinisher quizFinisher) {
         this.quiz = quiz;
+        this.quizFinisher = quizFinisher;
     }
 
     @Override

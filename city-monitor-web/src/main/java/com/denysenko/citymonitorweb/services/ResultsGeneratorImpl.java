@@ -2,6 +2,7 @@ package com.denysenko.citymonitorweb.services;
 
 import com.denysenko.citymonitorweb.models.entities.*;
 import com.denysenko.citymonitorweb.services.entity.AnswerService;
+import lombok.extern.log4j.Log4j;
 import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Log4j
 @Service
 public class ResultsGeneratorImpl implements ResultsGenerator{
     @Autowired
@@ -32,7 +34,7 @@ public class ResultsGeneratorImpl implements ResultsGenerator{
                 Option answerOption = answer.getOption();
                 Point localPoint = answer.getLocal().getLocation();
 
-                if(answerOption.equals(result.getOption()) && result.getPolygon().getPolygon().contains(localPoint)){
+                if(answerOption.getId().equals(result.getOption().getId()) && result.getPolygon().getPolygon().contains(localPoint)){
                     result.setAnswersCount(result.getAnswersCount() + 1);
                 }
             }
