@@ -16,7 +16,7 @@ import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.handlers.Handler;
 import com.denysenko.citymonitorbot.services.AppealService;
 import com.denysenko.citymonitorbot.services.BotUserService;
-import org.apache.log4j.Logger;
+import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -27,10 +27,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Log4j
 @Component
 public class ReplyButtonHandler implements Handler {
-
-    private static final Logger LOG = Logger.getLogger(ReplyButtonHandler.class);
     @Autowired
     private StartCommand startCommand;
     @Autowired
@@ -96,14 +95,14 @@ public class ReplyButtonHandler implements Handler {
     public void handle(Update update) {
         Message message = update.getMessage();
         Long chatId = message.getChatId();
-        LOG.info("Update handled by ReplyButtonHandler: updateId = " + update.getUpdateId() + ", chatId = " + chatId.toString());
+        log.info("Update handled by ReplyButtonHandler: updateId = " + update.getUpdateId() + ", chatId = " + chatId.toString());
         String text = message.getText();
 
         if(text.equalsIgnoreCase(Commands.START_COMMAND.getTitle()) || text.equalsIgnoreCase(Commands.COMEBACK_COMMAND.getTitle())){
             startCommand.execute(chatId);
         }else if(text.equalsIgnoreCase(Commands.NEXT_STEP_COMMAND.getTitle())) {
             BotStates botUserState = botUserService.findBotStateByChatId(chatId).get();
-            LOG.info("next bot state = " + botUserState.getTitle());
+            log.info("next bot state = " + botUserState.getTitle());
             sequenceCommandMap.get(botUserState).executeNext(chatId);
         }else if(text.equalsIgnoreCase(Commands.PREVIOUS_STEP_COMMAND.getTitle())){
             BotStates botUserState = botUserService.findBotStateByChatId(chatId).get();

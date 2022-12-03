@@ -8,6 +8,7 @@ import com.denysenko.citymonitorbot.services.TelegramService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
@@ -25,6 +26,7 @@ public class MainMenuCommand implements Command<Long> {
     private TelegramService telegramService;
 
     @Override
+    @Transactional
     public void execute(Long chatId) {
         LOG.info("Main menu command started: chatId = " + chatId);
         botUserService.updateBotStateByChatId(chatId, BotStates.MAIN_MENU);

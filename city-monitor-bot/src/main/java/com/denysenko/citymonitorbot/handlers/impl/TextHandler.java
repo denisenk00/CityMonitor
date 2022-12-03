@@ -6,7 +6,7 @@ import com.denysenko.citymonitorbot.commands.impl.profile.ProfileEnterPhoneNumbe
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.handlers.Handler;
 import com.denysenko.citymonitorbot.services.BotUserService;
-import org.apache.log4j.Logger;
+import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -14,10 +14,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Optional;
 
+@Log4j
 @Component
 public class TextHandler implements Handler {
 
-    private static final Logger LOG = Logger.getLogger(TextHandler.class);
     @Autowired
     private BotUserService botUserService;
     @Autowired
@@ -44,7 +44,7 @@ public class TextHandler implements Handler {
     public void handle(Update update) {
         Message message = update.getMessage();
         Long chatId = message.getChatId();
-        LOG.info("Update handled by TextHandler: updateId = " + update.getUpdateId() + ", chatId = " + chatId.toString());
+        log.info("Update handled by TextHandler: updateId = " + update.getUpdateId() + ", chatId = " + chatId.toString());
         BotStates botState = botUserService.findBotStateByChatId(chatId).get();
 
         if(botState.equals(BotStates.EDITING_PROFILE_NAME)){

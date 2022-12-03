@@ -4,7 +4,7 @@ import com.denysenko.citymonitorbot.commands.impl.appeal.AppealAttachFilesComman
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.handlers.Handler;
 import com.denysenko.citymonitorbot.services.BotUserService;
-import org.apache.log4j.Logger;
+import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.*;
@@ -12,10 +12,10 @@ import org.telegram.telegrambots.meta.api.objects.*;
 import java.util.List;
 import java.util.Optional;
 
+@Log4j
 @Component
 public class FileHandler implements Handler {
 
-    private static final Logger LOG = Logger.getLogger(FileHandler.class);
     @Autowired
     private BotUserService botUserService;
     @Autowired
@@ -41,7 +41,7 @@ public class FileHandler implements Handler {
     public void handle(Update update) {
         Message message = update.getMessage();
         Long chatId = message.getChatId();
-        LOG.info("Handled by FileHandler: updateId = " + update.getUpdateId() + ", chatId = " + chatId.toString());
+        log.info("Handled by FileHandler: updateId = " + update.getUpdateId() + ", chatId = " + chatId.toString());
         String name = null;
         String fileID = null;
         if(message.hasPhoto()){
@@ -62,6 +62,7 @@ public class FileHandler implements Handler {
             name = audio.getFileName();
             fileID = audio.getFileId();
         }
+
         appealAttachFilesCommand.saveFile(chatId, name, fileID);
     }
 }

@@ -2,16 +2,16 @@ package com.denysenko.citymonitorbot.handlers.impl;
 
 import com.denysenko.citymonitorbot.handlers.Handler;
 import com.denysenko.citymonitorbot.services.BotUserService;
-import org.apache.log4j.Logger;
+import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.ChatMemberUpdated;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+@Log4j
 @Component
 public class ChatMemberHandler implements Handler {
 
-    private static final Logger LOG = Logger.getLogger(ChatMemberHandler.class);
     @Autowired
     private BotUserService botUserService;
 
@@ -22,11 +22,11 @@ public class ChatMemberHandler implements Handler {
 
     @Override
     public void handle(Update update) {
-        LOG.info("Update handled by ChatMemberHandler: updateID = " + update.getUpdateId());
+        log.info("Update handled by ChatMemberHandler: updateID = " + update.getUpdateId());
         ChatMemberUpdated chatMemberUpdated = update.getMyChatMember();
         String newStatus = chatMemberUpdated.getNewChatMember().getStatus();
         if(newStatus.equals("kicked")) {
-            LOG.info("User kicked the bot from chat");
+            log.info("User kicked the bot from chat");
             Long chatId = chatMemberUpdated.getFrom().getId();
             botUserService.removeBotStateByChatId(chatId);
             botUserService.removeBotUserByChatIdFromCache(chatId);

@@ -2,3 +2,4 @@
 /city-monitor-bot/target/
 /city-monitor-web/target/
 /city-monitor-web/logs/console.log
+/city-monitor-bot/logs/tgbot.log

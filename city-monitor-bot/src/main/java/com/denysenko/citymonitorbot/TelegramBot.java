@@ -1,7 +1,7 @@
 package com.denysenko.citymonitorbot;
 
 import com.denysenko.citymonitorbot.handlers.SuperUpdateHandler;
-import org.apache.log4j.Logger;
+import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -13,10 +13,10 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import javax.annotation.PostConstruct;
 
+@Log4j
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
 
-    private static final Logger LOG = Logger.getLogger(TelegramBot.class);
     @Value("${telegram.bot.username}")
     private String botUsername;
     @Value("${telegram.bot.token}")
@@ -36,17 +36,17 @@ public class TelegramBot extends TelegramLongPollingBot {
     @PostConstruct
     private void startBot(){
         try {
-            LOG.info("Registering bot..");
+            log.info("Registering bot..");
             new TelegramBotsApi(DefaultBotSession.class).registerBot(this);
-            LOG.info("Telegram Bot is ready to receive updates from users..");
+            log.info("Telegram Bot is ready to receive updates from users..");
         } catch (TelegramApiException e) {
-            LOG.error("Failed to register bot(check internet connection / bot token or make sure only one instance of bot is running).", e);
+            log.error("Failed to register bot(check internet connection / bot token or make sure only one instance of bot is running).", e);
         }
     }
 
     @Override
     public void onUpdateReceived(Update update) {
-        LOG.info("Update received: updateId = " + update.getUpdateId());
+        log.info("Update received: updateId = " + update.getUpdateId());
         superUpdateHandler.handle(update);
     }
 }

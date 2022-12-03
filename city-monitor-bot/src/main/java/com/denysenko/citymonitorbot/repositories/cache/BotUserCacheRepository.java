@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Repository
-public class BotUserRepository {
+public class BotUserCacheRepository {
 
     private final Map<Long, BotUser> cachedUsers = new HashMap<>();
 

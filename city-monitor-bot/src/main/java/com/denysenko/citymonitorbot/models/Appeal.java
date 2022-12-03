@@ -5,6 +5,14 @@ import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.locationtech.jts.geom.Point;
+
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "APPEALS")
 public class Appeal {
@@ -20,10 +28,8 @@ public class Appeal {
     private String status;
     @Column(name = "post_date")
     private LocalDateTime postDate;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "point_id")
-    private LocationPoint locationPoint;
+    @Column(name = "point")
+    private Point locationPoint;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "appeal_id", nullable = false)
@@ -31,64 +37,8 @@ public class Appeal {
 
     @PrePersist
     protected void onCreate(){
-        status = "POSTED";
+        status = "UNREAD";
         postDate = LocalDateTime.now();
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getBotUserId() {
-        return botUserId;
-    }
-
-    public void setBotUserId(Long chatId) {
-        this.botUserId = chatId;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public LocalDateTime getPostDate() {
-        return postDate;
-    }
-
-    public void setPostDate(LocalDateTime postDate) {
-        this.postDate = postDate;
-    }
-
-    public LocationPoint getLocationPoint() {
-        return locationPoint;
-    }
-
-    public void setLocationPoint(LocationPoint locationPoint) {
-        this.locationPoint = locationPoint;
-    }
-
-
-    public List<File> getFiles() {
-        return files;
-    }
-
-    public void setFiles(List<File> files) {
-        this.files = files;
-    }
 }

@@ -1,7 +1,14 @@
 package com.denysenko.citymonitorbot.models;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "ANSWERS")
 public class Answer {
@@ -10,31 +17,17 @@ public class Answer {
     @Column(name = "answer_id")
     private Long id;
     @Column(name = "option_id")
-    private Integer optionId;
+    private Long optionId;
     @Column(name = "local_id")
-    private Integer localId;
+    private Long localId;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "quiz_id")
+    private Quiz quiz;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Integer getOptionId() {
-        return optionId;
-    }
-
-    public void setOptionId(Integer optionId) {
-        this.optionId = optionId;
-    }
-
-    public Integer getLocalId() {
-        return localId;
-    }
-
-    public void setLocalId(Integer localId) {
+    public Answer(Long localId, Long optionId, Quiz quiz){
         this.localId = localId;
+        this.optionId = optionId;
+        this.quiz = quiz;
     }
+
 }

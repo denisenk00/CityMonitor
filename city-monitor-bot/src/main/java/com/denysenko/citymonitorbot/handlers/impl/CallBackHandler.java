@@ -1,9 +1,11 @@
 package com.denysenko.citymonitorbot.handlers.impl;
 
+import com.denysenko.citymonitorbot.commands.impl.answer.SaveAnswerCommand;
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.handlers.Handler;
 import com.denysenko.citymonitorbot.services.BotUserService;
-import org.apache.log4j.Logger;
+import com.denysenko.citymonitorbot.services.TelegramService;
+import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -11,12 +13,16 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Optional;
 
+@Log4j
 @Component
 public class CallBackHandler implements Handler {
 
-    private static final Logger LOG = Logger.getLogger(CallBackHandler.class);
     @Autowired
     private BotUserService botUserService;
+    @Autowired
+    private SaveAnswerCommand saveAnswerCommand;
+    @Autowired
+    private TelegramService telegramService;
 
     @Override
     public boolean isApplicable(Update update) {
@@ -31,6 +37,16 @@ public class CallBackHandler implements Handler {
 
     @Override
     public void handle(Update update) {
-        LOG.info("Handled by CallBackHandler: updateId" + update.getUpdateId());
+        log.info("Handled by CallBackHandler: updateId" + update.getUpdateId());
+        CallbackQuery callbackQuery = update.getCallbackQuery();
+        String data = callbackQuery.getData();
+        Long chatId = callbackQuery.getFrom().getId();
+        if(data.startsWith("answer:")){
+            String [] parameters = data.replace("answer:", "").split(",");
+            Long quizId = Long.valueOf(parameters[0].split("=")[1]);
+            Long optionId = Long.valueOf(parameters[1].split("=")[1]);
+            saveAnswerCommand.saveAnswer(chatId, quizId, optionId);
+            telegramService.sendAnswerCallbackQuery(callbackQuery.getId(), "Дякуємо за участь! Вашу відповідь збережено.");
+        }
     }
 }
