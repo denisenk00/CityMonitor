@@ -6,6 +6,8 @@ import com.denysenko.citymonitorweb.services.entity.ResultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ResultServiceImpl implements ResultService {
     @Autowired
@@ -17,8 +19,8 @@ public class ResultServiceImpl implements ResultService {
         resultRepository.saveAll(results);
     }
 
-    public void deleteResultById(Long id){
-        if(id == null) throw new IllegalArgumentException();
-        resultRepository.deleteById(id);
+    public List<Result> findResultByQuizId(Long quizId){
+        if(quizId == null) throw new IllegalArgumentException();
+        return resultRepository.findAllByOptionQuizId(quizId);
     }
 }

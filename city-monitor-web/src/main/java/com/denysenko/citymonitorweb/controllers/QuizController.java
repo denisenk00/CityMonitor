@@ -1,11 +1,13 @@
 package com.denysenko.citymonitorweb.controllers;
 
 import com.denysenko.citymonitorweb.enums.LayoutStatus;
+import com.denysenko.citymonitorweb.enums.QuizStatus;
 import com.denysenko.citymonitorweb.models.domain.paging.Paged;
 import com.denysenko.citymonitorweb.models.domain.paging.Paging;
 import com.denysenko.citymonitorweb.models.dto.FileDTO;
 import com.denysenko.citymonitorweb.models.dto.OptionDTO;
 import com.denysenko.citymonitorweb.models.dto.QuizDTO;
+import com.denysenko.citymonitorweb.models.dto.ResultDTO;
 import com.denysenko.citymonitorweb.models.entities.Layout;
 import com.denysenko.citymonitorweb.models.entities.Quiz;
 import com.denysenko.citymonitorweb.models.entities.Result;
@@ -13,13 +15,18 @@ import com.denysenko.citymonitorweb.services.QuizFinisher;
 import com.denysenko.citymonitorweb.services.QuizSender;
 import com.denysenko.citymonitorweb.services.converters.impl.MultiFileToDTOConverter;
 import com.denysenko.citymonitorweb.services.converters.impl.QuizEntityToDTOConverter;
+import com.denysenko.citymonitorweb.services.converters.impl.ResultEntityToDTOConverter;
 import com.denysenko.citymonitorweb.services.entity.AppealService;
 import com.denysenko.citymonitorweb.services.entity.LayoutService;
 import com.denysenko.citymonitorweb.services.entity.QuizService;
 import com.denysenko.citymonitorweb.services.entity.ResultService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -48,9 +55,13 @@ public class QuizController {
     @Autowired
     private AppealService appealService;
     @Autowired
+    private ResultService resultService;
+    @Autowired
     private MultiFileToDTOConverter mFileConverter;
     @Autowired
     private QuizEntityToDTOConverter quizConverter;
+    @Autowired
+    private ResultEntityToDTOConverter resultConverter;
     @Autowired
     private QuizSender quizSender;
     @Autowired
@@ -76,12 +87,29 @@ public class QuizController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('quizzes:read')")
-    public String quizPage(Model model, @PathVariable("id") int id){
+    public String quizPage(Model model, @PathVariable("id") String id,
+                                @Value("${citymonitor.maps.center.lat}") String mapCenterLat,
+                                @Value("${citymonitor.maps.center.lng}") String mapCenterLng,
+                                @Value("${citymonitor.maps.zoom}") String mapZoom){
         log.info("Getting quiz page with parameters: id = " + id);
         Quiz quiz = quizService.getById(Long.valueOf(id));
         QuizDTO quizDTO = quizConverter.convertEntityToDTO(quiz);
         model.addAttribute("quiz", quizDTO);
-        //need to add results if exist
+
+        if(quiz.getStatus().equals(QuizStatus.FINISHED)){
+            model.addAttribute("mapCenterLat", mapCenterLat);
+            model.addAttribute("mapCenterLng", mapCenterLng);
+            model.addAttribute("mapZoom", mapZoom);
+            List<Result> results = resultService.findResultByQuizId(Long.valueOf(id));
+            List<ResultDTO> resultDTOs = resultConverter.convertListsEntityToDTO(results);
+            ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+            try {
+                String resultsJSON = ow.writeValueAsString(resultDTOs);
+                model.addAttribute("resultsJSON", resultsJSON);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
         log.info("Returning template 'quizzes/quiz' with model");
         return "quizzes/quiz";
     }
