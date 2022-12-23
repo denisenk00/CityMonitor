@@ -12,5 +12,6 @@ import java.io.*;
 public class FileDTO {
     private Long id;
     private String name;
+    private String tgFileId;
     private byte[] content;
 }

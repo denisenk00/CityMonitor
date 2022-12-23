@@ -10,6 +10,7 @@ import com.denysenko.citymonitorweb.services.telegram.TelegramService;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -25,6 +26,7 @@ public class QuizSenderImpl implements QuizSender {
 
     private Map<Long, Timer> scheduledTasks = new HashMap<>();
 
+    @Transactional
     @Override
     public void schedule(Quiz quiz) {
         if(quiz == null) throw new IllegalArgumentException();
@@ -41,6 +43,7 @@ public class QuizSenderImpl implements QuizSender {
         log.info("Quiz with id = " + quiz.getId() + " scheduled successfully");
     }
 
+    @Transactional
     @Override
     public void sendImmediate(Quiz quiz) {
         if(quiz == null) throw new IllegalArgumentException();

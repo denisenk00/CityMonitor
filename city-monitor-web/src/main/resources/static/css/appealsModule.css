@@ -1,0 +1,144 @@
+body{
+    background:#eee
+}
+
+.appeals-module .nav .active{
+    font-weight: bold;
+}
+
+.appeals-module {
+    display: flex;
+    flex-direction: row;
+    background: #fff;
+    border: 1px solid #e1e6ef;
+}
+
+.appeals-module nav {
+    flex: 0 0 200px;
+    padding: 1rem;
+    border-right: 1px solid #e1e6ef;
+}
+
+.appeals-module nav .btn-block {
+    margin-bottom: 15px;
+}
+
+.appeals-module nav .nav {
+    flex-direction: column;
+}
+
+.appeals-module nav .nav .nav-item {
+    position: relative;
+}
+
+.appeals-module nav .nav .nav-item .nav-link,
+.appeals-module nav .nav .nav-item .navbar .dropdown-toggle,
+.navbar .email-app nav .nav .nav-item .dropdown-toggle {
+    color: #151b1e;
+    border-bottom: 1px solid #e1e6ef;
+}
+
+.appeals-module nav .nav .nav-item .nav-link i,
+.appeals-module nav .nav .nav-item .navbar .dropdown-toggle i,
+.navbar .appeals-module nav .nav .nav-item .dropdown-toggle i {
+    width: 20px;
+    margin: 0 10px 0 0;
+    font-size: 14px;
+    text-align: center;
+}
+
+.appeals-module nav .nav .nav-item .nav-link .badge,
+.appeals-module nav .nav .nav-item .navbar .dropdown-toggle .badge,
+.navbar .email-app nav .nav .nav-item .dropdown-toggle .badge {
+    float: right;
+    margin-top: 4px;
+    margin-left: 10px;
+}
+
+.appeals-module main {
+    min-width: 0;
+    flex: 1;
+    padding: 1rem;
+}
+
+.appeals-module .inbox .toolbar {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e1e6ef;
+}
+
+.appeals-module .inbox .appeals {
+    padding: 0;
+    list-style: none;
+}
+
+.appeals-module .inbox .appeal {
+    position: relative;
+    padding: 1rem 1rem 1rem 2rem;
+    cursor: pointer;
+    border-bottom: 1px solid #e1e6ef;
+}
+
+.appeals-module .inbox .appeal:hover {
+    background: #f9f9fa;
+}
+
+.appeals-module .inbox .appeal .actions {
+    position: absolute;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.appeals-module .inbox .appeal .actions .action {
+    width: 2rem;
+    margin-bottom: 0.5rem;
+    color: #c0cadd;
+    text-align: center;
+}
+
+.appeals-module .inbox .appeal a {
+    color: #000;
+}
+
+.appeals-module .inbox .appeal a:hover {
+    text-decoration: none;
+}
+
+#list-appeal-div .appeals .unread{
+    font-weight: bold;
+}
+
+.appeals-module .inbox .appeal .header {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 0.5rem;
+}
+
+.appeals-module .inbox .appeal .header .date {
+    margin-left: auto;
+}
+
+
+.appeals-module .inbox .appeal .description {
+    font-size: 12px;
+}
+
+
+
+@media (max-width: 767px) {
+    .appeals-module {
+        flex-direction: column;
+    }
+    .appeals-module nav {
+        flex: 0 0 100%;
+    }
+}
+
+@media (max-width: 575px) {
+    .appeals-module .appeal .header {
+        flex-flow: row wrap;
+    }
+    .appeals-module .appeal .header .date {
+        flex: 0 0 100%;
+    }
+}

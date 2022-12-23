@@ -87,7 +87,7 @@ CREATE TABLE APPEALS(
                         point GEOMETRY,
                         local_id Integer NOT NULL,
                         PRIMARY KEY (appeal_id),
-                        CHECK ( status IN ('UNREAD', 'VIEWED', 'PROCESSED'))
+                        CHECK ( status IN ('UNREAD', 'VIEWED', 'PROCESSED', 'IN_PROGRESS', 'TRASH'))
 );
 
 -- Create indexes for table APPEALS

@@ -14,6 +14,7 @@ import java.util.List;
 @Table(name = "APPEALS")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Appeal {
@@ -31,7 +32,7 @@ public class Appeal {
     private AppealStatus status;
     @Column(name = "post_date")
     private LocalDateTime postDate;
-    @Column(name = "point_id")
+    @Column(name = "point")
     private Point locationPoint;
 
 

@@ -28,6 +28,7 @@ public class FileEntityToDTOConverter implements EntityDTOConverter<File, FileDT
         return FileDTO.builder()
                 .id(file.getId())
                 .name(file.getName())
+                .tgFileId(file.getFileID())
                 .content(file.getContent())
                 .build();
     }

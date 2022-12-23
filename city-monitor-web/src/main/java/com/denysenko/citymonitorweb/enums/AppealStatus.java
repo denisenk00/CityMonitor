@@ -4,7 +4,9 @@ public enum AppealStatus {
 
     UNREAD("Непрочитано"),
     VIEWED("Переглянуто"),
-    PROCESSED("Опрацьовано");
+    IN_PROGRESS("В роботі"),
+    PROCESSED("Опрацьовано"),
+    TRASH("Сміття");
 
     private String title;
 

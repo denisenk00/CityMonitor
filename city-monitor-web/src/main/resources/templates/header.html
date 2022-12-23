@@ -36,7 +36,7 @@
                 <li class="nav-item" sec:authorize="hasAnyAuthority('appeals:read', 'appeals:write')">
                     <a class="nav-link position-relative" href="/appeals">
                         Звернення жителів
-                        <span th:if="${unreadAppealsCnt > 0}" th:text="${unreadAppealsCnt}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        <span th:if="${unreadAppealsCnt > 0}" th:text="${unreadAppealsCnt}" id="unread-appeal-cnt" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                             <span class="visually-hidden">unread messages</span>
                         </span>
                     </a>

@@ -9,6 +9,7 @@ import com.denysenko.citymonitorweb.services.entity.QuizService;
 import com.denysenko.citymonitorweb.services.entity.ResultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -25,6 +26,7 @@ public class QuizFinisherImpl implements QuizFinisher {
     @Autowired
     private AnswerService answerService;
 
+    @Transactional
     @Override
     public void finishImmediate(Quiz quiz) {
         if(quiz == null) throw new IllegalArgumentException();
@@ -37,6 +39,7 @@ public class QuizFinisherImpl implements QuizFinisher {
         quizService.setQuizStatusById(quiz.getId(), QuizStatus.FINISHED);
     }
 
+    @Transactional
     @Override
     public void schedule(Quiz quiz) {
         if(quiz == null) throw new IllegalArgumentException();
