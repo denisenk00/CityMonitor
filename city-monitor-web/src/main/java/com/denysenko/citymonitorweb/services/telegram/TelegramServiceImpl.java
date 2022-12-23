@@ -88,25 +88,20 @@ public class TelegramServiceImpl extends DefaultAbsSender implements TelegramSer
         log.info("Quiz id = " + quiz.getId() + " was successfully sent");
     }
 
-    public java.io.File getFileByID(String tgFileId) throws IOException {
+    public java.io.File getFileByID(String tgFileId) {
+        GetFile getFile = new GetFile(tgFileId);
+        java.io.File file1 = null;
+        try {
+            org.telegram.telegrambots.meta.api.objects.File file = execute(getFile);
+            String filePath = file.getFilePath();
+            String fileName = file.getFilePath().split("/")[file.getFilePath().split("/").length-1];
+            file1 = new java.io.File(fileName);
+            file1 = downloadFile(filePath, file1);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
 
-        URL url = new URL("https://api.telegram.org/bot" + botToken +"/getFile?file_id=" + tgFileId);
-        BufferedReader in = new BufferedReader(new InputStreamReader( url.openStream()));
-        String res = in.readLine();
-        JSONObject jresult = new JSONObject(res);
-        JSONObject path = jresult.getJSONObject("result");
-        String file_path = path.getString("file_path");
-        URL downoload = new URL("https://api.telegram.org/file/bot" + botToken + "/" + file_path);
-        java.io.File file = FileUtils.toFile(downoload);
-
-        //FileOutputStream fos = new FileOutputStream(upPath + file_name);
-//        System.out.println("Start upload");
-//        ReadableByteChannel rbc = Channels.newChannel(downoload.openStream());
-//        //fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-//        //fos.close();
-//        rbc.close();
-//        System.out.println("Uploaded!");
-        return file;
+        return file1;
     }
 
 }

@@ -36,13 +36,6 @@ public class FileController {
     @PreAuthorize("hasAnyAuthority('quizzes:read')")
     public ResponseEntity<Resource> downloadFile(@PathVariable(name = "id") Long id){
         File file = fileService.getFileByID(id);
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//
-//        if(auth == null
-//                || (file.getAppealId() != null && !auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("appeals:read")))
-//                || (file.getQuizId() != null && !auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("quizzes:read")))){
-//            throw new AccessDeniedException("You don't have permission to save this file");
-//        }
 
         InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(file.getContent()));
 
@@ -63,16 +56,13 @@ public class FileController {
     @GetMapping("/tgFile/{id}")
     @ResponseBody
     @PreAuthorize("hasAnyAuthority('appeals:read')")
-    public ResponseEntity<Resource> downloadTelegramFile(@PathVariable(name = "id") String tgFileId) {
+    public ResponseEntity<byte[]> downloadTelegramFile(@PathVariable(name = "id") String tgFileId) {
         java.io.File file = null;
-        long contentLength = 0;
-        InputStreamResource resource = null;
 
+        byte[] resource = null;
         try {
             file = telegramService.getFileByID(tgFileId);
-            resource = new InputStreamResource(new FileInputStream(file));
-            contentLength = resource.contentLength();
-
+            resource = new FileInputStream(file).readAllBytes();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -88,8 +78,9 @@ public class FileController {
 
         return ResponseEntity.ok()
                 .headers(httpHeaders)
-                .contentLength(contentLength)
+                .contentLength(resource.length)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(resource);
     }
+
 }
