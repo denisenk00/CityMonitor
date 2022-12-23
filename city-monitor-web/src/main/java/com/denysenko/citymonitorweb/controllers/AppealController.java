@@ -1,7 +1,14 @@
 package com.denysenko.citymonitorweb.controllers;
 
+import com.denysenko.citymonitorweb.enums.AppealStatus;
+import com.denysenko.citymonitorweb.models.dto.AppealDTO;
+import com.denysenko.citymonitorweb.models.entities.Appeal;
+import com.denysenko.citymonitorweb.services.converters.impl.AppealEntityToDTOConverter;
 import com.denysenko.citymonitorweb.services.entity.AppealService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +20,8 @@ import java.util.Set;
 public class AppealController {
     @Autowired
     private AppealService appealService;
+    @Autowired
+    private AppealEntityToDTOConverter appealConverter;
 
     @ModelAttribute("unreadAppealsCnt")
     public long getCountOfUnreadAppeals(){
@@ -23,10 +32,30 @@ public class AppealController {
     @PreAuthorize("hasAnyAuthority('appeals:read', 'appeals:write')")
     public String appealsPage(Model model,
                               @RequestParam(name = "tab", defaultValue = "all") String tabName,
-                              @RequestParam(defaultValue = "1", required = false) int page,
-                              @RequestParam(defaultValue = "30", required = false) int size){
+                              @RequestParam(name = "page", defaultValue = "1", required = false) int pageNumber,
+                              @RequestParam(name = "size", defaultValue = "15", required = false) int pageSize){
+        Set<AppealStatus> statusSet = null;
+        if(tabName.equalsIgnoreCase("ALL")){
+            statusSet = Set.of(AppealStatus.UNREAD, AppealStatus.IN_PROGRESS, AppealStatus.VIEWED, AppealStatus.PROCESSED);
+        }else if(tabName.equalsIgnoreCase("NEW")){
+            statusSet = Set.of(AppealStatus.UNREAD);
+        }else if(tabName.equalsIgnoreCase("IN_PROGRESS")){
+            statusSet = Set.of(AppealStatus.IN_PROGRESS);
+        }else if(tabName.equalsIgnoreCase("PROCESSED")){
+            statusSet = Set.of(AppealStatus.PROCESSED);
+        }else if(tabName.equalsIgnoreCase("TRASH")){
+            statusSet = Set.of(AppealStatus.TRASH);
+        }else throw new IllegalArgumentException("");
+
+
+        Page<Appeal> appeals = appealService.getPageByStatuses(pageNumber, pageSize, statusSet);
+        Page<AppealDTO> appealDTOs = appeals.map(appeal -> appealConverter.convertEntityToDTO(appeal));
         model.addAttribute("tab", tabName);
-        model.addAttribute("appeals", null);
+        model.addAttribute("appeals", appealDTOs);
+        model.addAttribute("page", pageNumber);
+        model.addAttribute("size", pageSize);
+
+
         return "appeals/appeals";
     }
 
