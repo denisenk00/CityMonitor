@@ -4,9 +4,7 @@ import com.denysenko.citymonitorweb.models.entities.File;
 import com.denysenko.citymonitorweb.models.entities.Option;
 import com.denysenko.citymonitorweb.models.entities.Quiz;
 import lombok.extern.log4j.Log4j;
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.util.Strings;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,11 +19,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.*;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -47,7 +40,7 @@ public class TelegramServiceImpl extends DefaultAbsSender implements TelegramSer
 
     @Transactional
     @Override
-    public void sendQuizToLocals(Iterable<Long> chatIds, Quiz quiz) {
+    public void sendQuizToChats(Iterable<Long> chatIds, Quiz quiz) throws TelegramApiException{
         log.info("Sending quiz: quiz = " + quiz.toString());
         SendMessage.SendMessageBuilder messageBuilder = SendMessage.builder();
 
@@ -74,34 +67,25 @@ public class TelegramServiceImpl extends DefaultAbsSender implements TelegramSer
             sendDocumentList.add(sendDocument);
         }
 
-        try {
-            for(Long chatId : chatIds){
-                execute(messageBuilder.chatId(String.valueOf(chatId)).build());
-                for(SendDocument document: sendDocumentList){
-                    document.setChatId(String.valueOf(chatId));
-                    execute(document);
-                }
+        for (Long chatId : chatIds) {
+            execute(messageBuilder.chatId(String.valueOf(chatId)).build());
+            for (SendDocument document : sendDocumentList) {
+                document.setChatId(String.valueOf(chatId));
+                execute(document);
             }
-        } catch (TelegramApiException e) {
-            log.error(e);
         }
+
         log.info("Quiz id = " + quiz.getId() + " was successfully sent");
     }
 
-    public java.io.File getFileByID(String tgFileId) {
+    public FileInputStream getFileByID(String tgFileId) throws TelegramApiException, FileNotFoundException {
+        log.info("getting file from telegram server by id = " + tgFileId);
         GetFile getFile = new GetFile(tgFileId);
-        java.io.File file1 = null;
-        try {
-            org.telegram.telegrambots.meta.api.objects.File file = execute(getFile);
-            String filePath = file.getFilePath();
-            String fileName = file.getFilePath().split("/")[file.getFilePath().split("/").length-1];
-            file1 = new java.io.File(fileName);
-            file1 = downloadFile(filePath, file1);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
 
-        return file1;
+        org.telegram.telegrambots.meta.api.objects.File tgfile = execute(getFile);
+        String filePath = tgfile.getFilePath();
+        java.io.File file = downloadFile(filePath);
+        return new FileInputStream(file);
     }
 
 }

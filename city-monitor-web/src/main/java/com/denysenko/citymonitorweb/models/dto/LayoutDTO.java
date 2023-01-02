@@ -2,9 +2,7 @@ package com.denysenko.citymonitorweb.models.dto;
 
 import lombok.*;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
-
+import javax.validation.constraints.*;
 
 @Data
 @NoArgsConstructor
@@ -12,10 +10,10 @@ import javax.validation.constraints.Size;
 @Builder
 public class LayoutDTO {
     private Long id;
-    @NotEmpty
+    @NotBlank
     @Size(min = 10, max = 100)
     private String name;
     private String status;
-    @NotEmpty
-    private String polygonsGeoJson;;
+    @NotBlank
+    private String polygonsGeoJson;
 }

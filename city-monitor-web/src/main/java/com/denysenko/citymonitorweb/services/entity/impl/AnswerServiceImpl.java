@@ -15,14 +15,11 @@ public class AnswerServiceImpl implements AnswerService {
     private AnswerRepository answerRepository;
 
     public List<Answer> getAnswersByQuizId(Long quizId){
-        if(quizId == null) throw new IllegalArgumentException();
-
         return answerRepository.findAllByOptionQuizId(quizId);
     }
 
     @Transactional
     public void deleteAnswersByQuizId(Long quizId){
-        if(quizId == null) throw new IllegalArgumentException();
         answerRepository.deleteAllByOptionQuizId(quizId);
     }
 

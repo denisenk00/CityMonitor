@@ -2,19 +2,19 @@ package com.denysenko.citymonitorweb.services.entity;
 
 import com.denysenko.citymonitorweb.enums.LayoutStatus;
 import com.denysenko.citymonitorweb.models.entities.Layout;
-import com.denysenko.citymonitorweb.models.entities.Quiz;
 import org.springframework.data.domain.Page;
+import org.springframework.validation.annotation.Validated;
 
-
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
+@Validated
 public interface LayoutService {
-    List<Layout> getAllLayouts();
     List<Layout> getNotDeprecatedLayouts();
-    Layout getLayoutById(Long id);
-    void saveLayout(Layout layout);
+    Layout getLayoutById(@NotNull Long id);
+    void saveLayout(@NotNull Layout layout);
     Page<Layout> getPageOfLayouts(int pageNumber, int size);
-    void deleteLayout(Long id);
-    LayoutStatus markLayoutAsActual(Long layoutId);
-    LayoutStatus markLayoutAsDeprecated(Long layoutId);
+    void deleteLayout(@NotNull Long id);
+    LayoutStatus markLayoutAsActual(@NotNull Long layoutId);
+    LayoutStatus markLayoutAsDeprecated(@NotNull Long layoutId);
 }

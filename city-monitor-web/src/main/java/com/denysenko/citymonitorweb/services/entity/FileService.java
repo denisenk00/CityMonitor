@@ -1,14 +1,14 @@
 package com.denysenko.citymonitorweb.services.entity;
 
-import com.denysenko.citymonitorweb.models.dto.FileDTO;
 import com.denysenko.citymonitorweb.models.entities.File;
-import com.denysenko.citymonitorweb.services.converters.EntityDTOConverter;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.validation.annotation.Validated;
 
-import java.util.List;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
+@Validated
 public interface FileService {
 
-    File getFileByID(Long id);
-
+    File getFileByID(@NotNull Long id);
+    File getFileByTgFileId(@NotBlank String tgFileId);
 }

@@ -1,24 +1,22 @@
 package com.denysenko.citymonitorweb.controllers;
 
+import com.denysenko.citymonitorweb.exceptions.DownloadTelegramFileException;
+import com.denysenko.citymonitorweb.exceptions.EntityNotFoundException;
+import com.denysenko.citymonitorweb.exceptions.InputValidationException;
 import com.denysenko.citymonitorweb.models.entities.File;
 import com.denysenko.citymonitorweb.services.entity.FileService;
 import com.denysenko.citymonitorweb.services.telegram.TelegramService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.ContentDisposition;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -34,8 +32,13 @@ public class FileController {
     @GetMapping("/{id}")
     @ResponseBody
     @PreAuthorize("hasAnyAuthority('quizzes:read')")
-    public ResponseEntity<Resource> downloadFile(@PathVariable(name = "id") Long id){
-        File file = fileService.getFileByID(id);
+    public ResponseEntity<Resource> downloadFile(@PathVariable(name = "id") Long id) {
+        File file;
+        try {
+            file = fileService.getFileByID(id);
+        } catch (EntityNotFoundException e) {
+            throw new InputValidationException(e.getMessage(), e);
+        }
 
         InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(file.getContent()));
 
@@ -56,17 +59,22 @@ public class FileController {
     @GetMapping("/tgFile/{id}")
     @ResponseBody
     @PreAuthorize("hasAnyAuthority('appeals:read')")
-    public ResponseEntity<byte[]> downloadTelegramFile(@PathVariable(name = "id") String tgFileId) {
-        java.io.File file = null;
+    public ResponseEntity<byte[]> downloadFileFromTelegram(@PathVariable(name = "id") String tgFileId) {
+        FileInputStream fileContent;
+        File file;
+        byte[] resource;
 
-        byte[] resource = null;
         try {
-            file = telegramService.getFileByID(tgFileId);
-            resource = new FileInputStream(file).readAllBytes();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            file = fileService.getFileByTgFileId(tgFileId);
+            fileContent = telegramService.getFileByID(tgFileId);
+            resource = fileContent.readAllBytes();
+        } catch (EntityNotFoundException e) {
+            throw new InputValidationException(e.getMessage(), e);
+        } catch (TelegramApiException e) {
+            String reason = "Помилка при надсиланні запиту на завантаження файлу до Telegram API";
+            throw new DownloadTelegramFileException(reason, e, tgFileId);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Не вдалось завантажити вміст файлу", e);
         }
 
         ContentDisposition contentDisposition = ContentDisposition.builder("attachment")

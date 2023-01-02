@@ -1,6 +1,7 @@
 package com.denysenko.citymonitorweb.services;
 
 import com.denysenko.citymonitorweb.enums.QuizStatus;
+import com.denysenko.citymonitorweb.exceptions.SendQuizException;
 import com.denysenko.citymonitorweb.models.domain.async.SendQuizTask;
 import com.denysenko.citymonitorweb.models.entities.Layout;
 import com.denysenko.citymonitorweb.models.entities.Quiz;
@@ -9,8 +10,10 @@ import com.denysenko.citymonitorweb.services.entity.QuizService;
 import com.denysenko.citymonitorweb.services.telegram.TelegramService;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.*;
 
@@ -29,9 +32,7 @@ public class QuizSenderImpl implements QuizSender {
     @Transactional
     @Override
     public void schedule(Quiz quiz) {
-        if(quiz == null) throw new IllegalArgumentException();
         log.info("Scheduling quiz with id = " + quiz.getId());
-
         SendQuizTask sendQuizTask = new SendQuizTask(quiz, this);
         Timer timer = new Timer();
         Calendar calendar = Calendar.getInstance();
@@ -46,23 +47,28 @@ public class QuizSenderImpl implements QuizSender {
     @Transactional
     @Override
     public void sendImmediate(Quiz quiz) {
-        if(quiz == null) throw new IllegalArgumentException();
         log.info("Sending quiz with id = " + quiz.getId());
         removeScheduledSending(quiz.getId());
 
         Layout quizLayout = quiz.getLayout();
         List<Long> chatIDs = localService.getChatIdsLocatedWithinLayout(quizLayout);
 
-        telegramService.sendQuizToLocals(chatIDs, quiz);
+        try {
+            telegramService.sendQuizToChats(chatIDs, quiz);
+        } catch (TelegramApiException e) {
+            String reason = "Помилка при надсиланні даних до Telegram API";
+            throw new SendQuizException(reason, e, quiz, chatIDs);
+        }
         log.info("Sent quiz id = " + quiz.getId() + " successfully");
+        log.info("current status = " + quiz.getStatus() + ", " + !quiz.getStatus().equals(QuizStatus.IN_PROGRESS));
         if(!quiz.getStatus().equals(QuizStatus.IN_PROGRESS)) {
             quizService.setQuizStatusById(quiz.getId(), QuizStatus.IN_PROGRESS);
+            log.info("Status of quiz id = " + quiz.getId() + " changed to IN_PROGRESS");
         }
     }
 
     public void removeScheduledSending(Long quizId){
-        if (quizId == null) throw new IllegalArgumentException();
-
+        log.info("removing quiz from scheduled with id = " + quizId + " if exists");
         Timer timer = scheduledTasks.get(quizId);
         if(timer != null){
             timer.cancel();

@@ -9,9 +9,9 @@ import com.denysenko.citymonitorweb.services.converters.EntityDTOConverter;
 import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionFailedException;
+import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,27 +23,31 @@ public class AppealEntityToDTOConverter implements EntityDTOConverter<Appeal, Ap
     private LocalEntityToDTOConverter localEntityToDTOConverter;
 
     @Override
-    public Appeal convertDTOToEntity(AppealDTO appealDTO) throws ConversionFailedException {
-        return null;
+    public Appeal convertDTOToEntity(AppealDTO appealDTO) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public AppealDTO convertEntityToDTO(Appeal appeal) throws ConversionFailedException {
-        List<FileDTO> fileDTOs = fileEntityToDTOConverter.convertListsEntityToDTO(appeal.getFiles());
-        Point point = appeal.getLocationPoint();
-        LocationPointDTO locationPointDTO = null;
-        if(Objects.nonNull(point)){
-            locationPointDTO = new LocationPointDTO(point.getY(), point.getX());
+        try {
+            List<FileDTO> fileDTOs = fileEntityToDTOConverter.convertListsEntityToDTO(appeal.getFiles());
+            Point point = appeal.getLocationPoint();
+            LocationPointDTO locationPointDTO = null;
+            if (Objects.nonNull(point)) {
+                locationPointDTO = new LocationPointDTO(point.getY(), point.getX());
+            }
+            LocalDTO localDTO = localEntityToDTOConverter.convertEntityToDTO(appeal.getLocal());
+            return AppealDTO.builder()
+                    .id(appeal.getId())
+                    .text(appeal.getText())
+                    .postDate(appeal.getPostDate())
+                    .fileDTOs(fileDTOs)
+                    .locationPointDTO(locationPointDTO)
+                    .status(appeal.getStatus().getTitle())
+                    .local(localDTO)
+                    .build();
+        }catch (Exception e){
+            throw new ConversionFailedException(TypeDescriptor.forObject(appeal), TypeDescriptor.valueOf(AppealDTO.class), null, e);
         }
-        LocalDTO localDTO = localEntityToDTOConverter.convertEntityToDTO(appeal.getLocal());
-        return AppealDTO.builder()
-                .id(appeal.getId())
-                .text(appeal.getText())
-                .postDate(appeal.getPostDate())
-                .fileDTOs(fileDTOs)
-                .locationPointDTO(locationPointDTO)
-                .status(appeal.getStatus().getTitle())
-                .local(localDTO)
-                .build();
     }
 }

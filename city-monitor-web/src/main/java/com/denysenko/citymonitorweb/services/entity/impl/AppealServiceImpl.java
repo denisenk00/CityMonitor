@@ -2,6 +2,7 @@ package com.denysenko.citymonitorweb.services.entity.impl;
 
 
 import com.denysenko.citymonitorweb.enums.AppealStatus;
+import com.denysenko.citymonitorweb.exceptions.EntityNotFoundException;
 import com.denysenko.citymonitorweb.models.entities.Appeal;
 import com.denysenko.citymonitorweb.repositories.hibernate.AppealRepository;
 import com.denysenko.citymonitorweb.services.entity.AppealService;
@@ -28,7 +29,7 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public Page<Appeal> getPageByStatuses(int pageNumber, int size, Set<AppealStatus> statuses){
-        if(pageNumber < 1 || size < 1 || statuses == null || statuses.isEmpty()) throw new IllegalArgumentException();
+        if(pageNumber < 1 || size < 1) throw new IllegalArgumentException("Номер сторінки та її розмір має бути більше нуля. Поточні значення: pageNumber = " + pageNumber + ", size = " + size);
 
         PageRequest request = PageRequest.of(pageNumber - 1, size, Sort.by(Sort.Direction.DESC, "postDate"));
         Page<Appeal> appealsPage = appealRepository.findAllByStatusIn(statuses, request);
@@ -42,6 +43,6 @@ public class AppealServiceImpl implements AppealService {
         appeal.ifPresentOrElse((a)->{
             a.setStatus(appealStatus);
             appealRepository.save(a);
-        }, () -> new RuntimeException());
+        }, () -> new EntityNotFoundException("Не вдалось знайти звернення з id = " + id));
     }
 }

@@ -7,7 +7,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @NoArgsConstructor
@@ -30,10 +32,20 @@ public class QuizDTO {
     @NotNull(message = "Визначте дату завершення опитування")
     @Future(message = "Дата завершення не може бути в минулому")
     private LocalDateTime endDate;
+    @Valid
     private LayoutDTO layoutDTO;
-    private List<FileDTO> fileDTOs;
-    @NotNull
+    @Valid
+    private List<FileDTO> fileDTOs = new LinkedList<>();
+    @NotEmpty
     @Valid
     @Size(min = 2, message = "Повинно бути мінімум 2 варіанти відповіді")
-    private List<OptionDTO> optionDTOs;
+    private List<OptionDTO> optionDTOs = new LinkedList<>();
+
+    @AssertTrue(message = "Період проведення опитування вказано невірно")
+    public boolean isQuizPeriodOnCreationCorrect(){
+            if(!startImmediate && Objects.isNull(startDate)) return false;
+            return (startImmediate && endDate.isAfter(LocalDateTime.now()))
+                    || (startDate.isAfter(LocalDateTime.now()) && startDate.isBefore(endDate));
+    }
+
 }

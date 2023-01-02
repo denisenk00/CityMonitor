@@ -16,7 +16,10 @@
                 $(this).removeClass('unread');
                 let oldVal = Number.parseInt($("#unread-appeal-cnt").text());
                 $("#unread-appeal-cnt").text(oldVal-1);
-            },(data) => {console.log(data.responseText)});
+            },(data) => {
+                console.log(data.responseText);
+                alert(data.responseText);
+            });
         }
     });
 
@@ -37,6 +40,7 @@
                     window.location.reload();
                 },
                 (data) => {
+                    console.log(data.responseText);
                     alert(data.responseText);
                 });
         } else {
@@ -49,13 +53,12 @@
                     window.location.reload();
                 },
                 (data) => {
+                    console.log(data.responseText);
                     alert(data.responseText);
                 });
         }
 
     });
-
-    //need to hanle viewed!!!
 
     function loadMap(parent){
         let mapElement = parent.find('.location .map')[0];

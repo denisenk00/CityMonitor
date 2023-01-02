@@ -1,8 +1,7 @@
 package com.denysenko.citymonitorweb.services.entity.impl;
 
-import com.denysenko.citymonitorweb.enums.LayoutStatus;
 import com.denysenko.citymonitorweb.enums.QuizStatus;
-import com.denysenko.citymonitorweb.models.entities.Layout;
+import com.denysenko.citymonitorweb.exceptions.EntityNotFoundException;
 import com.denysenko.citymonitorweb.models.entities.Quiz;
 
 import com.denysenko.citymonitorweb.repositories.hibernate.QuizRepository;
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -28,7 +28,7 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public Page<Quiz> getPageOfQuizzes(int pageNumber, int size){
-        if(pageNumber < 1 || size < 1) throw new IllegalArgumentException();
+        if(pageNumber < 1 || size < 1) throw new IllegalArgumentException("Номер сторінки та кількість елементів мають бути більшими за нуль.");
 
         PageRequest request = PageRequest.of(pageNumber - 1, size, Sort.by(Sort.Direction.DESC, "startDate"));
         Page<Quiz> quizzesPage = quizRepository.findAll(request);
@@ -37,33 +37,27 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public void saveQuiz(Quiz quiz){
-        if(quiz == null) throw new IllegalArgumentException("Quiz should be not NULL");
         quizRepository.save(quiz);
     }
 
     @Override
     public Quiz getById(Long id){
-        if(id == null) throw new IllegalArgumentException("Id should be not NULL");
         Optional<Quiz> optionalQuiz = quizRepository.findById(id);
-        return optionalQuiz.orElseThrow(() -> new NoSuchElementException(""));
+        return optionalQuiz.orElseThrow(() -> new EntityNotFoundException("Не вдалось знайти опитування з id = " + id));
     }
 
     @Override
     public List<Quiz> findQuizzesByLayoutId(Long id) {
-        if(id == null) throw new IllegalArgumentException("Id should be not NULL");
         return quizRepository.findAllByLayoutId(id);
     }
 
     public void setQuizStatusById(Long id, QuizStatus quizStatus) {
-        if(id == null) throw new IllegalArgumentException();
-        if(quizStatus == null) throw new IllegalArgumentException();
-
         Optional<Quiz> quizOptional = quizRepository.findById(id);
         quizOptional.ifPresentOrElse((q)->{
             q.setStatus(quizStatus);
             quizRepository.save(q);
         }, ()->{
-            throw new NoSuchElementException();
+            throw new EntityNotFoundException("Не вдалось знайти опитування з id = " + id);
         });
     }
 

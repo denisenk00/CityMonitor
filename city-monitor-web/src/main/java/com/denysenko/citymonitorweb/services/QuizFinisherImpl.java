@@ -7,12 +7,14 @@ import com.denysenko.citymonitorweb.models.entities.Result;
 import com.denysenko.citymonitorweb.services.entity.AnswerService;
 import com.denysenko.citymonitorweb.services.entity.QuizService;
 import com.denysenko.citymonitorweb.services.entity.ResultService;
+import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
+@Log4j
 @Service
 public class QuizFinisherImpl implements QuizFinisher {
 
@@ -29,7 +31,7 @@ public class QuizFinisherImpl implements QuizFinisher {
     @Transactional
     @Override
     public void finishImmediate(Quiz quiz) {
-        if(quiz == null) throw new IllegalArgumentException();
+        log.info("finishing quiz with id = " + quiz.getId() + " immediately");
         removeScheduledFinish(quiz.getId());
 
         Set<Result> resultSet = resultsGenerator.generateResultsOfQuiz(quiz);
@@ -42,8 +44,7 @@ public class QuizFinisherImpl implements QuizFinisher {
     @Transactional
     @Override
     public void schedule(Quiz quiz) {
-        if(quiz == null) throw new IllegalArgumentException();
-
+        log.info("scheduling quiz finish with id = " + quiz.getId());
         FinishQuizTask finishQuizTask = new FinishQuizTask(quiz, this);
         Timer timer = new Timer();
         Calendar calendar = Calendar.getInstance();
@@ -54,8 +55,7 @@ public class QuizFinisherImpl implements QuizFinisher {
     }
 
     public void removeScheduledFinish(Long quizId){
-        if (quizId == null) throw new IllegalArgumentException();
-
+        log.info("removing quiz finish from scheduled if exists: id = " + quizId);
         Timer timer = scheduledTasks.get(quizId);
         if(timer != null){
             timer.cancel();

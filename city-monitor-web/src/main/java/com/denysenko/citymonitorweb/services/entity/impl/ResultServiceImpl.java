@@ -14,13 +14,10 @@ public class ResultServiceImpl implements ResultService {
     private ResultRepository resultRepository;
 
     public void saveResults(Iterable<Result> results){
-        if(results == null) throw new IllegalArgumentException();
-
         resultRepository.saveAll(results);
     }
 
     public List<Result> findResultByQuizId(Long quizId){
-        if(quizId == null) throw new IllegalArgumentException();
         return resultRepository.findAllByOptionQuizId(quizId);
     }
 }

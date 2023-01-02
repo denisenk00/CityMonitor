@@ -44,6 +44,7 @@ $(function (){
     }
     function onChangeAvailabilityError(data){
         alert(data.responseText);
+        console.log(data.responseText);
     }
 
 });

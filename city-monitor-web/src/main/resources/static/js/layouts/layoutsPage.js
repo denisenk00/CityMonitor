@@ -37,6 +37,7 @@ $(function($){
 
     }
     function onChangeAvailabilityError(data){
+        console.log(data.responseText);
         alert(data.responseText);
     }
 });

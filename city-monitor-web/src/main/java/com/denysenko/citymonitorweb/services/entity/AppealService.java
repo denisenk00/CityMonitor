@@ -1,16 +1,17 @@
 package com.denysenko.citymonitorweb.services.entity;
 
 import com.denysenko.citymonitorweb.enums.AppealStatus;
-import com.denysenko.citymonitorweb.models.dto.AppealDTO;
 import com.denysenko.citymonitorweb.models.entities.Appeal;
-import com.denysenko.citymonitorweb.services.converters.EntityDTOConverter;
 import org.springframework.data.domain.Page;
+import org.springframework.validation.annotation.Validated;
 
-import java.util.List;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
+@Validated
 public interface AppealService {
     long countOfUnreadAppeals();
-    Page<Appeal> getPageByStatuses(int pageNumber, int size, Set<AppealStatus> statuses);
-    void updateStatusById(Long id, AppealStatus appealStatus);
+    Page<Appeal> getPageByStatuses(int pageNumber, int size, @NotEmpty Set<AppealStatus> statuses);
+    void updateStatusById(@NotNull Long id, @NotNull AppealStatus appealStatus);
 }

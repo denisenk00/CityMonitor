@@ -1,7 +1,5 @@
 package com.denysenko.citymonitorweb.enums;
 
-import java.util.NoSuchElementException;
-
 public enum LayoutStatus {
 
     IN_USE("Використовується"),
@@ -18,11 +16,11 @@ public enum LayoutStatus {
         return title;
     }
 
-    public static LayoutStatus getByTitle(String title) throws NoSuchElementException {
+    public static LayoutStatus getByTitle(String title) {
         for (LayoutStatus status : values()){
             if(status.getTitle().equals(title)) return status;
         }
-        throw new IllegalArgumentException("Статусу - " + title + " не існує");
+        throw new EnumConstantNotPresentException(LayoutStatus.class, title);
     }
 
 }

@@ -18,6 +18,7 @@ public class ResultsGeneratorImpl implements ResultsGenerator{
     private AnswerService answerService;
 
     public Set<Result> generateResultsOfQuiz(Quiz quiz){
+        log.info("generating result of quiz id = " + quiz.getId());
         Set<Result> results = new HashSet<>();
         List<Polygon> polygons = quiz.getLayout().getPolygons();
         List<Option> options = quiz.getOptions();

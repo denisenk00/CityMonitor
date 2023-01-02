@@ -13,7 +13,7 @@ $(function (){
                 (data) => {
                     $(this).attr('disabled', false);
                     $(this).innerText = "Завершити";
-
+                    console.log(data.responseText);
                     alert(data.responseText);
                 });
         }

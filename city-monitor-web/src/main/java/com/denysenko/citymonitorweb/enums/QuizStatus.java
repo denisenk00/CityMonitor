@@ -1,7 +1,5 @@
 package com.denysenko.citymonitorweb.enums;
 
-import javassist.NotFoundException;
-
 public enum QuizStatus {
 
     PLANNED("Заплановано"),
@@ -18,10 +16,10 @@ public enum QuizStatus {
         return title;
     }
 
-    public static QuizStatus getByTitle(String title) throws NotFoundException {
+    public static QuizStatus getByTitle(String title) {
         for (QuizStatus status : values()){
             if(status.getTitle().equals(title)) return status;
         }
-        throw new NotFoundException("Статусу - " + title + " не існує");
+        throw new EnumConstantNotPresentException(QuizStatus.class, title);
     }
 }

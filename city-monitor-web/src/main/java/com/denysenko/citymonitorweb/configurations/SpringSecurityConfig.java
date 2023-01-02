@@ -28,20 +28,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder(12);
     }
 
-    //Check after full implementation
-
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf().disable()
                 .authorizeRequests()
                     .antMatchers("/login", "/css/*").permitAll()
-//                    .antMatchers("/users/**").hasAuthority(Permission.USERS_RW.getTitle())
-//                    .antMatchers(HttpMethod.POST, "/appeals/**").hasAuthority(Permission.APPEALS_WRITE.getTitle())
-//                    .antMatchers(HttpMethod.GET, "/appeals/new").hasAuthority(Permission.APPEALS_WRITE.getTitle())
-//                    .antMatchers(HttpMethod.GET, "/appeals/**").hasAuthority(Permission.APPEALS_READ.getTitle())
-
-
                     .anyRequest().authenticated()
                 .and()
                     .formLogin()

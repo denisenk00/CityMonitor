@@ -1,5 +1,6 @@
 package com.denysenko.citymonitorweb.services.entity.impl;
 
+import com.denysenko.citymonitorweb.exceptions.EntityNotFoundException;
 import com.denysenko.citymonitorweb.models.dto.FileDTO;
 import com.denysenko.citymonitorweb.models.entities.File;
 import com.denysenko.citymonitorweb.repositories.hibernate.FileRepository;
@@ -22,9 +23,13 @@ public class FileServiceImpl implements FileService{
     private FileRepository fileRepository;
 
     public File getFileByID(Long id){
-        if(id == null) throw new IllegalArgumentException("File id should not be NULL");
         Optional<com.denysenko.citymonitorweb.models.entities.File> fileOpt = fileRepository.findById(id);
-        return fileOpt.orElseThrow(()-> new NoSuchElementException());
+        return fileOpt.orElseThrow(()-> new EntityNotFoundException("Не вдалось знайти файл з id = " + id));
+    }
+
+    public File getFileByTgFileId(String tgFileId){
+        Optional<com.denysenko.citymonitorweb.models.entities.File> fileOpt = fileRepository.findByFileID(tgFileId);
+        return fileOpt.orElseThrow(()-> new EntityNotFoundException("Не вдалось знайти файл з tgId = " + tgFileId));
     }
 
 }

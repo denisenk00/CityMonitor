@@ -1,32 +1,31 @@
 package com.denysenko.citymonitorweb.controllers;
 
 import com.denysenko.citymonitorweb.enums.LayoutStatus;
+import com.denysenko.citymonitorweb.exceptions.EntityNotFoundException;
+import com.denysenko.citymonitorweb.exceptions.InputValidationException;
 import com.denysenko.citymonitorweb.exceptions.RestException;
 import com.denysenko.citymonitorweb.models.domain.paging.Paged;
 import com.denysenko.citymonitorweb.models.domain.paging.Paging;
 import com.denysenko.citymonitorweb.models.dto.LayoutDTO;
-import com.denysenko.citymonitorweb.models.dto.QuizDTO;
 import com.denysenko.citymonitorweb.models.entities.Layout;
 import com.denysenko.citymonitorweb.models.entities.Quiz;
 import com.denysenko.citymonitorweb.services.converters.impl.LayoutEntityToDTOConverter;
-import com.denysenko.citymonitorweb.services.converters.impl.QuizEntityToDTOConverter;
 import com.denysenko.citymonitorweb.services.entity.AppealService;
 import com.denysenko.citymonitorweb.services.entity.LayoutService;
 import com.denysenko.citymonitorweb.services.entity.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 
 @Controller
@@ -64,9 +63,7 @@ public class LayoutController {
 
     @PostMapping("/")
     @PreAuthorize("hasAuthority('layouts:write')")
-    public String saveLayout(@Valid @ModelAttribute("layout") LayoutDTO layoutDTO, BindingResult bindingResult){
-        if(bindingResult.hasErrors()) throw new IllegalArgumentException();
-
+    public String saveLayout(@Valid @ModelAttribute("layout") LayoutDTO layoutDTO){
         Layout layout = layoutConverter.convertDTOToEntity(layoutDTO);
         layoutService.saveLayout(layout);
         return "redirect:/";
@@ -74,10 +71,13 @@ public class LayoutController {
 
     @GetMapping()
     @PreAuthorize("hasAuthority('layouts:read')")
-    public String layouts(Model model, @RequestParam(defaultValue = "1", required = false) int page, @RequestParam(defaultValue = "30", required = false) int size) {
-        Page<Layout> layoutPage = layoutService.getPageOfLayouts(page, size);
+    public String layouts(Model model, @RequestParam(defaultValue = "1", required = false) int pageNumber, @RequestParam(defaultValue = "30", required = false) int pageSize) {
+        if (pageNumber < 1 || pageSize < 1)
+            throw new InputValidationException("Номер сторінки та її розмір має бути більше нуля. Поточні значення: pageNumber = " + pageNumber + ", pageSize = " + pageSize);
+
+        Page<Layout> layoutPage = layoutService.getPageOfLayouts(pageNumber, pageSize);
         Page<LayoutDTO> dtoPage = layoutPage.map(layout -> layoutConverter.convertEntityToDTO(layout));
-        Paged<LayoutDTO> paged = new Paged(dtoPage, Paging.of(dtoPage.getTotalPages(), page, size));
+        Paged<LayoutDTO> paged = new Paged(dtoPage, Paging.of(dtoPage.getTotalPages(), pageNumber, pageSize));
 
         model.addAttribute("layouts", paged);
         return "layouts/layouts";
@@ -86,7 +86,13 @@ public class LayoutController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('layouts:read')")
     public String layoutPage(@PathVariable(name = "id") long id, Model model){
-        Layout layout = layoutService.getLayoutById(id);
+        Layout layout;
+        try {
+             layout = layoutService.getLayoutById(id);
+        }catch (EntityNotFoundException e){
+            throw new InputValidationException(e.getMessage(), e);
+        }
+
         LayoutDTO layoutDTO = layoutConverter.convertEntityToDTO(layout);
         List<Quiz> quizList = quizService.findQuizzesByLayoutId(layout.getId());
         model.addAttribute("mapCenterLat", mapCenterLat);
@@ -100,25 +106,32 @@ public class LayoutController {
     @PatchMapping("/{id}/changeAvailability")
     @PreAuthorize("hasAuthority('layouts:write')")
     public ResponseEntity changeLayoutAvailability(@PathVariable(name = "id") long id, @RequestParam(name = "deprecated") boolean isDeprecated){
-        LayoutStatus newlayoutStatus;
+        LayoutStatus newStatus;
         try {
             if(isDeprecated){
-                newlayoutStatus = layoutService.markLayoutAsDeprecated(id);
+                newStatus = layoutService.markLayoutAsDeprecated(id);
             }
             else{
-                newlayoutStatus = layoutService.markLayoutAsActual(id);
+                newStatus = layoutService.markLayoutAsActual(id);
             }
-        }catch (IllegalArgumentException e){
-            throw new RestException("", e);
+        }catch (EntityNotFoundException e){
+            throw new RestException(e.getMessage(), e, HttpStatus.BAD_REQUEST);
+        }catch (Exception e){
+            throw new RestException(e.getMessage(), e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        String body = "{\"msg\":\"success\", \"newStatus\":\"" + newlayoutStatus.getTitle() + "\"}";
+
+        String body = "{\"msg\":\"success\", \"newStatus\":\"" + newStatus.getTitle() + "\"}";
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(body);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('layouts:write')")
     public ResponseEntity deleteLayout(@PathVariable(name = "id") long id){
-        layoutService.deleteLayout(id);
+        try {
+            layoutService.deleteLayout(id);
+        }catch (Exception e){
+            throw new RestException(e.getMessage(), e, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"msg\":\"success\"}");
     }
 }

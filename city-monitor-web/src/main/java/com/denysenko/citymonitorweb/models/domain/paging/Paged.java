@@ -5,6 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 
+/**
+ *  @author https://github.com/martinwojtus/tutorials/tree/master/thymeleaf/thymeleaf-bootstrap-pagination
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
