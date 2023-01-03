@@ -1,16 +1,15 @@
 package com.denysenko.citymonitorbot;
 
-import org.apache.log4j.Logger;
+import lombok.extern.log4j.Log4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+@Log4j
 @SpringBootApplication
 public class CityMonitorBotApplication {
 
-    private static final Logger LOG = Logger.getLogger(CityMonitorBotApplication.class);
-
     public static void main(String[] args){
-        LOG.info("Application starting..");
+        log.info("Application starting..");
         SpringApplication.run(CityMonitorBotApplication.class, args);
     }
 }

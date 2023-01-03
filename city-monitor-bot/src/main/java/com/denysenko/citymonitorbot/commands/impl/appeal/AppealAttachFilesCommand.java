@@ -8,9 +8,11 @@ import com.denysenko.citymonitorbot.models.File;
 import com.denysenko.citymonitorbot.services.AppealService;
 import com.denysenko.citymonitorbot.services.BotUserService;
 import com.denysenko.citymonitorbot.services.TelegramService;
+import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
@@ -19,10 +21,10 @@ import java.util.Optional;
 
 import static org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton.builder;
 
+@Log4j
 @Component
 public class AppealAttachFilesCommand implements CommandSequence<Long> {
 
-    private static final Logger LOG = Logger.getLogger(AppealAttachFilesCommand.class);
     @Autowired
     private AppealEnterLocationCommand appealEnterLocationCommand;
     @Autowired
@@ -35,8 +37,9 @@ public class AppealAttachFilesCommand implements CommandSequence<Long> {
     private static final String MESSAGE = "Додайте фото або інші файли за необхідності і натисніть \"Далі\"";
 
     @Override
+    @Transactional
     public void execute(Long chatId) {
-        LOG.info("Attaching files to appeal started: chatId = " + chatId);
+        log.info("Attaching files to appeal started: chatId = " + chatId);
         botUserService.updateBotStateByChatId(chatId, BotStates.APPEAL_ATTACHING_FILES);
         ReplyKeyboardMarkup replyKeyboardMarkup = createKeyboard();
         telegramService.sendMessage(chatId, MESSAGE, replyKeyboardMarkup);
@@ -55,7 +58,7 @@ public class AppealAttachFilesCommand implements CommandSequence<Long> {
     }
 
     public void saveFile(Long chatId, String name, String fileId){
-        LOG.info("Saving file started: chatId = " + chatId + ", name = " + name + ", fileId + " + fileId);
+        log.info("Saving file started: chatId = " + chatId + ", name = " + name + ", fileId + " + fileId);
         File file = new File(name, fileId);
 
         Optional<Appeal> appeal = appealService.findAppealInCacheByChatId(chatId);
@@ -63,7 +66,7 @@ public class AppealAttachFilesCommand implements CommandSequence<Long> {
              existedAppeal.getFiles().add(file);
              appealService.updateAppealInCacheByChatId(chatId, existedAppeal);
         },
-        () -> LOG.error("Appeal for user with chatId = " + chatId + " was not found in cache repository"));
+        () -> log.error("Appeal for user with chatId = " + chatId + " was not found in cache repository"));
     }
 
     @Override

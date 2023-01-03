@@ -4,6 +4,7 @@ import com.denysenko.citymonitorbot.commands.Command;
 import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.services.BotUserService;
 import com.denysenko.citymonitorbot.services.TelegramService;
+import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,10 +15,10 @@ import java.util.Arrays;
 
 import static org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton.builder;
 
+@Log4j
 @Component
 public class StopCommand implements Command<Long> {
 
-    private static final Logger LOG = Logger.getLogger(StopCommand.class);
     @Autowired
     private BotUserService botUserService;
     @Autowired
@@ -27,7 +28,7 @@ public class StopCommand implements Command<Long> {
 
     @Override
     public void execute(Long chatId) {
-        LOG.info("Executing stop command: chatID = " + chatId);
+        log.info("Executing stop command: chatID = " + chatId);
         botUserService.deactivateBotUser(chatId);
         botUserService.removeBotStateByChatId(chatId);
         telegramService.sendMessage(chatId, STOP_MESSAGE, createStoppedBotKeyboard());

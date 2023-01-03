@@ -8,9 +8,10 @@ import com.denysenko.citymonitorbot.models.BotUser;
 import com.denysenko.citymonitorbot.services.AppealService;
 import com.denysenko.citymonitorbot.services.BotUserService;
 import com.denysenko.citymonitorbot.services.TelegramService;
-import org.apache.log4j.Logger;
+import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
@@ -19,10 +20,10 @@ import java.util.Optional;
 
 import static org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton.builder;
 
+@Log4j
 @Component
 public class AppealEnterDescriptionCommand implements Command<Long> {
 
-    private static final Logger LOG = Logger.getLogger(AppealEnterDescriptionCommand.class);
     @Autowired
     private BotUserService botUserService;
     @Autowired
@@ -36,8 +37,9 @@ public class AppealEnterDescriptionCommand implements Command<Long> {
     private static final String TEXT_SIZE_OVERFLOW = "Перевищено максимальну кількість символів. Для прикріплення великого обсягу інформації скористайтесь файлом";
 
     @Override
+    @Transactional
     public void execute(Long chatId) {
-        LOG.info("Entering description of appeal started: chatId = " + chatId);
+        log.info("Entering description of appeal started: chatId = " + chatId);
         botUserService.updateBotStateByChatId(chatId, BotStates.APPEAL_ENTERING_DESCRIPTION);
         ReplyKeyboardMarkup replyKeyboardMarkup = createKeyboard();
         telegramService.sendMessage(chatId, MESSAGE, replyKeyboardMarkup);
@@ -54,8 +56,9 @@ public class AppealEnterDescriptionCommand implements Command<Long> {
         return keyboardBuilder.build();
     }
 
+    @Transactional
     public void saveDescription(Long chatId, String text){
-        LOG.info("Saving description started: chatId = " + chatId + "text = " + text);
+        log.info("Saving description started: chatId = " + chatId + "text = " + text);
         if(text.length() > 2000){
             telegramService.sendMessage(chatId, TEXT_SIZE_OVERFLOW, null);
             return;
@@ -67,7 +70,7 @@ public class AppealEnterDescriptionCommand implements Command<Long> {
              existedAppeal.setText(text);
              appealService.updateAppealInCacheByChatId(chatId, existedAppeal);
         },
-        () -> LOG.error("Appeal for user with chatId = " + chatId + " was not found in cache repository"));
+        () -> log.error("Appeal for user with chatId = " + chatId + " was not found in cache repository"));
         appealAttachFilesCommand.execute(chatId);
     }
 

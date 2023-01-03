@@ -5,9 +5,11 @@ import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.services.BotUserService;
 import com.denysenko.citymonitorbot.services.TelegramService;
+import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
@@ -15,18 +17,19 @@ import java.util.Arrays;
 
 import static org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton.builder;
 
+@Log4j
 @Component
 public class ProfileMenuCommand implements Command<Long> {
 
-    private static final Logger LOG = Logger.getLogger(ProfileMenuCommand.class);
     @Autowired
     private TelegramService telegramService;
     @Autowired
     private BotUserService botUserService;
 
     @Override
+    @Transactional
     public void execute(Long chatId) {
-        LOG.info("Profile menu command started: chatId = " + chatId);
+        log.info("Profile menu command started: chatId = " + chatId);
         botUserService.updateBotStateByChatId(chatId, BotStates.PROFILE_MENU);
         telegramService.sendMessage(chatId, "Управління профілем:", createProfileMenuKeyboard());
     }

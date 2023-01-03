@@ -6,9 +6,11 @@ import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.models.BotUser;
 import com.denysenko.citymonitorbot.services.BotUserService;
 import com.denysenko.citymonitorbot.services.TelegramService;
+import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
@@ -20,10 +22,10 @@ import java.util.regex.Pattern;
 
 import static org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton.builder;
 
+@Log4j
 @Component
 public class ProfileEnterPhoneNumberCommand implements CommandSequence<Long> {
 
-    private static final Logger LOG = Logger.getLogger(ProfileEnterPhoneNumberCommand.class);
     @Autowired
     private ProfileEnterNameCommand enterNameCommand;
     @Autowired
@@ -41,33 +43,35 @@ public class ProfileEnterPhoneNumberCommand implements CommandSequence<Long> {
     private static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("^(\\s*)?(\\+)?([- _():=+]?\\d[- _():=+]?){10,14}(\\s*)?$");
 
     @Override
+    @Transactional
     public void execute(Long chatId) {
-        LOG.info("Entering phone number command started: chatId = " + chatId);
+        log.info("Entering phone number command started: chatId = " + chatId);
         botUserService.updateBotStateByChatId(chatId, BotStates.EDITING_PROFILE_PHONE);
         Optional<BotUser> botUser = botUserService.findBotUserByChatId(chatId);
         botUser.ifPresentOrElse(notActiveUser -> {
-                LOG.info("User with chatId = " + chatId + " has already registered");
+                log.info("User with chatId = " + chatId + " has already registered");
                 String oldPhone = notActiveUser.getPhone();
                 ReplyKeyboardMarkup keyboardMarkup = createKeyboard(true);
                 telegramService.sendMessage(chatId, MessageFormat.format(NOT_ACTIVE_USER_MESSAGE, oldPhone), keyboardMarkup);
             },
             ()->{
-                LOG.info("User with chatId = " + chatId + " isn't registered - new User");
+                log.info("User with chatId = " + chatId + " isn't registered - new User");
                 ReplyKeyboardMarkup keyboardMarkup = createKeyboard(false);
                 telegramService.sendMessage(chatId, NOT_REGISTERED_USER_MESSAGE, keyboardMarkup);
             });
     }
 
+    @Transactional
     public void savePhoneNumber(Long chatId, String phoneNumber){
-        LOG.info("Saving phone number: chatId = " + chatId + ", phoneNumber = " + phoneNumber);
+        log.info("Saving phone number: chatId = " + chatId + ", phoneNumber = " + phoneNumber);
         Matcher matcher = PHONE_NUMBER_PATTERN.matcher(phoneNumber);
         if (!matcher.find() || phoneNumber.length() > 13) {
-            LOG.info("Incorrect phone number");
+            log.info("Incorrect phone number");
             ReplyKeyboardMarkup replyKeyboardMarkup = botUserService.userIsRegistered(chatId) ? createKeyboard(true) : createKeyboard(false);
             telegramService.sendMessage(chatId, INCORRECT_PHONE_MESSAGE, replyKeyboardMarkup);
             return;
         } else if(botUserService.existsUserByPhone(phoneNumber)){
-            LOG.info("User with such phone already exists");
+            log.info("User with such phone already exists");
             ReplyKeyboardMarkup replyKeyboardMarkup = botUserService.userIsRegistered(chatId) ? createKeyboard(true) : createKeyboard(false);
             telegramService.sendMessage(chatId, PHONE_EXISTS_MESSAGE, replyKeyboardMarkup);
             return;
@@ -77,7 +81,7 @@ public class ProfileEnterPhoneNumberCommand implements CommandSequence<Long> {
                 existedBotUser.setPhone(phoneNumber);
                 botUserService.updateBotUserInCacheByChatId(chatId, existedBotUser);
             },
-            () -> LOG.error("User with chatId = " + chatId + " was not found in cache repository"));
+            () -> log.error("User with chatId = " + chatId + " was not found in cache repository"));
         executeNext(chatId);
     }
 

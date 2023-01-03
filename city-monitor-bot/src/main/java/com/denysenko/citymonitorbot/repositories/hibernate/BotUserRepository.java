@@ -10,9 +10,9 @@ import javax.transaction.Transactional;
 import java.util.Optional;
 
 
-public interface BotUserDAO extends JpaRepository<BotUser, Long> {
-    Optional<BotUser> findByChatId(Long chatId);
+public interface BotUserRepository extends JpaRepository<BotUser, Long> {
 
+    Optional<BotUser> findByChatId(Long chatId);
     boolean existsByChatId(Long chatId);
     boolean existsByPhone(String phone);
 

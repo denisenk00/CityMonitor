@@ -1,24 +1,24 @@
 package com.denysenko.citymonitorbot.services;
 
 import com.denysenko.citymonitorbot.models.Appeal;
-import com.denysenko.citymonitorbot.repositories.cache.AppealRepository;
-import com.denysenko.citymonitorbot.repositories.hibernate.AppealDAO;
+import com.denysenko.citymonitorbot.repositories.cache.AppealCacheRepository;
+import com.denysenko.citymonitorbot.repositories.hibernate.AppealRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Component
+@Service
 public class AppealService {
 
     @Autowired
-    private AppealDAO appealDAO;
+    private AppealRepository appealRepository;
     @Autowired
-    private AppealRepository appealCacheRepository;
+    private AppealCacheRepository appealCacheRepository;
 
     public void saveAppeal(Appeal appeal){
         if(appeal == null) throw new IllegalArgumentException("Appeal should not be NULL");
-        appealDAO.save(appeal);
+        appealRepository.save(appeal);
     }
 
     //Cache
