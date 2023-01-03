@@ -91,7 +91,7 @@ function changeMyPassword(username, oldPassword, newPassword){
     if(newPassword == null || newPassword == undefined){
         console.log("changing password, newPassword is null or undefined");
     }
-    let url = "/myprofile/update"
+    let url = "/myprofile/changePassword"
     return $.ajax({
         url: url,
         method: "PATCH",

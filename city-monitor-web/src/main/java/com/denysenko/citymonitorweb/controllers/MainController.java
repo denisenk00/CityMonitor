@@ -13,6 +13,7 @@ import com.denysenko.citymonitorweb.services.converters.impl.UserEntityToDTOConv
 import com.denysenko.citymonitorweb.services.entity.AppealService;
 import com.denysenko.citymonitorweb.services.entity.QuizService;
 import com.denysenko.citymonitorweb.services.entity.UserServicee;
+import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Log4j
 @Controller
 public class MainController {
     @Autowired
@@ -62,10 +64,11 @@ public class MainController {
         return "login";
     }
 
-    @PatchMapping("/myprofile/update")
-    public ResponseEntity updateCurrentProfile(@RequestParam("username") String username,
+    @PatchMapping("/myprofile/changePassword")
+    public ResponseEntity changePassword(@RequestParam("username") String username,
                                                        @RequestParam("oldPassword") String oldPassword,
                                                        @RequestParam("newPassword") String newPassword){
+        log.info("changing password called for username = " + username);
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String sessionUsername = auth.getName();
@@ -97,6 +100,7 @@ public class MainController {
     public String profilePage(Model model){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
+        log.info("Opening profile page for: " + username);
         User user = userService.getUserByUsername(username);
         UserDTO userDTO = userConverter.convertEntityToDTO(user);
         model.addAttribute("user", userDTO);
