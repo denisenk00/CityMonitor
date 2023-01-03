@@ -49,7 +49,7 @@ public class FileHandler implements Handler {
             List<PhotoSize> photos = message.getPhoto();
             PhotoSize photoSize = photos.get(photos.size()-1);
             name = photoSize.getFilePath();
-            if(name == null) name = "someImage_" + RandomStringUtils.randomNumeric(3);
+            if(name == null) name = "someImage_" + RandomStringUtils.randomNumeric(3) + ".jpeg";
             fileID = photoSize.getFileId();
         } else if(message.hasDocument()){
             Document document = message.getDocument();
