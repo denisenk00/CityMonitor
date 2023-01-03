@@ -51,15 +51,15 @@ $(function () {
                     },(data) => {
                         if(data.status == 400){
                             $('#old-password, #new-password, #new-password2').each(function (){
-                            $(this).removeClass('is-valid');
-                            $(this).val(null);
+                                $(this).removeClass('is-valid');
+                                $(this).val(null);
 
-                            let btn = $("#change-password-submit");
-                            btn.html("Змінити");
-                            btn.attr('disabled', false);
-                        });
-                    }
-                    alert(data.responseText);
+                                let btn = $("#change-password-submit");
+                                btn.html("Змінити");
+                                btn.attr('disabled', false);
+                            });
+                        }
+                        alert(data.responseText);
                 })
             }
         });

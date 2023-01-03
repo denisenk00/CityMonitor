@@ -5,6 +5,7 @@ import com.denysenko.citymonitorweb.enums.UserRole;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "USERS")
@@ -33,4 +34,16 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserAccountStatus userAccountStatus;
 
+    @PrePersist
+    void onCreate(){
+        if(Objects.isNull(userAccountStatus)){
+            userAccountStatus = UserAccountStatus.ACTIVE;
+        }
+    }
+
+    public User(String username, String password, UserRole role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
 }

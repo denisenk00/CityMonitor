@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CM - Користувачі</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+    <link type="text/css" rel="stylesheet" th:href="@{/css/customStyles.css}">
+    <script src="https://kit.fontawesome.com/97125d9c6b.js" crossorigin="anonymous" async></script>
+    <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous" async></script>
+    <script type="text/javascript" rel="script" th:src="@{/js/ajaxRequests.js}" defer></script>
+    <script type="text/javascript" rel="script" th:src="@{/js/usersPage.js}" defer></script>
+</head>
+<body class="bg-light">
+<div th:insert="header.html"></div>
+
+<div class="container py-5">
+    <button id="create-user-btn" class="btn btn-primary submit-btn">Створити нового</button>
+    <div id="create-user-area" style="display: none">
+        <h3>Створення користувача</h3>
+        <br>
+        <div class="mb-2 row">
+            <label class="col-md-2 col-form-label" for="new-username">Ім'я користувача</label>
+            <input class="form-control col-md-10" type="text" id="new-username">
+            <div class="invalid-feedback"></div>
+        </div>
+        <div class="mb-2 row">
+            <label class="col-md-2 col-form-label" for="new-role">Роль</label>
+            <select id="new-role" class="form-control col-md-10">
+                <option th:each="role : ${roles}"
+                        th:value="${role}" th:text="${role}">
+                </option>
+            </select>
+        </div>
+        <br>
+        <div class="d-flex justify-content-start">
+            <button id="create-user-submit" type="button" class="btn submit-btn">Створити</button>
+            <button id="cancel" type="button" class="mx-5">Назад</button>
+        </div>
+    </div>
+    <br><br>
+    <h3>Всі користувачі</h3>
+    <br>
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered table-condensed align-middle">
+            <thead>
+            <tr>
+                <th>Ім'я</th>
+                <th>Роль</th>
+                <th>Статус аккаунту</th>
+                <th sec:authorize="hasAnyAuthority('users:write')"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="clickable-row" th:each="user : ${users.page}">
+                <td><t th:text="${user.username}"></t></td>
+                <td>
+                    <select th:if="${#authorization.expression('hasAnyAuthority(''users:write'')')
+                                    and not (#strings.equals(#authentication.getPrincipal().getUsername(), user.username)
+                                                or #strings.equals(user.username, 'sysadm'))}"
+                            th:data-username="${user.username}"
+                            class="role-selector">
+                        <option th:each="role : ${roles}"
+                                th:value="${role}" th:text="${role}"
+                                th:selected="${#strings.equals(user.role, role)}">
+                        </option>
+                    </select>
+                    <t th:unless="${#authorization.expression('hasAnyAuthority(''users:write'')')
+                                    and not (#strings.equals(#authentication.getPrincipal().getUsername(), user.username)
+                                                or #strings.equals(user.username, 'sysadm'))}"
+                       th:text="${user.role}"></t>
+                </td>
+                <td>
+                    <select th:if="${#authorization.expression('hasAnyAuthority(''users:write'')')
+                                    and not (#strings.equals(#authentication.getPrincipal().getUsername(), user.username)
+                                                or #strings.equals(user.username, 'sysadm'))}"
+                            th:data-username="${user.username}"
+                            class="status-selector">
+                        <option th:each="status : ${accountStatuses}"
+                                th:value="${status}" th:text="${status}"
+                                th:selected="${#strings.equals(user.userAccountStatus, status)}">
+                        </option>
+                    </select>
+                    <t th:unless="${#authorization.expression('hasAnyAuthority(''users:write'')')
+                                    and not (#strings.equals(#authentication.getPrincipal().getUsername(), user.username)
+                                                or #strings.equals(user.username, 'sysadm'))}"
+                       th:text="${user.userAccountStatus}"></t>
+                </td>
+                <td sec:authorize="hasAnyAuthority('users:write')" th:if="${not (#strings.equals(#authentication.getPrincipal().getUsername(), user.username) or #strings.equals(user.username, 'sysadm')) }">
+                    <button class="btn btn-primary submit-btn reset-password" th:data-username="${user.username}">Скинути пароль</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<nav aria-label="Page navigation" class="paging mb-5">
+    <ul class="pagination justify-content-center" th:if="${users.page.totalPages > 1}">
+        <li class="page-item" th:classappend="${!users.paging.isPrevEnabled()? 'disabled' : ''}">
+            <a class="page-link" th:href="@{'/users?page=' + ${users.paging.pageNumber - 1} + '&size=' + ${users.paging.pageSize}}"
+               tabindex="-1">Previous</a>
+        </li>
+        <th:block th:each="item : ${users.paging.getItems()}">
+            <li class="page-item" th:classappend="${item.index == users.paging.pageNumber? 'active' : ''}"
+                th:if="${item.pageItemType.name() == 'PAGE'}">
+                <a class="page-link" th:href="@{'/users?page=' + ${item.index} + '&size=' + ${users.paging.pageSize}}"
+                   th:text="${item.index}"></a>
+            </li>
+            <li class="page-item disabled" th:if="${item.pageItemType.name() == 'DOTS'}">
+                <a class="page-link" href="#">...</a>
+            </li>
+        </th:block>
+        <li class="page-item" th:classappend="${!users.paging.isNextEnabled()? 'disabled' : ''}">
+            <a class="page-link" th:href="@{'/users?page=' + ${users.paging.pageNumber + 1} + '&size=' + ${users.paging.pageSize}}">Next</a>
+        </li>
+    </ul>
+</nav>
+</body>
+</html>
