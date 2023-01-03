@@ -48,16 +48,16 @@
         </div>
     </div>
 
-    <nav aria-label="Page navigation" class="paging">
+    <nav aria-label="Page navigation" class="paging mb-5">
         <ul class="pagination justify-content-center" th:if="${quizzes.page.totalPages > 1}">
             <li class="page-item" th:classappend="${!quizzes.paging.isPrevEnabled()? 'disabled' : ''}">
-                <a class="page-link" th:href="@{'/quizzes?page=' + ${quizzes.paging.pageNumber - 1}}"
+                <a class="page-link" th:href="@{'/quizzes?page=' + ${quizzes.paging.pageNumber - 1} + '&size=' + ${quizzes.paging.pageSize}}"
                    tabindex="-1">Previous</a>
             </li>
             <th:block th:each="item : ${quizzes.paging.getItems()}">
                 <li class="page-item" th:classappend="${item.index == quizzes.paging.pageNumber? 'active' : ''}"
                     th:if="${item.pageItemType.name() == 'PAGE'}">
-                    <a class="page-link" th:href="@{'/quizzes?page=' + ${item.index}}"
+                    <a class="page-link" th:href="@{'/quizzes?page=' + ${item.index} + '&size=' + ${quizzes.paging.pageSize}}"
                        th:text="${item.index}"></a>
                 </li>
                 <li class="page-item disabled" th:if="${item.pageItemType.name() == 'DOTS'}">
@@ -65,7 +65,7 @@
                 </li>
             </th:block>
             <li class="page-item" th:classappend="${!quizzes.paging.isNextEnabled()? 'disabled' : ''}">
-                <a class="page-link" th:href="@{'/quizzes?page=' + ${quizzes.paging.pageNumber + 1}}">Next</a>
+                <a class="page-link" th:href="@{'/quizzes?page=' + ${quizzes.paging.pageNumber + 1} + '&size=' + ${quizzes.paging.pageSize}}">Next</a>
             </li>
         </ul>
     </nav>

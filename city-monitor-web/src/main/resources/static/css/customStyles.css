@@ -37,3 +37,18 @@
 .table-row{
     cursor:pointer;
 }
+
+.page-link{
+    color: black;
+}
+
+.page-item.active .page-link {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.page-item :hover{
+    background-color: #a70000;
+    border-color: #a70000;
+    color: white;
+}

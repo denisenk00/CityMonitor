@@ -73,7 +73,9 @@ public class QuizController {
 
     @GetMapping()
     @PreAuthorize("hasAnyAuthority('quizzes:read')")
-    public String quizzesPage(Model model, @RequestParam(defaultValue = "1", required = false) int pageNumber, @RequestParam(defaultValue = "30", required = false) int pageSize){
+    public String quizzesPage(Model model,
+                              @RequestParam(name = "page", defaultValue = "1", required = false) int pageNumber,
+                              @RequestParam(name = "size", defaultValue = "30", required = false) int pageSize){
         log.info("Getting quizzes page with parameters: page = " + pageNumber + ", size = " + pageSize);
         if (pageNumber < 1 || pageSize < 1)
             throw new InputValidationException("Номер сторінки та її розмір має бути більше нуля. Поточні значення: pageNumber = " + pageNumber + ", pageSize = " + pageSize);
