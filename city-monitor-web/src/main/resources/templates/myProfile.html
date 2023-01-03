@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="uk" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+  <title>CM - Мій профіль</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+  <link type="text/css" rel="stylesheet" th:href="@{/css/customStyles.css}">
+  <script src="https://kit.fontawesome.com/97125d9c6b.js" crossorigin="anonymous" async></script>
+  <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous" async></script>
+  <script type="text/javascript" rel="script" th:src="@{/js/ajaxRequests.js}" defer></script>
+  <script type="text/javascript" charset="UTF-8" rel="script" th:src="@{/js/profilePage.js}" defer></script>
+</head>
+<body>
+<div th:insert="header.html"></div>
+  <div class="container py-5">
+    <h2>Мій профіль</h2>
+    <br>
+    <table class="table">
+      <tbody>
+      <tr>
+        <td class="name">Ім'я</td>
+        <td class="value" id="username-value" th:text="${user.username}"></td>
+      </tr>
+      <tr>
+        <td class="name">Роль</td>
+        <td class="value" th:text="${user.role}"></td>
+      </tr>
+      <tr>
+        <td class="name">Статус аккаунту</td>
+        <td class="value" th:text="${user.userAccountStatus}"></td>
+      </tr>
+      </tbody>
+    </table>
+    <br>
+    <button id="change-password-btn" class="btn btn-primary submit-btn">Змінити пароль</button>
+    <div id="change-password-area"></div>
+  </div>
+</body>

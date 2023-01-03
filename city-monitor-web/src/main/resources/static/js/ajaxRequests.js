@@ -80,3 +80,21 @@ function changeSetOfAppealsStatus(appealIDs, status){
         method: "PATCH"
     })
 }
+
+function changeMyPassword(username, oldPassword, newPassword){
+    if(username == null || username == undefined){
+        console.log("changing password, username is null or undefined");
+    }
+    if(oldPassword == null || oldPassword == undefined){
+        console.log("changing password, oldPassword is null or undefined");
+    }
+    if(newPassword == null || newPassword == undefined){
+        console.log("changing password, newPassword is null or undefined");
+    }
+    let url = "/myprofile/update"
+    return $.ajax({
+        url: url,
+        method: "PATCH",
+        data: { username: username, oldPassword: oldPassword, newPassword: newPassword}
+    })
+}
