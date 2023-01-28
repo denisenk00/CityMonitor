@@ -15,7 +15,11 @@
             changeAppealStatus(selectedAppealId, "VIEWED").then(()=>{
                 $(this).removeClass('unread');
                 let oldVal = Number.parseInt($("#unread-appeal-cnt").text());
-                $("#unread-appeal-cnt").text(oldVal-1);
+                if(oldVal == 1){
+                    $("#unread-appeal-cnt").remove();
+                }else {
+                    $("#unread-appeal-cnt").text(oldVal-1);
+                }
             },(data) => {
                 console.log(data.responseText);
                 alert(data.responseText);
