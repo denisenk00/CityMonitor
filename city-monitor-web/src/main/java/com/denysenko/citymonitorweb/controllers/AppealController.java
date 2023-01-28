@@ -69,7 +69,7 @@ public class AppealController {
     @PreAuthorize("hasAuthority('appeals:write')")
     public ResponseEntity changeStatus(@PathVariable(name = "id") long id, @RequestParam(name = "status") String status) {
         try {
-            AppealStatus appealStatus = AppealStatus.valueOf("status");
+            AppealStatus appealStatus = AppealStatus.valueOf(status);
             appealService.updateStatusById(id, appealStatus);
         } catch (IllegalArgumentException e){
             throw new RestException("Неприйнятний статус: " + status, e, HttpStatus.BAD_REQUEST);
