@@ -9,11 +9,15 @@ import com.denysenko.citymonitorbot.repositories.hibernate.BotUserRepository;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 @Log4j
 @Service
+@Validated
 public class BotUserService {
 
     @Autowired
@@ -24,67 +28,54 @@ public class BotUserService {
     private BotUserRepository botUserRepository;
 
     //Database
-    public Optional<BotUser> findBotUserByChatId(Long chatId){
-        if(chatId == null) throw new IllegalArgumentException("ChatId should not be NULL");
+    public Optional<BotUser> findBotUserByChatId(@NotNull Long chatId){
         return botUserRepository.findByChatId(chatId);
     }
 
-    public BotUser getBotUserByChatId(Long chatId){
-        if(chatId == null) throw new IllegalArgumentException("ChatId should not be NULL");
+    public BotUser getBotUserByChatId(@NotNull Long chatId){
         return botUserRepository.findByChatId(chatId)
                 .orElseThrow(() -> new EntityNotFoundException("botUser with chatId = " + chatId + " was not found"));
     }
 
-    public boolean userIsRegistered(Long chatId){
-        if(chatId == null) throw new IllegalArgumentException("ChatId should not be NULL");
+    public boolean userIsRegistered(@NotNull Long chatId){
         return botUserRepository.existsByChatId(chatId);
     }
 
-    public void saveBotUserToDB(BotUser botUser){
-        if(botUser == null) throw new IllegalArgumentException("botUser should not be NULL");
+    public void saveBotUserToDB(@NotNull BotUser botUser){
         botUserRepository.save(botUser);
     }
-    public boolean existsUserByPhone(String phone){
-        if(phone == null) throw new IllegalArgumentException("phone should not be NULL");
+
+    public boolean existsUserByPhone(@NotBlank String phone){
         return botUserRepository.existsByPhone(phone);
     }
 
-    public void deactivateBotUser(Long chatId){
-        if(chatId == null) throw new IllegalArgumentException("ChatId should not be NULL");
+    public void deactivateBotUser(@NotNull Long chatId){
         botUserRepository.changeActivity(chatId, false);
     }
 
     //Cache BotUserState
-    public Optional<BotStates> findBotStateByChatId(Long chatId){
-        if(chatId == null) throw new IllegalArgumentException("ChatId should not be NULL");
+    public Optional<BotStates> findBotStateByChatId(@NotNull Long chatId){
         return botUserStateCacheRepository.findBotStateByChatId(chatId);
     }
 
-    public void updateBotStateByChatId(Long chatId, BotStates botStates){
-        if(chatId == null) throw new IllegalArgumentException("ChatId should not be NULL");
-        if(botStates == null) throw new IllegalArgumentException("botStates should not be NULL");
+    public void updateBotStateByChatId(@NotNull Long chatId, @NotNull BotStates botStates){
         botUserStateCacheRepository.updateStateByChatId(chatId, botStates);
     }
 
-    public void removeBotStateByChatId(Long chatId){
-        if(chatId == null) throw new IllegalArgumentException("ChatId should not be NULL");
+    public void removeBotStateByChatId(@NotNull Long chatId){
         botUserStateCacheRepository.removeStateByChatId(chatId);
     }
 
     //Cache BotUser
-    public Optional<BotUser> findBotUserInCacheByChatId(Long chatId){
-        if(chatId == null) throw new IllegalArgumentException("ChatId should not be NULL");
+    public Optional<BotUser> findBotUserInCacheByChatId(@NotNull Long chatId){
         return botUserCacheRepository.findBotUserByChatId(chatId);
     }
 
-    public void updateBotUserInCacheByChatId(Long chatId, BotUser botUser){
-        if(botUser == null) throw new IllegalArgumentException("botUser should not be NULL");
-        if(chatId == null) throw new IllegalArgumentException("ChatId should not be NULL");
+    public void updateBotUserInCacheByChatId(@NotNull Long chatId, @NotNull BotUser botUser){
         botUserCacheRepository.saveBotUserByChatId(chatId, botUser);
     }
 
-    public void removeBotUserByChatIdFromCache(Long chatId){
-        if(chatId == null) throw new IllegalArgumentException("ChatId should not be NULL");
+    public void removeBotUserByChatIdFromCache(@NotNull Long chatId){
         botUserCacheRepository.removeBotUserByChatId(chatId);
     }
 
