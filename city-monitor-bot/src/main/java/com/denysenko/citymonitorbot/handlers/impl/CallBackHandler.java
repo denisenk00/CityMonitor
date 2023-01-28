@@ -2,6 +2,7 @@ package com.denysenko.citymonitorbot.handlers.impl;
 
 import com.denysenko.citymonitorbot.commands.impl.answer.SaveAnswerCommand;
 import com.denysenko.citymonitorbot.enums.BotStates;
+import com.denysenko.citymonitorbot.exceptions.NotAllowedQuizStatusException;
 import com.denysenko.citymonitorbot.handlers.Handler;
 import com.denysenko.citymonitorbot.services.BotUserService;
 import com.denysenko.citymonitorbot.services.TelegramService;
@@ -45,7 +46,12 @@ public class CallBackHandler implements Handler {
             String [] parameters = data.replace("answer:", "").split(",");
             Long quizId = Long.valueOf(parameters[0].split("=")[1]);
             Long optionId = Long.valueOf(parameters[1].split("=")[1]);
-            saveAnswerCommand.saveAnswer(chatId, quizId, optionId);
+            try {
+                saveAnswerCommand.saveAnswer(chatId, quizId, optionId);
+            }catch (NotAllowedQuizStatusException e){
+                log.warn("Quiz " + quizId + " has already finished. Saving answers in unavailable");
+                telegramService.sendAnswerCallbackQuery(callbackQuery.getId(), e.getMessage());
+            }
             telegramService.sendAnswerCallbackQuery(callbackQuery.getId(), "Дякуємо за участь! Вашу відповідь збережено.");
         }
     }
