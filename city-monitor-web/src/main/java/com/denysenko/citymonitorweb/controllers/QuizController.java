@@ -46,7 +46,14 @@ import java.util.List;
 @Controller
 @RequestMapping("/quizzes")
 public class QuizController {
-
+    @Value("${citymonitor.maps.center.lat}")
+    private String mapCenterLat;
+    @Value("${citymonitor.maps.center.lng}")
+    private String mapCenterLng;
+    @Value("${citymonitor.maps.zoom}")
+    private String mapZoom;
+    @Value("${citymonitor.googlemaps.apikey}")
+    private String GOOGLE_MAPS_API_KEY;
     @Autowired
     private QuizService quizService;
     @Autowired
@@ -91,10 +98,7 @@ public class QuizController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('quizzes:read')")
-    public String quizPage(Model model, @PathVariable("id") Long id,
-                                @Value("${citymonitor.maps.center.lat}") String mapCenterLat,
-                                @Value("${citymonitor.maps.center.lng}") String mapCenterLng,
-                                @Value("${citymonitor.maps.zoom}") String mapZoom) throws JsonProcessingException {
+    public String quizPage(Model model, @PathVariable("id") Long id) throws JsonProcessingException {
         log.info("Getting quiz page with parameters: id = " + id);
         Quiz quiz;
         try {
@@ -110,6 +114,7 @@ public class QuizController {
             model.addAttribute("mapCenterLat", mapCenterLat);
             model.addAttribute("mapCenterLng", mapCenterLng);
             model.addAttribute("mapZoom", mapZoom);
+            model.addAttribute("googlemaps_apikey", GOOGLE_MAPS_API_KEY);
             List<Result> results = resultService.findResultByQuizId(id);
             List<ResultDTO> resultDTOs = resultConverter.convertListsEntityToDTO(results);
             ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();

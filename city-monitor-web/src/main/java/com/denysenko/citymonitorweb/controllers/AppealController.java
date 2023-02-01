@@ -9,6 +9,7 @@ import com.denysenko.citymonitorweb.models.entities.Appeal;
 import com.denysenko.citymonitorweb.services.converters.impl.AppealEntityToDTOConverter;
 import com.denysenko.citymonitorweb.services.entity.AppealService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,8 @@ public class AppealController {
     private AppealService appealService;
     @Autowired
     private AppealEntityToDTOConverter appealConverter;
+    @Value("${citymonitor.googlemaps.apikey}")
+    private String GOOGLE_MAPS_API_KEY;
 
     @ModelAttribute("unreadAppealsCnt")
     public long getCountOfUnreadAppeals() {
@@ -61,6 +64,7 @@ public class AppealController {
         model.addAttribute("appeals", appealDTOs);
         model.addAttribute("page", pageNumber);
         model.addAttribute("size", pageSize);
+        model.addAttribute("googlemaps_apikey", GOOGLE_MAPS_API_KEY);
 
         return "appeals/appeals";
     }

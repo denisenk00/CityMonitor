@@ -37,6 +37,8 @@ public class LayoutController {
     private String mapCenterLng;
     @Value("${citymonitor.maps.zoom}")
     private String mapZoom;
+    @Value("${citymonitor.googlemaps.apikey}")
+    private String GOOGLE_MAPS_API_KEY;
     @Autowired
     private LayoutService layoutService;
     @Autowired
@@ -58,6 +60,7 @@ public class LayoutController {
         model.addAttribute("mapCenterLat", mapCenterLat);
         model.addAttribute("mapCenterLng", mapCenterLng);
         model.addAttribute("mapZoom", mapZoom);
+        model.addAttribute("googlemaps_apikey", GOOGLE_MAPS_API_KEY);
         return "layouts/newLayout";
     }
 
@@ -100,6 +103,7 @@ public class LayoutController {
         model.addAttribute("mapCenterLat", mapCenterLat);
         model.addAttribute("mapCenterLng", mapCenterLng);
         model.addAttribute("mapZoom", mapZoom);
+        model.addAttribute("googlemaps_apikey", GOOGLE_MAPS_API_KEY);
         model.addAttribute("layout", layoutDTO);
         model.addAttribute("quizzes", quizList);
         return "layouts/layout";
