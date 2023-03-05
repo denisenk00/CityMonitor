@@ -25,12 +25,16 @@ public class SaveAnswerCommand implements Command<Long> {
     private QuizService quizService;
 
     public void saveAnswer(Long chatId, Long quizId, Long optionId){
+        final String UNAVAILABLE_QUIZ_MESSAGE = "Це опитування вже завершено. Чекаємо на вашу участь в наступних!";
         BotUser botUser = botUserService.getBotUserByChatId(chatId);
         Long userId = botUser.getBotUserId();
 
+        if(!quizService.existsById(quizId))
+            throw new NotAllowedQuizStatusException(UNAVAILABLE_QUIZ_MESSAGE);
+
         Quiz quiz = quizService.getQuizById(quizId);
         if(quiz.getStatus().equals("FINISHED"))
-            throw new NotAllowedQuizStatusException("Це опитування вже завершено. Чекаємо на вашу участь в наступних!");
+            throw new NotAllowedQuizStatusException(UNAVAILABLE_QUIZ_MESSAGE);
 
         Optional<Answer> oldAnswerOpt = answerService.findAnswerByQuizIdAndUserId(quizId, userId);
         oldAnswerOpt.ifPresentOrElse((oldAnswer) -> {

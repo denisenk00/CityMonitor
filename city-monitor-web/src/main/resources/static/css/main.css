@@ -52,3 +52,8 @@
     border-color: #a70000;
     color: white;
 }
+
+t, p{
+    word-wrap: break-word;
+}
+

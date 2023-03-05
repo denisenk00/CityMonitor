@@ -22,4 +22,8 @@ public class QuizService {
         return quizRepository.findById(quizId)
                 .orElseThrow(() -> new EntityNotFoundException("Quiz with id = " + quizId + " was not found"));
     }
+
+    public boolean existsById(@NotNull Long quizId){
+        return quizRepository.existsById(quizId);
+    }
 }
