@@ -17,12 +17,14 @@ services:
   admin-panel:
     image: city-monitor-web
     container_name: city-monitor-web
+    restart: always
     ports:
       - '8088:8085'
     environment:
       - 'DATABASE_URL=jdbc:postgresql://postgresql:5432/CityMonitorDB'
       - 'DATABASE_USERNAME=postgres'
       - 'DATABASE_PASSWORD=postgres'
+      - 'TZ=Europe/Kiev'
     depends_on:
       - postgresql
 
@@ -33,5 +35,6 @@ services:
       - 'DATABASE_URL=jdbc:postgresql://postgresql:5432/CityMonitorDB'
       - 'DATABASE_USERNAME=postgres'
       - 'DATABASE_PASSWORD=postgres'
+      - 'TZ=Europe/Kiev'
     depends_on:
       - postgresql
