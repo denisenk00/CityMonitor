@@ -33,9 +33,9 @@ public class ProfileEnterNameCommand implements CommandSequence<Long> {
     @Autowired
     private ProfileEnterPhoneNumberCommand enterPhoneNumberCommand;
 
-    private static final String NOT_ACTIVE_USER_MESSAGE = "Ваше ім''я - {0}? Якщо ні, змініть відправивши нове";
-    private static final String NOT_REGISTERED_USER_MESSAGE = "Як до вас звертатися? Напишіть своє ім''я";
-    private static final String INCORRECT_NAME_MESSAGE = "Дані не схожі на ім''я, будь-ласка, перевірте та повторіть спробу";
+    private static final String NOT_ACTIVE_USER_MESSAGE = "Ваше ім'я - {0}? Якщо ні, змініть відправивши нове";
+    private static final String NOT_REGISTERED_USER_MESSAGE = "Як до вас звертатися? Напишіть своє ім'я";
+    private static final String INCORRECT_NAME_MESSAGE = "Дані не схожі на ім'я, будь-ласка, перевірте та повторіть спробу";
 
     private static final Pattern NAME_PATTERN = Pattern.compile("[a-zA-Zа-яА-я]");
 

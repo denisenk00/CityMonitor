@@ -29,7 +29,8 @@ public class FileHandler implements Handler {
             message = update.getMessage();
             if(!(message.hasPhoto() || message.hasDocument() || message.hasVideo() || message.hasAudio()))
                 return false;
-        }
+        } else return false;
+
         Long chatId = message.getChatId();
         Optional<BotStates> botUserState = botUserService.findBotStateByChatId(chatId);
         if(botUserState.isPresent()){
