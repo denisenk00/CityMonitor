@@ -15,7 +15,6 @@ function initMap() {
         center: {lat: mapCenterLat, lng: mapCenterLng}
     }
     map = new google.maps.Map(mapElement, mapOptions);
-    console.log(geoJson);
     map.data.addGeoJson(JSON.parse(geoJson));
 
     map.data.setStyle(function(feature) {
