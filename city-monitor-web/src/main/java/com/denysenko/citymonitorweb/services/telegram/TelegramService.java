@@ -11,6 +11,6 @@ import java.io.IOException;
 
 @Validated
 public interface TelegramService {
-    void sendQuizToChats(@NotNull Iterable<Long> chatIDs, @NotNull Quiz quiz) throws TelegramApiException;
+    void sendQuizToChats(@NotNull Iterable<Long> chatIDs, @NotNull Quiz quiz) throws TelegramApiException, InterruptedException;
     FileInputStream getFileByID(@NotBlank String tgFileId) throws IOException, TelegramApiException;
 }

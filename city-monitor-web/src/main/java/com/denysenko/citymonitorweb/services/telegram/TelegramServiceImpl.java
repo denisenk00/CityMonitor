@@ -40,7 +40,7 @@ public class TelegramServiceImpl extends DefaultAbsSender implements TelegramSer
 
     @Transactional
     @Override
-    public void sendQuizToChats(Iterable<Long> chatIds, Quiz quiz) throws TelegramApiException{
+    public void sendQuizToChats(Iterable<Long> chatIds, Quiz quiz) throws TelegramApiException, InterruptedException {
         log.info("Sending quiz: quiz = " + quiz.toString());
         SendMessage.SendMessageBuilder messageBuilder = SendMessage.builder();
 
@@ -68,8 +68,10 @@ public class TelegramServiceImpl extends DefaultAbsSender implements TelegramSer
         }
 
         for (Long chatId : chatIds) {
+            Thread.sleep(35);
             execute(messageBuilder.chatId(String.valueOf(chatId)).build());
             for (SendDocument document : sendDocumentList) {
+                Thread.sleep(35);
                 document.setChatId(String.valueOf(chatId));
                 execute(document);
             }

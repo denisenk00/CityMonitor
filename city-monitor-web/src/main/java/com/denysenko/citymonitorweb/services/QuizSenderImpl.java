@@ -10,10 +10,11 @@ import com.denysenko.citymonitorweb.services.entity.QuizService;
 import com.denysenko.citymonitorweb.services.telegram.TelegramService;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiValidationException;
 
 import java.util.*;
 
@@ -55,7 +56,15 @@ public class QuizSenderImpl implements QuizSender {
 
         try {
             telegramService.sendQuizToChats(chatIDs, quiz);
-        } catch (TelegramApiException e) {
+        } catch (TelegramApiValidationException e){
+            log.warn("Exception raised", e);
+        } catch (TelegramApiRequestException e){
+            log.warn("Exception raised:", e);
+            int code = e.getErrorCode();
+            if(code == 420 || code == 406 || code == 404 || code == 400){
+                throw new SendQuizException(e.getMessage(), e, quiz, chatIDs);
+            }
+        }catch (TelegramApiException | InterruptedException e) {
             String reason = "Помилка при надсиланні даних до Telegram API";
             throw new SendQuizException(reason, e, quiz, chatIDs);
         }
