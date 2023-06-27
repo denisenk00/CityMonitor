@@ -6,8 +6,8 @@ import com.denysenko.citymonitorbot.exceptions.NotAllowedQuizStatusException;
 import com.denysenko.citymonitorbot.handlers.Handler;
 import com.denysenko.citymonitorbot.services.BotUserService;
 import com.denysenko.citymonitorbot.services.TelegramService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -15,15 +15,13 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.Optional;
 
 @Log4j
+@RequiredArgsConstructor
 @Component
 public class CallBackHandler implements Handler {
 
-    @Autowired
-    private BotUserService botUserService;
-    @Autowired
-    private SaveAnswerCommand saveAnswerCommand;
-    @Autowired
-    private TelegramService telegramService;
+    private final BotUserService botUserService;
+    private final SaveAnswerCommand saveAnswerCommand;
+    private final TelegramService telegramService;
 
     @Override
     public boolean isApplicable(Update update) {

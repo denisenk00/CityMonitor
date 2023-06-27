@@ -3,7 +3,6 @@ package com.denysenko.citymonitorweb.services;
 import com.denysenko.citymonitorweb.models.entities.Quiz;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 @Validated

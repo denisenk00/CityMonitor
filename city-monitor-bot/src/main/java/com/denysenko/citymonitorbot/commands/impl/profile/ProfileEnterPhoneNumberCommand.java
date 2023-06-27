@@ -6,8 +6,8 @@ import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.models.BotUser;
 import com.denysenko.citymonitorbot.services.BotUserService;
 import com.denysenko.citymonitorbot.services.TelegramService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 import static org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton.builder;
 
 @Log4j
+@RequiredArgsConstructor
 @Component
 public class ProfileEnterPhoneNumberCommand implements CommandSequence<Long> {
 
@@ -30,10 +31,8 @@ public class ProfileEnterPhoneNumberCommand implements CommandSequence<Long> {
     private ProfileEnterNameCommand enterNameCommand;
     @Autowired
     private ProfileEnterLocationCommand enterLocationCommand;
-    @Autowired
-    private TelegramService telegramService;
-    @Autowired
-    private BotUserService botUserService;
+    private final TelegramService telegramService;
+    private final BotUserService botUserService;
 
     private static final String NOT_ACTIVE_USER_MESSAGE = "Ваш телефон - {0}? Якщо хочете змінити, введіть новий або натисніть кнопку для відправки поточного";
     private static final String NOT_REGISTERED_USER_MESSAGE = "Введіть номер телефону або натисніть кнопку для відправки поточного, він буде використаний у разі необхідності зв'язку з вами";

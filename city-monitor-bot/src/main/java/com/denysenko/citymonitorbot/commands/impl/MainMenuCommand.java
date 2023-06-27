@@ -5,7 +5,8 @@ import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.services.BotUserService;
 import com.denysenko.citymonitorbot.services.TelegramService;
-import org.apache.log4j.Logger;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,19 +17,18 @@ import java.util.Arrays;
 
 import static org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton.builder;
 
+@Log4j
+@RequiredArgsConstructor
 @Component
 public class MainMenuCommand implements Command<Long> {
 
-    private static final Logger LOG = Logger.getLogger(MainMenuCommand.class);
-    @Autowired
-    private BotUserService botUserService;
-    @Autowired
-    private TelegramService telegramService;
+    private final BotUserService botUserService;
+    private final TelegramService telegramService;
 
     @Override
     @Transactional
     public void execute(Long chatId) {
-        LOG.info("Main menu command started: chatId = " + chatId);
+        log.info("Main menu command started: chatId = " + chatId);
         botUserService.updateBotStateByChatId(chatId, BotStates.MAIN_MENU);
         telegramService.sendMessage(chatId, "Головне меню:", createMainMenuKeyboard());
     }

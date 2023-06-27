@@ -3,6 +3,7 @@ package com.denysenko.citymonitorbot.services;
 import com.denysenko.citymonitorbot.models.Appeal;
 import com.denysenko.citymonitorbot.repositories.cache.AppealCacheRepository;
 import com.denysenko.citymonitorbot.repositories.hibernate.AppealRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -11,13 +12,12 @@ import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 @Validated
 public class AppealService {
 
-    @Autowired
-    private AppealRepository appealRepository;
-    @Autowired
-    private AppealCacheRepository appealCacheRepository;
+    private final AppealRepository appealRepository;
+    private final AppealCacheRepository appealCacheRepository;
 
     public void saveAppeal(@NotNull Appeal appeal){
         appealRepository.save(appeal);

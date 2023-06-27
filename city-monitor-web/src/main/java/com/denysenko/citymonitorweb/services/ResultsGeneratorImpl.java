@@ -2,9 +2,9 @@ package com.denysenko.citymonitorweb.services;
 
 import com.denysenko.citymonitorweb.models.entities.*;
 import com.denysenko.citymonitorweb.services.entity.AnswerService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.locationtech.jts.geom.Point;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -12,10 +12,11 @@ import java.util.List;
 import java.util.Set;
 
 @Log4j
+@RequiredArgsConstructor
 @Service
 public class ResultsGeneratorImpl implements ResultsGenerator{
-    @Autowired
-    private AnswerService answerService;
+
+    private final AnswerService answerService;
 
     public Set<Result> generateResultsOfQuiz(Quiz quiz){
         log.info("generating result of quiz id = " + quiz.getId());

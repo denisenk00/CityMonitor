@@ -16,8 +16,8 @@ import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.handlers.Handler;
 import com.denysenko.citymonitorbot.services.AppealService;
 import com.denysenko.citymonitorbot.services.BotUserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -28,32 +28,22 @@ import java.util.Map;
 import java.util.Optional;
 
 @Log4j
+@RequiredArgsConstructor
 @Component
 public class ReplyButtonHandler implements Handler {
-    @Autowired
-    private StartCommand startCommand;
-    @Autowired
-    private ProfileEnterNameCommand profileEnterNameCommand;
-    @Autowired
-    private ProfileEnterPhoneNumberCommand profileEnterPhoneNumberCommand;
-    @Autowired
-    private ProfileEnterLocationCommand profileEnterLocationCommand;
-    @Autowired
-    private ProfileMenuCommand profileMenuCommand;
-    @Autowired
-    private BotUserService botUserService;
-    @Autowired
-    private AppealService appealService;
-    @Autowired
-    private SaveAppealCommand saveAppealCommand;
-    @Autowired
-    private MainMenuCommand mainMenuCommand;
-    @Autowired
-    private StopCommand stopCommand;
-    @Autowired
-    private AppealEnterDescriptionCommand appealEnterDescriptionCommand;
-    @Autowired
-    private AppealAttachFilesCommand appealAttachFilesCommand;
+
+    private final StartCommand startCommand;
+    private final ProfileEnterNameCommand profileEnterNameCommand;
+    private final ProfileEnterPhoneNumberCommand profileEnterPhoneNumberCommand;
+    private final ProfileEnterLocationCommand profileEnterLocationCommand;
+    private final ProfileMenuCommand profileMenuCommand;
+    private final BotUserService botUserService;
+    private final AppealService appealService;
+    private final SaveAppealCommand saveAppealCommand;
+    private final MainMenuCommand mainMenuCommand;
+    private final StopCommand stopCommand;
+    private final AppealEnterDescriptionCommand appealEnterDescriptionCommand;
+    private final AppealAttachFilesCommand appealAttachFilesCommand;
 
     private Map<BotStates, CommandSequence<Long>> sequenceCommandMap;
 

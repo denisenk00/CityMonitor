@@ -1,6 +1,7 @@
 package com.denysenko.citymonitorbot;
 
 import com.denysenko.citymonitorbot.handlers.SuperUpdateHandler;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,7 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import javax.annotation.PostConstruct;
 
 @Log4j
+@RequiredArgsConstructor
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
 
@@ -21,8 +23,8 @@ public class TelegramBot extends TelegramLongPollingBot {
     private String botUsername;
     @Value("${telegram.bot.token}")
     private String botToken;
-    @Autowired
-    private SuperUpdateHandler superUpdateHandler;
+
+    private final SuperUpdateHandler superUpdateHandler;
 
     @Override
     public String getBotUsername() {

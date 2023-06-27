@@ -6,8 +6,8 @@ import com.denysenko.citymonitorweb.models.dto.LocalDTO;
 import com.denysenko.citymonitorweb.models.dto.LocationPointDTO;
 import com.denysenko.citymonitorweb.models.entities.Appeal;
 import com.denysenko.citymonitorweb.services.converters.EntityDTOConverter;
+import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Service;
@@ -15,12 +15,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 
+@RequiredArgsConstructor
 @Service
 public class AppealEntityToDTOConverter implements EntityDTOConverter<Appeal, AppealDTO> {
-    @Autowired
-    private FileEntityToDTOConverter fileEntityToDTOConverter;
-    @Autowired
-    private LocalEntityToDTOConverter localEntityToDTOConverter;
+
+    private final FileEntityToDTOConverter fileEntityToDTOConverter;
+    private final LocalEntityToDTOConverter localEntityToDTOConverter;
 
     @Override
     public Appeal convertDTOToEntity(AppealDTO appealDTO) {

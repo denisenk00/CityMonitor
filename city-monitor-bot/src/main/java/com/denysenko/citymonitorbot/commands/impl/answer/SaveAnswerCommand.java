@@ -8,21 +8,20 @@ import com.denysenko.citymonitorbot.models.Quiz;
 import com.denysenko.citymonitorbot.services.AnswerService;
 import com.denysenko.citymonitorbot.services.BotUserService;
 import com.denysenko.citymonitorbot.services.QuizService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Log4j
+@RequiredArgsConstructor
 @Component
 public class SaveAnswerCommand implements Command<Long> {
-    @Autowired
-    private AnswerService answerService;
-    @Autowired
-    private BotUserService botUserService;
-    @Autowired
-    private QuizService quizService;
+
+    private final AnswerService answerService;
+    private final BotUserService botUserService;
+    private final QuizService quizService;
 
     public void saveAnswer(Long chatId, Long quizId, Long optionId){
         final String UNAVAILABLE_QUIZ_MESSAGE = "Це опитування вже завершено. Чекаємо на вашу участь в наступних!";

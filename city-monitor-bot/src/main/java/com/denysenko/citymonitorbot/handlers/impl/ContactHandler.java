@@ -4,9 +4,8 @@ import com.denysenko.citymonitorbot.commands.impl.profile.ProfileEnterPhoneNumbe
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.handlers.Handler;
 import com.denysenko.citymonitorbot.services.BotUserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Contact;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -15,13 +14,12 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.Optional;
 
 @Log4j
+@RequiredArgsConstructor
 @Component
 public class ContactHandler implements Handler {
 
-    @Autowired
-    private ProfileEnterPhoneNumberCommand profileEnterPhoneNumberCommand;
-    @Autowired
-    private BotUserService botUserService;
+    private final ProfileEnterPhoneNumberCommand profileEnterPhoneNumberCommand;
+    private final BotUserService botUserService;
 
     @Override
     public boolean isApplicable(Update update) {

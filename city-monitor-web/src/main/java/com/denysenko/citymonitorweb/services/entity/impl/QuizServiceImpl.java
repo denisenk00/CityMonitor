@@ -6,20 +6,21 @@ import com.denysenko.citymonitorweb.models.entities.Quiz;
 
 import com.denysenko.citymonitorweb.repositories.hibernate.QuizRepository;
 import com.denysenko.citymonitorweb.services.entity.QuizService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
 @Log4j
+@RequiredArgsConstructor
 @Service
 public class QuizServiceImpl implements QuizService {
-    @Autowired
-    private QuizRepository quizRepository;
+
+    private final QuizRepository quizRepository;
 
     @Override
     public List<Quiz> getLast10Quizzes() {

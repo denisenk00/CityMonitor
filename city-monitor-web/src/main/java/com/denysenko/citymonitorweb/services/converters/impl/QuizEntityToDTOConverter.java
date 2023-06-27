@@ -7,6 +7,7 @@ import com.denysenko.citymonitorweb.models.entities.Quiz;
 import com.denysenko.citymonitorweb.repositories.hibernate.QuizRepository;
 import com.denysenko.citymonitorweb.services.converters.EntityDTOConverter;
 import javassist.NotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
@@ -14,16 +15,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class QuizEntityToDTOConverter implements EntityDTOConverter<Quiz, QuizDTO> {
-    @Autowired
-    private FileEntityToDTOConverter fileConverter;
-    @Autowired
-    private OptionEntityToDTOConverter optionConverter;
-    @Autowired
-    private LayoutEntityToDTOConverter layoutConverter;
-    @Autowired
-    private QuizRepository quizRepository;
+
+    private final FileEntityToDTOConverter fileConverter;
+    private final OptionEntityToDTOConverter optionConverter;
+    private final LayoutEntityToDTOConverter layoutConverter;
+    private final QuizRepository quizRepository;
 
 
     @Override

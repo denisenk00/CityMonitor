@@ -4,6 +4,7 @@ import com.denysenko.citymonitorweb.models.dto.FileDTO;
 import com.denysenko.citymonitorweb.models.entities.File;
 import com.denysenko.citymonitorweb.repositories.hibernate.FileRepository;
 import com.denysenko.citymonitorweb.services.converters.EntityDTOConverter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
@@ -11,10 +12,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class FileEntityToDTOConverter implements EntityDTOConverter<File, FileDTO> {
-    @Autowired
-    private FileRepository fileRepository;
+
+    private final FileRepository fileRepository;
 
     @Override
     public File convertDTOToEntity(FileDTO fileDTO) throws ConversionFailedException {

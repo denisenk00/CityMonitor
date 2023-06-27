@@ -1,6 +1,7 @@
 package com.denysenko.citymonitorweb.configurations;
 
 import com.denysenko.citymonitorweb.services.security.SecurityUserServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,12 +17,12 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 
 @Configuration
+@RequiredArgsConstructor
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private SecurityUserServiceImpl securityUserServiceImpl;
+    private final SecurityUserServiceImpl securityUserServiceImpl;
 
     @Bean
     public PasswordEncoder bCryptPasswordEncoder(){

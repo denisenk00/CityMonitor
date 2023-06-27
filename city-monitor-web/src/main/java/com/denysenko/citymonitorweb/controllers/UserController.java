@@ -13,7 +13,7 @@ import com.denysenko.citymonitorweb.models.entities.User;
 import com.denysenko.citymonitorweb.services.converters.impl.UserEntityToDTOConverter;
 import com.denysenko.citymonitorweb.services.entity.AppealService;
 import com.denysenko.citymonitorweb.services.entity.UserServicee;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,15 +28,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Controller
 @RequestMapping("/users")
 public class UserController {
-    @Autowired
-    private AppealService appealService;
-    @Autowired
-    private UserServicee userServicee;
-    @Autowired
-    private UserEntityToDTOConverter userConverter;
+
+    private final AppealService appealService;
+    private final UserServicee userServicee;
+    private final UserEntityToDTOConverter userConverter;
 
 
     @ModelAttribute("unreadAppealsCnt")

@@ -5,17 +5,19 @@ import com.denysenko.citymonitorweb.models.entities.Local;
 import com.denysenko.citymonitorweb.models.entities.Polygon;
 import com.denysenko.citymonitorweb.repositories.hibernate.LocalRepository;
 import com.denysenko.citymonitorweb.services.entity.LocalService;
+import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class LocalServiceImpl implements LocalService {
-    @Autowired
-    private LocalRepository localRepository;
+
+    private final LocalRepository localRepository;
 
     @Override
     public List<Long> getChatIdsLocatedWithinLayout(Layout layout) {

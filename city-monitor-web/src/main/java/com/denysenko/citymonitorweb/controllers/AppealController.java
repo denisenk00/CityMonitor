@@ -8,7 +8,7 @@ import com.denysenko.citymonitorweb.models.dto.AppealDTO;
 import com.denysenko.citymonitorweb.models.entities.Appeal;
 import com.denysenko.citymonitorweb.services.converters.impl.AppealEntityToDTOConverter;
 import com.denysenko.citymonitorweb.services.entity.AppealService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
+@RequiredArgsConstructor
 @Controller
 @RequestMapping("/appeals")
 public class AppealController {
-    @Autowired
-    private AppealService appealService;
-    @Autowired
-    private AppealEntityToDTOConverter appealConverter;
+
+    private final AppealService appealService;
+    private final AppealEntityToDTOConverter appealConverter;
     @Value("${citymonitor.googlemaps.apikey}")
     private String GOOGLE_MAPS_API_KEY;
 

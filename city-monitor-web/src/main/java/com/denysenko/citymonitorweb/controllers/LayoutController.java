@@ -13,7 +13,7 @@ import com.denysenko.citymonitorweb.services.converters.impl.LayoutEntityToDTOCo
 import com.denysenko.citymonitorweb.services.entity.AppealService;
 import com.denysenko.citymonitorweb.services.entity.LayoutService;
 import com.denysenko.citymonitorweb.services.entity.QuizService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-
+@RequiredArgsConstructor
 @Controller
 @RequestMapping("/layouts")
 public class LayoutController {
@@ -39,14 +39,11 @@ public class LayoutController {
     private String mapZoom;
     @Value("${citymonitor.googlemaps.apikey}")
     private String GOOGLE_MAPS_API_KEY;
-    @Autowired
-    private LayoutService layoutService;
-    @Autowired
-    private QuizService quizService;
-    @Autowired
-    private LayoutEntityToDTOConverter layoutConverter;
-    @Autowired
-    private AppealService appealService;
+
+    private final LayoutService layoutService;
+    private final QuizService quizService;
+    private final LayoutEntityToDTOConverter layoutConverter;
+    private final AppealService appealService;
 
     @ModelAttribute("unreadAppealsCnt")
     public long getCountOfUnreadAppeals(){

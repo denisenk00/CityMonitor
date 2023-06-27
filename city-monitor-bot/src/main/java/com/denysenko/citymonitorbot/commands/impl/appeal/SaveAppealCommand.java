@@ -4,22 +4,20 @@ import com.denysenko.citymonitorbot.commands.Command;
 import com.denysenko.citymonitorbot.models.Appeal;
 import com.denysenko.citymonitorbot.services.AppealService;
 import com.denysenko.citymonitorbot.services.TelegramService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Log4j
+@RequiredArgsConstructor
 @Component
 public class SaveAppealCommand implements Command<Long> {
 
-    @Autowired
-    private AppealService appealService;
-    @Autowired
-    private TelegramService telegramService;
+    private final AppealService appealService;
+    private final TelegramService telegramService;
 
     private static final String SUCCESS_SENDING_APPEAL_MESSAGE = "Ваше звернення збережено та буде оброблено найближчим часом. Наш працівник обов'язково зв'яжеться з вами якщо буде потреба";
 

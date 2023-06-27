@@ -7,26 +7,24 @@ import com.denysenko.citymonitorweb.models.entities.Result;
 import com.denysenko.citymonitorweb.services.entity.AnswerService;
 import com.denysenko.citymonitorweb.services.entity.QuizService;
 import com.denysenko.citymonitorweb.services.entity.ResultService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 @Log4j
+@RequiredArgsConstructor
 @Service
 public class QuizFinisherImpl implements QuizFinisher {
 
     private Map<Long, Timer> scheduledTasks = new HashMap<>();
-    @Autowired
-    private QuizService quizService;
-    @Autowired
-    private ResultService resultService;
-    @Autowired
-    private ResultsGenerator resultsGenerator;
-    @Autowired
-    private AnswerService answerService;
+
+    private final QuizService quizService;
+    private final ResultService resultService;
+    private final ResultsGenerator resultsGenerator;
+    private final AnswerService answerService;
 
     @Transactional
     @Override

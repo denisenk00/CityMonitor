@@ -8,8 +8,8 @@ import com.denysenko.citymonitorbot.models.BotUser;
 import com.denysenko.citymonitorbot.services.AppealService;
 import com.denysenko.citymonitorbot.services.BotUserService;
 import com.denysenko.citymonitorbot.services.TelegramService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -21,17 +21,14 @@ import java.util.Optional;
 import static org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton.builder;
 
 @Log4j
+@RequiredArgsConstructor
 @Component
 public class AppealEnterDescriptionCommand implements Command<Long> {
 
-    @Autowired
-    private BotUserService botUserService;
-    @Autowired
-    private TelegramService telegramService;
-    @Autowired
-    private AppealService appealService;
-    @Autowired
-    private AppealAttachFilesCommand appealAttachFilesCommand;
+    private final BotUserService botUserService;
+    private final TelegramService telegramService;
+    private final AppealService appealService;
+    private final AppealAttachFilesCommand appealAttachFilesCommand;
 
     private static final String MESSAGE = "Почнемо з тексту.. Опишіть детально проблему або іншу мету цього звернення (до 2000 символів)";
     private static final String TEXT_SIZE_OVERFLOW = "Перевищено максимальну кількість символів. Для прикріплення великого обсягу інформації скористайтесь файлом";

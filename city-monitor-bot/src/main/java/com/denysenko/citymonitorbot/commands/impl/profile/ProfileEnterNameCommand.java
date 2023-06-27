@@ -6,8 +6,8 @@ import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.models.BotUser;
 import com.denysenko.citymonitorbot.services.BotUserService;
 import com.denysenko.citymonitorbot.services.TelegramService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,13 +23,12 @@ import java.util.regex.Pattern;
 import static org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton.builder;
 
 @Log4j
+@RequiredArgsConstructor
 @Component
 public class ProfileEnterNameCommand implements CommandSequence<Long> {
 
-    @Autowired
-    private BotUserService botUserService;
-    @Autowired
-    private TelegramService telegramService;
+    private final BotUserService botUserService;
+    private final TelegramService telegramService;
     @Autowired
     private ProfileEnterPhoneNumberCommand enterPhoneNumberCommand;
 

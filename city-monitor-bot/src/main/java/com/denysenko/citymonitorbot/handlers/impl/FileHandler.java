@@ -4,9 +4,9 @@ import com.denysenko.citymonitorbot.commands.impl.appeal.AppealAttachFilesComman
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.handlers.Handler;
 import com.denysenko.citymonitorbot.services.BotUserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.*;
 
@@ -14,12 +14,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Log4j
+@RequiredArgsConstructor
 @Component
 public class FileHandler implements Handler {
 
-    @Autowired
     private BotUserService botUserService;
-    @Autowired
     private AppealAttachFilesCommand appealAttachFilesCommand;
 
     @Override

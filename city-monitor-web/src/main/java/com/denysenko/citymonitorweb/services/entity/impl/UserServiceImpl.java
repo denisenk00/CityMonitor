@@ -6,21 +6,20 @@ import com.denysenko.citymonitorweb.exceptions.EntityNotFoundException;
 import com.denysenko.citymonitorweb.models.entities.User;
 import com.denysenko.citymonitorweb.repositories.hibernate.UserRepository;
 import com.denysenko.citymonitorweb.services.entity.UserServicee;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
+@RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserServicee {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public User getUserById(Long id){

@@ -4,17 +4,16 @@ import com.denysenko.citymonitorweb.models.dto.OptionDTO;
 import com.denysenko.citymonitorweb.models.dto.ResultDTO;
 import com.denysenko.citymonitorweb.models.entities.Result;
 import com.denysenko.citymonitorweb.services.converters.EntityDTOConverter;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Service;
 
-
+@RequiredArgsConstructor
 @Service
 public class ResultEntityToDTOConverter implements EntityDTOConverter<Result, ResultDTO> {
 
-    @Autowired
-    private OptionEntityToDTOConverter optionConverter;
+    private final OptionEntityToDTOConverter optionConverter;
 
     @Override
     public Result convertDTOToEntity(ResultDTO resultDTO){

@@ -2,18 +2,18 @@ package com.denysenko.citymonitorbot.handlers.impl;
 
 import com.denysenko.citymonitorbot.handlers.Handler;
 import com.denysenko.citymonitorbot.services.BotUserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.ChatMemberUpdated;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Log4j
+@RequiredArgsConstructor
 @Component
 public class ChatMemberHandler implements Handler {
 
-    @Autowired
-    private BotUserService botUserService;
+    private final BotUserService botUserService;
 
     @Override
     public boolean isApplicable(Update update) {

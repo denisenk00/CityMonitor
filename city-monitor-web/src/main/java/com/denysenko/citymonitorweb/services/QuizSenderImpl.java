@@ -8,8 +8,8 @@ import com.denysenko.citymonitorweb.models.entities.Quiz;
 import com.denysenko.citymonitorweb.services.entity.LocalService;
 import com.denysenko.citymonitorweb.services.entity.QuizService;
 import com.denysenko.citymonitorweb.services.telegram.TelegramService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -19,14 +19,13 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiValidationException;
 import java.util.*;
 
 @Log4j
+@RequiredArgsConstructor
 @Service
 public class QuizSenderImpl implements QuizSender {
-    @Autowired
-    private TelegramService telegramService;
-    @Autowired
-    private LocalService localService;
-    @Autowired
-    private QuizService quizService;
+
+    private final TelegramService telegramService;
+    private final LocalService localService;
+    private final QuizService quizService;
 
     private Map<Long, Timer> scheduledTasks = new HashMap<>();
 

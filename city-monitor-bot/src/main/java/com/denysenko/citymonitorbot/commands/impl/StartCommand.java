@@ -5,26 +5,22 @@ import com.denysenko.citymonitorbot.commands.impl.profile.ProfileEnterNameComman
 import com.denysenko.citymonitorbot.models.BotUser;
 import com.denysenko.citymonitorbot.services.BotUserService;
 import com.denysenko.citymonitorbot.services.TelegramService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Log4j
+@RequiredArgsConstructor
 @Component
 public class StartCommand implements Command <Long>{
 
-    @Autowired
-    private BotUserService botUserService;
-    @Autowired
-    private TelegramService telegramService;
-    @Autowired
-    private ProfileEnterNameCommand profileEnterNameCommand;
-    @Autowired
-    private MainMenuCommand mainMenuCommand;
+    private final BotUserService botUserService;
+    private final TelegramService telegramService;
+    private final ProfileEnterNameCommand profileEnterNameCommand;
+    private final MainMenuCommand mainMenuCommand;
 
     private static final String BASIC_MESSAGE = "Привіт! Раді вітати тебе в нашому чат-боті. Ми налаштовані на тісну співпрацю з тобою, тож будь активним!\nРазом ми зможемо зробити наше місто кращим)";
     private static final String NOT_ACTIVE_USER_MESSAGE = "Хмм.. Я тебе пам'ятаю, перевір будь-ласка свої дані.";

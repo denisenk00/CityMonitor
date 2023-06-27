@@ -26,6 +26,7 @@ import com.denysenko.citymonitorweb.services.entity.ResultService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,6 +44,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Log4j
+@RequiredArgsConstructor
 @Controller
 @RequestMapping("/quizzes")
 public class QuizController {
@@ -54,24 +56,16 @@ public class QuizController {
     private String mapZoom;
     @Value("${citymonitor.googlemaps.apikey}")
     private String GOOGLE_MAPS_API_KEY;
-    @Autowired
-    private QuizService quizService;
-    @Autowired
-    private LayoutService layoutService;
-    @Autowired
-    private AppealService appealService;
-    @Autowired
-    private ResultService resultService;
-    @Autowired
-    private MultiFileToDTOConverter mFileConverter;
-    @Autowired
-    private QuizEntityToDTOConverter quizConverter;
-    @Autowired
-    private ResultEntityToDTOConverter resultConverter;
-    @Autowired
-    private QuizSender quizSender;
-    @Autowired
-    private QuizFinisher quizFinisher;
+
+    private final QuizService quizService;
+    private final LayoutService layoutService;
+    private final AppealService appealService;
+    private final ResultService resultService;
+    private final MultiFileToDTOConverter mFileConverter;
+    private final QuizEntityToDTOConverter quizConverter;
+    private final ResultEntityToDTOConverter resultConverter;
+    private final QuizSender quizSender;
+    private final QuizFinisher quizFinisher;
 
     @ModelAttribute("unreadAppealsCnt")
     public long getCountOfUnreadAppeals(){

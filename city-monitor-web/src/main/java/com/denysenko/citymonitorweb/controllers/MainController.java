@@ -13,8 +13,8 @@ import com.denysenko.citymonitorweb.services.converters.impl.UserEntityToDTOConv
 import com.denysenko.citymonitorweb.services.entity.AppealService;
 import com.denysenko.citymonitorweb.services.entity.QuizService;
 import com.denysenko.citymonitorweb.services.entity.UserServicee;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -26,21 +26,17 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Log4j
 @Controller
 public class MainController {
-    @Autowired
-    private QuizService quizService;
-    @Autowired
-    private QuizEntityToDTOConverter quizConverter;
-    @Autowired
-    private AppealService appealService;
-    @Autowired
-    private UserServicee userService;
-    @Autowired
-    private UserEntityToDTOConverter userConverter;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+
+    private final QuizService quizService;
+    private final QuizEntityToDTOConverter quizConverter;
+    private final AppealService appealService;
+    private final UserServicee userService;
+    private final UserEntityToDTOConverter userConverter;
+    private final PasswordEncoder passwordEncoder;
 
     @ModelAttribute("unreadAppealsCnt")
     public long getCountOfUnreadAppeals(){

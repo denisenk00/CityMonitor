@@ -6,23 +6,21 @@ import com.denysenko.citymonitorweb.models.entities.Layout;
 import com.denysenko.citymonitorweb.repositories.hibernate.LayoutRepository;
 import com.denysenko.citymonitorweb.repositories.hibernate.QuizRepository;
 import com.denysenko.citymonitorweb.services.entity.LayoutService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class LayoutServiceImpl implements LayoutService {
-    @Autowired
-    private LayoutRepository layoutRepository;
-    @Autowired
-    private QuizRepository quizRepository;
+
+    private final LayoutRepository layoutRepository;
+    private final QuizRepository quizRepository;
 
     public Layout getLayoutById(Long id){
         return layoutRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Не вдалось знайти макет з id = " + id));

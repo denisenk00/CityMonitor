@@ -6,8 +6,8 @@ import com.denysenko.citymonitorbot.models.BotUser;
 import com.denysenko.citymonitorbot.repositories.cache.BotUserCacheRepository;
 import com.denysenko.citymonitorbot.repositories.cache.UserStateCacheRepository;
 import com.denysenko.citymonitorbot.repositories.hibernate.BotUserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -16,16 +16,14 @@ import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 @Log4j
+@RequiredArgsConstructor
 @Service
 @Validated
 public class BotUserService {
 
-    @Autowired
-    private UserStateCacheRepository botUserStateCacheRepository;
-    @Autowired
-    private BotUserCacheRepository botUserCacheRepository;
-    @Autowired
-    private BotUserRepository botUserRepository;
+    private final UserStateCacheRepository botUserStateCacheRepository;
+    private final BotUserCacheRepository botUserCacheRepository;
+    private final BotUserRepository botUserRepository;
 
     //Database
     public Optional<BotUser> findBotUserByChatId(@NotNull Long chatId){

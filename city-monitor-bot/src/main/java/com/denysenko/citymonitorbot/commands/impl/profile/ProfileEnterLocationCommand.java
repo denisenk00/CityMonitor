@@ -7,8 +7,8 @@ import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.models.BotUser;
 import com.denysenko.citymonitorbot.services.BotUserService;
 import com.denysenko.citymonitorbot.services.TelegramService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.apache.log4j.Logger;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -24,15 +24,13 @@ import java.util.Optional;
 import static org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton.builder;
 
 @Log4j
+@RequiredArgsConstructor
 @Component
 public class ProfileEnterLocationCommand implements CommandSequence<Long> {
 
-    @Autowired
-    private TelegramService telegramService;
-    @Autowired
-    private BotUserService botUserService;
-    @Autowired
-    private MainMenuCommand mainMenuCommand;
+    private final TelegramService telegramService;
+    private final BotUserService botUserService;
+    private final MainMenuCommand mainMenuCommand;
     @Autowired
     private ProfileEnterPhoneNumberCommand enterPhoneNumberCommand;
 

@@ -7,7 +7,7 @@ import com.denysenko.citymonitorweb.models.entities.Layout;
 import com.denysenko.citymonitorweb.repositories.hibernate.LayoutRepository;
 import com.denysenko.citymonitorweb.services.converters.EntityDTOConverter;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Service;
@@ -22,11 +22,11 @@ import org.wololo.jts2geojson.GeoJSONWriter;
 import java.util.*;
 
 
+@RequiredArgsConstructor
 @Service
 public class LayoutEntityToDTOConverter implements EntityDTOConverter<Layout, LayoutDTO> {
 
-    @Autowired
-    private LayoutRepository layoutRepository;
+    private final LayoutRepository layoutRepository;
 
     @Override
     public Layout convertDTOToEntity(LayoutDTO layoutDTO) throws ConversionFailedException {

@@ -6,7 +6,7 @@ import com.denysenko.citymonitorweb.exceptions.EntityNotFoundException;
 import com.denysenko.citymonitorweb.models.entities.Appeal;
 import com.denysenko.citymonitorweb.repositories.hibernate.AppealRepository;
 import com.denysenko.citymonitorweb.services.entity.AppealService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -16,11 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 import java.util.Set;
 
+@RequiredArgsConstructor
 @Service
 public class AppealServiceImpl implements AppealService {
 
-    @Autowired
-    private AppealRepository appealRepository;
+    private final AppealRepository appealRepository;
 
     @Override
     public long countOfUnreadAppeals(){

@@ -7,12 +7,11 @@ import com.denysenko.citymonitorbot.models.Appeal;
 import com.denysenko.citymonitorbot.services.AppealService;
 import com.denysenko.citymonitorbot.services.BotUserService;
 import com.denysenko.citymonitorbot.services.TelegramService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.apache.log4j.Logger;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -24,15 +23,13 @@ import java.util.Optional;
 import static org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton.builder;
 
 @Log4j
+@RequiredArgsConstructor
 @Component
 public class AppealEnterLocationCommand implements Command<Long> {
 
-    @Autowired
-    private BotUserService botUserService;
-    @Autowired
-    private TelegramService telegramService;
-    @Autowired
-    private AppealService appealService;
+    private final BotUserService botUserService;
+    private final TelegramService telegramService;
+    private final AppealService appealService;
 
     private static final String MESSAGE = "Тут ви можете прикріпити геолокацію";
 

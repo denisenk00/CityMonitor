@@ -6,6 +6,7 @@ import com.denysenko.citymonitorweb.exceptions.InputValidationException;
 import com.denysenko.citymonitorweb.models.entities.File;
 import com.denysenko.citymonitorweb.services.entity.FileService;
 import com.denysenko.citymonitorweb.services.telegram.TelegramService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -21,13 +22,13 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
+@RequiredArgsConstructor
 @Controller
 @RequestMapping("/files")
 public class FileController {
-    @Autowired
-    private FileService fileService;
-    @Autowired
-    private TelegramService telegramService;
+
+    private final FileService fileService;
+    private final TelegramService telegramService;
 
     @GetMapping("/{id}")
     @ResponseBody
