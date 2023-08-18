@@ -1,11 +1,10 @@
 package com.denysenko.citymonitorbot.handlers.impl;
 
-import com.denysenko.citymonitorbot.commands.CommandSequence;
 import com.denysenko.citymonitorbot.commands.impl.MainMenuCommand;
 import com.denysenko.citymonitorbot.commands.impl.StartCommand;
 import com.denysenko.citymonitorbot.commands.impl.StopCommand;
-import com.denysenko.citymonitorbot.commands.impl.appeal.AppealAttachFilesCommand;
 import com.denysenko.citymonitorbot.commands.impl.appeal.AppealEnterDescriptionCommand;
+import com.denysenko.citymonitorbot.commands.impl.appeal.AppealEnterLocationCommand;
 import com.denysenko.citymonitorbot.commands.impl.appeal.SaveAppealCommand;
 import com.denysenko.citymonitorbot.commands.impl.profile.ProfileEnterLocationCommand;
 import com.denysenko.citymonitorbot.commands.impl.profile.ProfileEnterNameCommand;
@@ -18,6 +17,7 @@ import com.denysenko.citymonitorbot.services.AppealService;
 import com.denysenko.citymonitorbot.services.BotUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -26,6 +26,8 @@ import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 @Log4j
 @RequiredArgsConstructor
@@ -43,17 +45,34 @@ public class ReplyButtonHandler implements Handler {
     private final MainMenuCommand mainMenuCommand;
     private final StopCommand stopCommand;
     private final AppealEnterDescriptionCommand appealEnterDescriptionCommand;
-    private final AppealAttachFilesCommand appealAttachFilesCommand;
+    private final AppealEnterLocationCommand appealEnterLocationCommand;
 
-    private Map<BotStates, CommandSequence<Long>> sequenceCommandMap;
+    private Map<BotStates, ImmutablePair<Consumer, Consumer>> sequenceCommandMap;
 
     @PostConstruct
-    private void assignActionMap(){
+    private void configureCommandSequences(){
         sequenceCommandMap = new HashMap<>();
-        sequenceCommandMap.put(BotStates.EDITING_PROFILE_NAME, profileEnterNameCommand);
-        sequenceCommandMap.put(BotStates.EDITING_PROFILE_PHONE, profileEnterPhoneNumberCommand);
-        sequenceCommandMap.put(BotStates.EDITING_PROFILE_LOCATION, profileEnterLocationCommand);
-        sequenceCommandMap.put(BotStates.APPEAL_ATTACHING_FILES, appealAttachFilesCommand);
+        sequenceCommandMap.put(
+                BotStates.EDITING_PROFILE_NAME,
+                new ImmutablePair(null, (Consumer<Long>) profileEnterPhoneNumberCommand::execute)
+        );
+        sequenceCommandMap.put(
+                BotStates.EDITING_PROFILE_PHONE,
+                new ImmutablePair((Consumer<Long>) profileEnterNameCommand::execute, (Consumer<Long>) profileEnterLocationCommand::execute)
+        );
+        sequenceCommandMap.put(
+                BotStates.EDITING_PROFILE_LOCATION,
+                new ImmutablePair((Consumer<Long>) profileEnterPhoneNumberCommand::execute,
+                        (Consumer<Long>)(Long chatId) -> {
+                            botUserService.saveToDBAndCleanCache(chatId);
+                            mainMenuCommand.execute(chatId);
+                        }
+                )
+        );
+        sequenceCommandMap.put(
+                BotStates.APPEAL_ATTACHING_FILES,
+                new ImmutablePair<>(null, (Consumer<Long>) appealEnterLocationCommand::execute)
+        );
     }
 
     @Override
@@ -93,10 +112,10 @@ public class ReplyButtonHandler implements Handler {
         }else if(text.equalsIgnoreCase(Commands.NEXT_STEP_COMMAND.getTitle())) {
             BotStates botUserState = botUserService.findBotStateByChatId(chatId).get();
             log.info("next bot state = " + botUserState.getTitle());
-            sequenceCommandMap.get(botUserState).executeNext(chatId);
+            sequenceCommandMap.get(botUserState).getRight().accept(chatId);
         }else if(text.equalsIgnoreCase(Commands.PREVIOUS_STEP_COMMAND.getTitle())){
             BotStates botUserState = botUserService.findBotStateByChatId(chatId).get();
-            sequenceCommandMap.get(botUserState).executePrevious(chatId);
+            sequenceCommandMap.get(botUserState).getLeft().accept(chatId);
         }else if(text.equalsIgnoreCase(Commands.PROFILE_COMMAND.getTitle())){
             profileMenuCommand.execute(chatId);
         }else if(text.equalsIgnoreCase(Commands.SEND_APPEAL_COMMAND.getTitle())){

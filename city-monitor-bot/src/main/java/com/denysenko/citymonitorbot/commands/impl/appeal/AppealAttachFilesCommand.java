@@ -1,6 +1,6 @@
 package com.denysenko.citymonitorbot.commands.impl.appeal;
 
-import com.denysenko.citymonitorbot.commands.CommandSequence;
+import com.denysenko.citymonitorbot.commands.Command;
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.models.Appeal;
@@ -23,9 +23,8 @@ import static org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.K
 @Log4j
 @RequiredArgsConstructor
 @Component
-public class AppealAttachFilesCommand implements CommandSequence<Long> {
+public class AppealAttachFilesCommand implements Command<Long> {
 
-    private final AppealEnterLocationCommand appealEnterLocationCommand;
     private final BotUserService botUserService;
     private final TelegramService telegramService;
     private final AppealService appealService;
@@ -65,11 +64,4 @@ public class AppealAttachFilesCommand implements CommandSequence<Long> {
         () -> log.error("Appeal for user with chatId = " + chatId + " was not found in cache repository"));
     }
 
-    @Override
-    public void executeNext(Long chatId) {
-        appealEnterLocationCommand.execute(chatId);
-    }
-
-    @Override
-    public void executePrevious(Long chatId) {}
 }

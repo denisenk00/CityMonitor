@@ -28,7 +28,6 @@ public class AppealEnterDescriptionCommand implements Command<Long> {
     private final BotUserService botUserService;
     private final TelegramService telegramService;
     private final AppealService appealService;
-    private final AppealAttachFilesCommand appealAttachFilesCommand;
 
     private static final String MESSAGE = "Почнемо з тексту.. Опишіть детально проблему або іншу мету цього звернення (до 2000 символів)";
     private static final String TEXT_SIZE_OVERFLOW = "Перевищено максимальну кількість символів. Для прикріплення великого обсягу інформації скористайтесь файлом";
@@ -49,7 +48,6 @@ public class AppealEnterDescriptionCommand implements Command<Long> {
         keyboardBuilder.keyboardRow(new KeyboardRow(Arrays.asList(
                 builder().text(Commands.CANCEL_GENERAL_COMMAND.getTitle()).build()
         )));
-
         return keyboardBuilder.build();
     }
 
@@ -68,7 +66,6 @@ public class AppealEnterDescriptionCommand implements Command<Long> {
              appealService.updateAppealInCacheByChatId(chatId, existedAppeal);
         },
         () -> log.error("Appeal for user with chatId = " + chatId + " was not found in cache repository"));
-        appealAttachFilesCommand.execute(chatId);
     }
 
     private void createAppealInCache(Long chatId){

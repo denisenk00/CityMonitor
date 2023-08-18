@@ -1,6 +1,8 @@
 package com.denysenko.citymonitorbot.handlers.impl;
 
+import com.denysenko.citymonitorbot.commands.impl.appeal.AppealAttachFilesCommand;
 import com.denysenko.citymonitorbot.commands.impl.appeal.AppealEnterDescriptionCommand;
+import com.denysenko.citymonitorbot.commands.impl.profile.ProfileEnterLocationCommand;
 import com.denysenko.citymonitorbot.commands.impl.profile.ProfileEnterNameCommand;
 import com.denysenko.citymonitorbot.commands.impl.profile.ProfileEnterPhoneNumberCommand;
 import com.denysenko.citymonitorbot.enums.BotStates;
@@ -23,6 +25,8 @@ public class TextHandler implements Handler {
     private final ProfileEnterNameCommand profileEnterNameCommand;
     private final ProfileEnterPhoneNumberCommand profileEnterPhoneNumberCommand;
     private final AppealEnterDescriptionCommand appealEnterDescriptionCommand;
+    private final ProfileEnterLocationCommand profileEnterLocationCommand;
+    private final AppealAttachFilesCommand appealAttachFilesCommand;
 
     @Override
     public boolean isApplicable(Update update) {
@@ -46,10 +50,13 @@ public class TextHandler implements Handler {
 
         if(botState.equals(BotStates.EDITING_PROFILE_NAME)){
             profileEnterNameCommand.saveUserName(chatId, message.getText());
+            profileEnterPhoneNumberCommand.execute(chatId);
         }else if(botState.equals(BotStates.EDITING_PROFILE_PHONE)){
             profileEnterPhoneNumberCommand.savePhoneNumber(chatId, message.getText());
+            profileEnterLocationCommand.execute(chatId);
         }else if(botState.equals(BotStates.APPEAL_ENTERING_DESCRIPTION)){
             appealEnterDescriptionCommand.saveDescription(chatId, message.getText());
+            appealAttachFilesCommand.execute(chatId);
         }
     }
 }

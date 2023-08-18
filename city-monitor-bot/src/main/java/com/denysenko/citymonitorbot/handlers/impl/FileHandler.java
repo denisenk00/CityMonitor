@@ -1,6 +1,7 @@
 package com.denysenko.citymonitorbot.handlers.impl;
 
 import com.denysenko.citymonitorbot.commands.impl.appeal.AppealAttachFilesCommand;
+import com.denysenko.citymonitorbot.commands.impl.appeal.AppealEnterLocationCommand;
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.handlers.Handler;
 import com.denysenko.citymonitorbot.services.BotUserService;
@@ -18,8 +19,9 @@ import java.util.Optional;
 @Component
 public class FileHandler implements Handler {
 
-    private BotUserService botUserService;
-    private AppealAttachFilesCommand appealAttachFilesCommand;
+    private final BotUserService botUserService;
+    private final AppealAttachFilesCommand appealAttachFilesCommand;
+    private final AppealEnterLocationCommand appealEnterLocationCommand;
 
     @Override
     public boolean isApplicable(Update update) {
@@ -66,5 +68,6 @@ public class FileHandler implements Handler {
         }
 
         appealAttachFilesCommand.saveFile(chatId, name, fileID);
+        appealEnterLocationCommand.execute(chatId);
     }
 }

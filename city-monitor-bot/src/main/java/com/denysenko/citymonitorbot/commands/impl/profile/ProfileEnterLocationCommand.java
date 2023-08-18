@@ -1,7 +1,6 @@
 package com.denysenko.citymonitorbot.commands.impl.profile;
 
-import com.denysenko.citymonitorbot.commands.CommandSequence;
-import com.denysenko.citymonitorbot.commands.impl.MainMenuCommand;
+import com.denysenko.citymonitorbot.commands.Command;
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.models.BotUser;
@@ -12,7 +11,6 @@ import lombok.extern.log4j.Log4j;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -26,13 +24,10 @@ import static org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.K
 @Log4j
 @RequiredArgsConstructor
 @Component
-public class ProfileEnterLocationCommand implements CommandSequence<Long> {
+public class ProfileEnterLocationCommand implements Command<Long> {
 
     private final TelegramService telegramService;
     private final BotUserService botUserService;
-    private final MainMenuCommand mainMenuCommand;
-    @Autowired
-    private ProfileEnterPhoneNumberCommand enterPhoneNumberCommand;
 
     private static final String NOT_ACTIVE_USER_MESSAGE = "Ваше поточне місце проживання наведено зверху, для його зміни відправте нове або натисніть кнопку";
     private static final String NOT_REGISTERED_USER_MESSAGE = "Поділіться своїм місцем проживання, натиснувши кнопку або відправивши вручну";
@@ -67,7 +62,6 @@ public class ProfileEnterLocationCommand implements CommandSequence<Long> {
                 botUserService.updateBotUserInCacheByChatId(chatId, existedBotUser);
             },
             () ->  log.error("User with chatId = " + chatId + " was not found in cache repository"));
-        executeNext(chatId);
     }
 
 
@@ -89,22 +83,5 @@ public class ProfileEnterLocationCommand implements CommandSequence<Long> {
 
         return keyboardBuilder.build();
     }
-    @Override
-    public void executePrevious(Long chatId){
-        enterPhoneNumberCommand.execute(chatId);
-    }
-    @Override
-    @Transactional
-    public void executeNext(Long chatId){
-        saveBotUserToDBAndRemoveCached(chatId);
-        mainMenuCommand.execute(chatId);
-    }
 
-    private void saveBotUserToDBAndRemoveCached(Long chatId){
-        log.info("Saving user data to remote database and clearing caches: chatId = " + chatId);
-        Optional<BotUser> cachedUser = botUserService.findBotUserInCacheByChatId(chatId);
-        cachedUser.get().setActive(true);
-        botUserService.saveBotUserToDB(cachedUser.get());
-        botUserService.removeBotUserByChatIdFromCache(chatId);
-    }
 }

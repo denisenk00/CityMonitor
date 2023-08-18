@@ -1,6 +1,6 @@
 package com.denysenko.citymonitorbot.commands.impl.profile;
 
-import com.denysenko.citymonitorbot.commands.CommandSequence;
+import com.denysenko.citymonitorbot.commands.Command;
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.models.BotUser;
@@ -8,7 +8,6 @@ import com.denysenko.citymonitorbot.services.BotUserService;
 import com.denysenko.citymonitorbot.services.TelegramService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -25,14 +24,12 @@ import static org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.K
 @Log4j
 @RequiredArgsConstructor
 @Component
-public class ProfileEnterNameCommand implements CommandSequence<Long> {
+public class ProfileEnterNameCommand implements Command<Long> {
 
     private final BotUserService botUserService;
     private final TelegramService telegramService;
-    @Autowired
-    private ProfileEnterPhoneNumberCommand enterPhoneNumberCommand;
 
-    private static final String NOT_ACTIVE_USER_MESSAGE = "Ваше ім'я - {0}? Якщо ні, змініть відправивши нове";
+    private static final String NOT_ACTIVE_USER_MESSAGE = "Ваше ім''я - {0}? Якщо ні, змініть відправивши нове";
     private static final String NOT_REGISTERED_USER_MESSAGE = "Як до вас звертатися? Напишіть своє ім'я";
     private static final String INCORRECT_NAME_MESSAGE = "Дані не схожі на ім'я, будь-ласка, перевірте та повторіть спробу";
 
@@ -86,14 +83,7 @@ public class ProfileEnterNameCommand implements CommandSequence<Long> {
             botUserService.updateBotUserInCacheByChatId(chatId, existedBotUser);
         },
         () -> log.error("User with chatId = " + chatId + " was not found in cache repository"));
-        executeNext(chatId);
     }
 
-    @Override
-    public void executeNext(Long chatId) {
-        enterPhoneNumberCommand.execute(chatId);
-    }
-    @Override
-    public void executePrevious(Long chatId) { }
 
 }

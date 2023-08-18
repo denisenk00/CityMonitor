@@ -1,5 +1,6 @@
 package com.denysenko.citymonitorbot.handlers.impl;
 
+import com.denysenko.citymonitorbot.commands.impl.MainMenuCommand;
 import com.denysenko.citymonitorbot.commands.impl.appeal.AppealEnterLocationCommand;
 import com.denysenko.citymonitorbot.commands.impl.profile.ProfileEnterLocationCommand;
 import com.denysenko.citymonitorbot.enums.BotStates;
@@ -22,6 +23,7 @@ public class LocationHandler implements Handler {
     private final BotUserService botUserService;
     private final ProfileEnterLocationCommand profileEnterLocationCommand;
     private final AppealEnterLocationCommand appealEnterLocationCommand;
+    private final MainMenuCommand mainMenuCommand;
 
     @Override
     public boolean isApplicable(Update update) {
@@ -45,8 +47,11 @@ public class LocationHandler implements Handler {
         BotStates botUserState = botUserService.findBotStateByChatId(chatId).get();
         if(botUserState.equals(BotStates.EDITING_PROFILE_LOCATION)){
             profileEnterLocationCommand.saveLocation(chatId, location.getLongitude(), location.getLatitude());
+            botUserService.saveToDBAndCleanCache(chatId);
+            mainMenuCommand.execute(chatId);
         }else if(botUserState.equals(BotStates.APPEAL_ENTERING_LOCATION)){
             appealEnterLocationCommand.saveLocation(chatId, location.getLongitude(), location.getLatitude());
         }
     }
+
 }

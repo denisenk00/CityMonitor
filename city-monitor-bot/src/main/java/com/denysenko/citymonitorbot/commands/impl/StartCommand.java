@@ -40,7 +40,7 @@ public class StartCommand implements Command <Long>{
                     profileEnterNameCommand.execute(chatId);
                 }else {
                     log.info("User is active");
-                    executeMainMenuCommand(chatId);
+                    mainMenuCommand.execute(chatId);
                 }
         },
         ()->{
@@ -51,7 +51,4 @@ public class StartCommand implements Command <Long>{
 
     }
 
-    public void executeMainMenuCommand(Long chatId){
-        mainMenuCommand.execute(chatId);
-    }
 }

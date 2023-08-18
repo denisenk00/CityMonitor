@@ -1,6 +1,6 @@
 package com.denysenko.citymonitorbot.commands.impl.profile;
 
-import com.denysenko.citymonitorbot.commands.CommandSequence;
+import com.denysenko.citymonitorbot.commands.Command;
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.models.BotUser;
@@ -8,7 +8,6 @@ import com.denysenko.citymonitorbot.services.BotUserService;
 import com.denysenko.citymonitorbot.services.TelegramService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -25,12 +24,8 @@ import static org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.K
 @Log4j
 @RequiredArgsConstructor
 @Component
-public class ProfileEnterPhoneNumberCommand implements CommandSequence<Long> {
+public class ProfileEnterPhoneNumberCommand implements Command<Long> {
 
-    @Autowired
-    private ProfileEnterNameCommand enterNameCommand;
-    @Autowired
-    private ProfileEnterLocationCommand enterLocationCommand;
     private final TelegramService telegramService;
     private final BotUserService botUserService;
 
@@ -81,7 +76,6 @@ public class ProfileEnterPhoneNumberCommand implements CommandSequence<Long> {
                 botUserService.updateBotUserInCacheByChatId(chatId, existedBotUser);
             },
             () -> log.error("User with chatId = " + chatId + " was not found in cache repository"));
-        executeNext(chatId);
     }
 
     private ReplyKeyboardMarkup createKeyboard(boolean skipStep) {
@@ -102,12 +96,4 @@ public class ProfileEnterPhoneNumberCommand implements CommandSequence<Long> {
         return keyboardBuilder.build();
     }
 
-    @Override
-    public void executePrevious(Long chatId){
-        enterNameCommand.execute(chatId);
-    }
-    @Override
-    public void executeNext(Long chatId){
-        enterLocationCommand.execute(chatId);
-    }
 }

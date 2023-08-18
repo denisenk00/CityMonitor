@@ -9,6 +9,7 @@ import com.denysenko.citymonitorbot.repositories.hibernate.BotUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
@@ -75,6 +76,15 @@ public class BotUserService {
 
     public void removeBotUserByChatIdFromCache(@NotNull Long chatId){
         botUserCacheRepository.removeBotUserByChatId(chatId);
+    }
+
+    @Transactional
+    public void saveToDBAndCleanCache(Long chatId){
+        log.info("Saving user data to remote database and clearing caches: chatId = " + chatId);
+        Optional<BotUser> cachedUser = findBotUserInCacheByChatId(chatId);
+        cachedUser.get().setActive(true);
+        saveBotUserToDB(cachedUser.get());
+        removeBotUserByChatIdFromCache(chatId);
     }
 
 }
