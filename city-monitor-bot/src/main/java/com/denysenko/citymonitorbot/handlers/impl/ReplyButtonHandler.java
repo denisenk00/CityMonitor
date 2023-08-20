@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 @Log4j
 @RequiredArgsConstructor
@@ -119,6 +118,7 @@ public class ReplyButtonHandler implements Handler {
         }else if(text.equalsIgnoreCase(Commands.PROFILE_COMMAND.getTitle())){
             profileMenuCommand.execute(chatId);
         }else if(text.equalsIgnoreCase(Commands.SEND_APPEAL_COMMAND.getTitle())){
+            appealService.createEmptyAppealInCache(chatId);
             appealEnterDescriptionCommand.execute(chatId);
         }else if(text.equalsIgnoreCase(Commands.CANCEL_GENERAL_COMMAND.getTitle())){
             BotStates botUserState = botUserService.findBotStateByChatId(chatId).get();

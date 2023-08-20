@@ -58,7 +58,6 @@ public class AppealEnterDescriptionCommand implements Command<Long> {
             telegramService.sendMessage(chatId, TEXT_SIZE_OVERFLOW, null);
             return;
         }
-        createAppealInCache(chatId);
 
         Optional<Appeal> appeal = appealService.findAppealInCacheByChatId(chatId);
         appeal.ifPresentOrElse(existedAppeal -> {
@@ -66,13 +65,6 @@ public class AppealEnterDescriptionCommand implements Command<Long> {
              appealService.updateAppealInCacheByChatId(chatId, existedAppeal);
         },
         () -> log.error("Appeal for user with chatId = " + chatId + " was not found in cache repository"));
-    }
-
-    private void createAppealInCache(Long chatId){
-        BotUser botUser = botUserService.findBotUserByChatId(chatId).get();
-        Appeal appeal = new Appeal();
-        appeal.setBotUserId(botUser.getBotUserId());
-        appealService.updateAppealInCacheByChatId(chatId, appeal);
     }
 
 }
