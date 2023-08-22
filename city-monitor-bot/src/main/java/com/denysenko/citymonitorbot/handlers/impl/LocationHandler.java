@@ -5,7 +5,8 @@ import com.denysenko.citymonitorbot.commands.impl.appeal.AppealEnterLocationComm
 import com.denysenko.citymonitorbot.commands.impl.profile.ProfileEnterLocationCommand;
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.handlers.Handler;
-import com.denysenko.citymonitorbot.services.BotUserService;
+import com.denysenko.citymonitorbot.services.CacheManager;
+import com.denysenko.citymonitorbot.services.entity.BotUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,7 @@ import java.util.Optional;
 @Component
 public class LocationHandler implements Handler {
 
+    private final CacheManager cacheManager;
     private final BotUserService botUserService;
     private final ProfileEnterLocationCommand profileEnterLocationCommand;
     private final AppealEnterLocationCommand appealEnterLocationCommand;
@@ -30,7 +32,7 @@ public class LocationHandler implements Handler {
         if(!update.hasMessage() || !update.getMessage().hasLocation()) return false;
         Message message = update.getMessage();
         Long chatId = message.getChatId();
-        Optional<BotStates> botUserState = botUserService.findBotStateByChatId(chatId);
+        Optional<BotStates> botUserState = cacheManager.findBotStateByChatId(chatId);
         if(botUserState.isPresent()){
             BotStates botState = botUserState.get();
             return botState.equals(BotStates.EDITING_PROFILE_LOCATION) || botState.equals(BotStates.APPEAL_ENTERING_LOCATION);
@@ -44,7 +46,7 @@ public class LocationHandler implements Handler {
         log.info("Handled update by LocationHandler: updateId = " + update.getUpdateId() + ", chatId = " + chatId.toString());
 
         Location location = message.getLocation();
-        BotStates botUserState = botUserService.findBotStateByChatId(chatId).get();
+        BotStates botUserState = cacheManager.findBotStateByChatId(chatId).get();
         if(botUserState.equals(BotStates.EDITING_PROFILE_LOCATION)){
             profileEnterLocationCommand.saveLocation(chatId, location.getLongitude(), location.getLatitude());
             botUserService.saveToDBAndCleanCache(chatId);

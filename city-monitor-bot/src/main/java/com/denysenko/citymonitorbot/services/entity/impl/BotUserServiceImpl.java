@@ -1,11 +1,10 @@
-package com.denysenko.citymonitorbot.services;
+package com.denysenko.citymonitorbot.services.entity.impl;
 
-import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.exceptions.EntityNotFoundException;
 import com.denysenko.citymonitorbot.models.BotUser;
-import com.denysenko.citymonitorbot.repositories.cache.BotUserCacheRepository;
-import com.denysenko.citymonitorbot.repositories.cache.UserStateCacheRepository;
 import com.denysenko.citymonitorbot.repositories.hibernate.BotUserRepository;
+import com.denysenko.citymonitorbot.services.CacheManager;
+import com.denysenko.citymonitorbot.services.entity.BotUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Service;
@@ -20,71 +19,53 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 @Validated
-public class BotUserService {
+@Transactional(readOnly = true)
+public class BotUserServiceImpl implements BotUserService {
 
-    private final UserStateCacheRepository botUserStateCacheRepository;
-    private final BotUserCacheRepository botUserCacheRepository;
+    private final CacheManager cacheManager;
     private final BotUserRepository botUserRepository;
 
-    //Database
+    @Override
     public Optional<BotUser> findBotUserByChatId(@NotNull Long chatId){
         return botUserRepository.findByChatId(chatId);
     }
 
+    @Override
     public BotUser getBotUserByChatId(@NotNull Long chatId){
         return botUserRepository.findByChatId(chatId)
                 .orElseThrow(() -> new EntityNotFoundException("botUser with chatId = " + chatId + " was not found"));
     }
 
+    @Override
     public boolean userIsRegistered(@NotNull Long chatId){
         return botUserRepository.existsByChatId(chatId);
     }
 
+    @Override
+    @Transactional
     public void saveBotUserToDB(@NotNull BotUser botUser){
         botUserRepository.save(botUser);
     }
 
+    @Override
     public boolean existsUserByPhone(@NotBlank String phone){
         return botUserRepository.existsByPhone(phone);
     }
 
+    @Override
+    @Transactional
     public void deactivateBotUser(@NotNull Long chatId){
         botUserRepository.changeActivity(chatId, false);
     }
 
-    //Cache BotUserState
-    public Optional<BotStates> findBotStateByChatId(@NotNull Long chatId){
-        return botUserStateCacheRepository.findBotStateByChatId(chatId);
-    }
-
-    public void updateBotStateByChatId(@NotNull Long chatId, @NotNull BotStates botStates){
-        botUserStateCacheRepository.updateStateByChatId(chatId, botStates);
-    }
-
-    public void removeBotStateByChatId(@NotNull Long chatId){
-        botUserStateCacheRepository.removeStateByChatId(chatId);
-    }
-
-    //Cache BotUser
-    public Optional<BotUser> findBotUserInCacheByChatId(@NotNull Long chatId){
-        return botUserCacheRepository.findBotUserByChatId(chatId);
-    }
-
-    public void updateBotUserInCacheByChatId(@NotNull Long chatId, @NotNull BotUser botUser){
-        botUserCacheRepository.saveBotUserByChatId(chatId, botUser);
-    }
-
-    public void removeBotUserByChatIdFromCache(@NotNull Long chatId){
-        botUserCacheRepository.removeBotUserByChatId(chatId);
-    }
-
+    @Override
     @Transactional
     public void saveToDBAndCleanCache(Long chatId){
         log.info("Saving user data to remote database and clearing caches: chatId = " + chatId);
-        Optional<BotUser> cachedUser = findBotUserInCacheByChatId(chatId);
+        Optional<BotUser> cachedUser = cacheManager.findBotUserByChatId(chatId);
         cachedUser.get().setActive(true);
         saveBotUserToDB(cachedUser.get());
-        removeBotUserByChatIdFromCache(chatId);
+        cacheManager.removeBotUserByChatId(chatId);
     }
 
 }

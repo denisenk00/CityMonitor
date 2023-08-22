@@ -23,6 +23,10 @@ public class File {
     @Column(name = "tg_file_id")
     private String fileID;
 
+    @ManyToOne
+    @JoinColumn(name = "appeal_id")
+    private Appeal appeal;
+
     public File(String name, String fileID) {
         this.name = name;
         this.fileID = fileID;

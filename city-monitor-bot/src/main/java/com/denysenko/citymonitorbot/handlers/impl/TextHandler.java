@@ -7,7 +7,7 @@ import com.denysenko.citymonitorbot.commands.impl.profile.ProfileEnterNameComman
 import com.denysenko.citymonitorbot.commands.impl.profile.ProfileEnterPhoneNumberCommand;
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.handlers.Handler;
-import com.denysenko.citymonitorbot.services.BotUserService;
+import com.denysenko.citymonitorbot.services.CacheManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
@@ -21,19 +21,20 @@ import java.util.Optional;
 @Component
 public class TextHandler implements Handler {
 
-    private final BotUserService botUserService;
     private final ProfileEnterNameCommand profileEnterNameCommand;
     private final ProfileEnterPhoneNumberCommand profileEnterPhoneNumberCommand;
     private final AppealEnterDescriptionCommand appealEnterDescriptionCommand;
     private final ProfileEnterLocationCommand profileEnterLocationCommand;
     private final AppealAttachFilesCommand appealAttachFilesCommand;
 
+    private final CacheManager cacheManager;
+
     @Override
     public boolean isApplicable(Update update) {
         if(!update.hasMessage() || !update.getMessage().hasText()) return false;
         Message message = update.getMessage();
         Long chatId = message.getChatId();
-        Optional<BotStates> botUserState = botUserService.findBotStateByChatId(chatId);
+        Optional<BotStates> botUserState = cacheManager.findBotStateByChatId(chatId);
         if(botUserState.isPresent()){
             BotStates botState = botUserState.get();
             return botState.equals(BotStates.EDITING_PROFILE_NAME) || botState.equals(BotStates.EDITING_PROFILE_PHONE)
@@ -46,7 +47,7 @@ public class TextHandler implements Handler {
         Message message = update.getMessage();
         Long chatId = message.getChatId();
         log.info("Update handled by TextHandler: updateId = " + update.getUpdateId() + ", chatId = " + chatId.toString());
-        BotStates botState = botUserService.findBotStateByChatId(chatId).get();
+        BotStates botState = cacheManager.findBotStateByChatId(chatId).get();
 
         if(botState.equals(BotStates.EDITING_PROFILE_NAME)){
             profileEnterNameCommand.saveUserName(chatId, message.getText());

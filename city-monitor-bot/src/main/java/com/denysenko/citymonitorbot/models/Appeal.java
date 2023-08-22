@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,14 +32,23 @@ public class Appeal {
     @Column(name = "point")
     private Point locationPoint;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "appeal_id", nullable = false)
+    @Setter(AccessLevel.PRIVATE)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "appeal")
     private List<File> files = new LinkedList<>();
 
     @PrePersist
     protected void onCreate(){
         status = "UNREAD";
         postDate = LocalDateTime.now();
+    }
+
+    public void addFile(File file){
+        file.setAppeal(this);
+        files.add(file);
+    }
+
+    public Appeal(Long botUserId){
+        this.botUserId = botUserId;
     }
 
 }

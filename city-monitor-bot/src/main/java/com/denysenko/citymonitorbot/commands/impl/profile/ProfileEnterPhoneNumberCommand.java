@@ -4,12 +4,12 @@ import com.denysenko.citymonitorbot.commands.Command;
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.models.BotUser;
-import com.denysenko.citymonitorbot.services.BotUserService;
+import com.denysenko.citymonitorbot.services.CacheManager;
 import com.denysenko.citymonitorbot.services.TelegramService;
+import com.denysenko.citymonitorbot.services.entity.BotUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
@@ -26,8 +26,9 @@ import static org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.K
 @Component
 public class ProfileEnterPhoneNumberCommand implements Command<Long> {
 
-    private final TelegramService telegramService;
     private final BotUserService botUserService;
+    private final TelegramService telegramService;
+    private final CacheManager cacheManager;
 
     private static final String NOT_ACTIVE_USER_MESSAGE = "Ваш телефон - {0}? Якщо хочете змінити, введіть новий або натисніть кнопку для відправки поточного";
     private static final String NOT_REGISTERED_USER_MESSAGE = "Введіть номер телефону або натисніть кнопку для відправки поточного, він буде використаний у разі необхідності зв'язку з вами";
@@ -37,10 +38,9 @@ public class ProfileEnterPhoneNumberCommand implements Command<Long> {
     private static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("^(\\s*)?(\\+)?([- _():=+]?\\d[- _():=+]?){10,14}(\\s*)?$");
 
     @Override
-    @Transactional
     public void execute(Long chatId) {
         log.info("Entering phone number command started: chatId = " + chatId);
-        botUserService.updateBotStateByChatId(chatId, BotStates.EDITING_PROFILE_PHONE);
+        cacheManager.updateBotStateByChatId(chatId, BotStates.EDITING_PROFILE_PHONE);
         Optional<BotUser> botUser = botUserService.findBotUserByChatId(chatId);
         botUser.ifPresentOrElse(notActiveUser -> {
                 log.info("User with chatId = " + chatId + " has already registered");
@@ -55,7 +55,6 @@ public class ProfileEnterPhoneNumberCommand implements Command<Long> {
             });
     }
 
-    @Transactional
     public void savePhoneNumber(Long chatId, String phoneNumber){
         log.info("Saving phone number: chatId = " + chatId + ", phoneNumber = " + phoneNumber);
         Matcher matcher = PHONE_NUMBER_PATTERN.matcher(phoneNumber);
@@ -70,10 +69,9 @@ public class ProfileEnterPhoneNumberCommand implements Command<Long> {
             telegramService.sendMessage(chatId, PHONE_EXISTS_MESSAGE, replyKeyboardMarkup);
             return;
         }
-        Optional<BotUser> botUser = botUserService.findBotUserInCacheByChatId(chatId);
+        Optional<BotUser> botUser = cacheManager.findBotUserByChatId(chatId);
         botUser.ifPresentOrElse(existedBotUser -> {
                 existedBotUser.setPhone(phoneNumber);
-                botUserService.updateBotUserInCacheByChatId(chatId, existedBotUser);
             },
             () -> log.error("User with chatId = " + chatId + " was not found in cache repository"));
     }

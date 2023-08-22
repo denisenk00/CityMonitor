@@ -1,10 +1,9 @@
 package com.denysenko.citymonitorbot.handlers.impl;
 
 import com.denysenko.citymonitorbot.commands.impl.appeal.AppealAttachFilesCommand;
-import com.denysenko.citymonitorbot.commands.impl.appeal.AppealEnterLocationCommand;
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.handlers.Handler;
-import com.denysenko.citymonitorbot.services.BotUserService;
+import com.denysenko.citymonitorbot.services.CacheManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -19,9 +18,8 @@ import java.util.Optional;
 @Component
 public class FileHandler implements Handler {
 
-    private final BotUserService botUserService;
     private final AppealAttachFilesCommand appealAttachFilesCommand;
-    private final AppealEnterLocationCommand appealEnterLocationCommand;
+    private final CacheManager cacheManager;
 
     @Override
     public boolean isApplicable(Update update) {
@@ -33,7 +31,7 @@ public class FileHandler implements Handler {
         } else return false;
 
         Long chatId = message.getChatId();
-        Optional<BotStates> botUserState = botUserService.findBotStateByChatId(chatId);
+        Optional<BotStates> botUserState = cacheManager.findBotStateByChatId(chatId);
         if(botUserState.isPresent()){
             BotStates botState = botUserState.get();
             return botState.equals(BotStates.APPEAL_ATTACHING_FILES);
@@ -68,6 +66,5 @@ public class FileHandler implements Handler {
         }
 
         appealAttachFilesCommand.saveFile(chatId, name, fileID);
-        appealEnterLocationCommand.execute(chatId);
     }
 }

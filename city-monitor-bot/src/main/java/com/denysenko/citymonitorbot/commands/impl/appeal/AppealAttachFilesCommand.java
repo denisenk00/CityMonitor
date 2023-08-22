@@ -5,13 +5,11 @@ import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.models.Appeal;
 import com.denysenko.citymonitorbot.models.File;
-import com.denysenko.citymonitorbot.services.AppealService;
-import com.denysenko.citymonitorbot.services.BotUserService;
+import com.denysenko.citymonitorbot.services.CacheManager;
 import com.denysenko.citymonitorbot.services.TelegramService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
@@ -25,17 +23,15 @@ import static org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.K
 @Component
 public class AppealAttachFilesCommand implements Command<Long> {
 
-    private final BotUserService botUserService;
     private final TelegramService telegramService;
-    private final AppealService appealService;
+    private final CacheManager cacheManager;
 
     private static final String MESSAGE = "Додайте фото або інші файли за необхідності і натисніть \"Далі\"";
 
     @Override
-    @Transactional
     public void execute(Long chatId) {
         log.info("Attaching files to appeal started: chatId = " + chatId);
-        botUserService.updateBotStateByChatId(chatId, BotStates.APPEAL_ATTACHING_FILES);
+        cacheManager.updateBotStateByChatId(chatId, BotStates.APPEAL_ATTACHING_FILES);
         ReplyKeyboardMarkup replyKeyboardMarkup = createKeyboard();
         telegramService.sendMessage(chatId, MESSAGE, replyKeyboardMarkup);
     }
@@ -56,10 +52,9 @@ public class AppealAttachFilesCommand implements Command<Long> {
         log.info("Saving file started: chatId = " + chatId + ", name = " + name + ", fileId + " + fileId);
         File file = new File(name, fileId);
 
-        Optional<Appeal> appeal = appealService.findAppealInCacheByChatId(chatId);
+        Optional<Appeal> appeal = cacheManager.findAppealByChatId(chatId);
         appeal.ifPresentOrElse(existedAppeal -> {
-             existedAppeal.getFiles().add(file);
-             appealService.updateAppealInCacheByChatId(chatId, existedAppeal);
+             existedAppeal.addFile(file);
         },
         () -> log.error("Appeal for user with chatId = " + chatId + " was not found in cache repository"));
     }

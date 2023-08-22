@@ -4,7 +4,7 @@ import com.denysenko.citymonitorbot.commands.impl.answer.SaveAnswerCommand;
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.exceptions.NotAllowedQuizStatusException;
 import com.denysenko.citymonitorbot.handlers.Handler;
-import com.denysenko.citymonitorbot.services.BotUserService;
+import com.denysenko.citymonitorbot.services.CacheManager;
 import com.denysenko.citymonitorbot.services.TelegramService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -19,16 +19,17 @@ import java.util.Optional;
 @Component
 public class CallBackHandler implements Handler {
 
-    private final BotUserService botUserService;
     private final SaveAnswerCommand saveAnswerCommand;
     private final TelegramService telegramService;
+    private final CacheManager cacheManager;
+
 
     @Override
     public boolean isApplicable(Update update) {
         if(!update.hasCallbackQuery()) return false;
         CallbackQuery callbackQuery = update.getCallbackQuery();
         Long id = callbackQuery.getFrom().getId();
-        Optional<BotStates> botUserState = botUserService.findBotStateByChatId(id);
+        Optional<BotStates> botUserState = cacheManager.findBotStateByChatId(id);
         if(botUserState.isPresent()){
             return true;
         } else return false;

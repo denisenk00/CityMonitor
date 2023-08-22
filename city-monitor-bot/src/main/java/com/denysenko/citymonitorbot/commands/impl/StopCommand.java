@@ -2,8 +2,9 @@ package com.denysenko.citymonitorbot.commands.impl;
 
 import com.denysenko.citymonitorbot.commands.Command;
 import com.denysenko.citymonitorbot.enums.Commands;
-import com.denysenko.citymonitorbot.services.BotUserService;
+import com.denysenko.citymonitorbot.services.CacheManager;
 import com.denysenko.citymonitorbot.services.TelegramService;
+import com.denysenko.citymonitorbot.services.entity.BotUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ public class StopCommand implements Command<Long> {
 
     private final BotUserService botUserService;
     private final TelegramService telegramService;
+    private final CacheManager cacheManager;
 
     private static final String STOP_MESSAGE = "Ваш профіль деактивовано. Ви більше не будете отримувати опитування і тим самим впливати на прийняття важливих для вас рішень. Якщо надумаєте - ми на вас завжди чекаємо!";
 
@@ -28,7 +30,7 @@ public class StopCommand implements Command<Long> {
     public void execute(Long chatId) {
         log.info("Executing stop command: chatID = " + chatId);
         botUserService.deactivateBotUser(chatId);
-        botUserService.removeBotStateByChatId(chatId);
+        cacheManager.removeBotStateByChatId(chatId);
         telegramService.sendMessage(chatId, STOP_MESSAGE, createStoppedBotKeyboard());
     }
 

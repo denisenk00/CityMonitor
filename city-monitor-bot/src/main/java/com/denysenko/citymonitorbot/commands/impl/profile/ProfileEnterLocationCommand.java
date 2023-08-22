@@ -4,7 +4,8 @@ import com.denysenko.citymonitorbot.commands.Command;
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.models.BotUser;
-import com.denysenko.citymonitorbot.services.BotUserService;
+import com.denysenko.citymonitorbot.services.CacheManager;
+import com.denysenko.citymonitorbot.services.entity.BotUserService;
 import com.denysenko.citymonitorbot.services.TelegramService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -12,7 +13,6 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
@@ -28,15 +28,15 @@ public class ProfileEnterLocationCommand implements Command<Long> {
 
     private final TelegramService telegramService;
     private final BotUserService botUserService;
+    private final CacheManager cacheManager;
 
     private static final String NOT_ACTIVE_USER_MESSAGE = "Ваше поточне місце проживання наведено зверху, для його зміни відправте нове або натисніть кнопку";
     private static final String NOT_REGISTERED_USER_MESSAGE = "Поділіться своїм місцем проживання, натиснувши кнопку або відправивши вручну";
 
     @Override
-    @Transactional
     public void execute(Long chatId) {
         log.info("Enter location command started: chatId = " + chatId);
-        botUserService.updateBotStateByChatId(chatId, BotStates.EDITING_PROFILE_LOCATION);
+        cacheManager.updateBotStateByChatId(chatId, BotStates.EDITING_PROFILE_LOCATION);
         Optional<BotUser> botUser = botUserService.findBotUserByChatId(chatId);
         botUser.ifPresentOrElse(notActiveUser -> {
                 log.info("User with chatId = " + chatId + " has already registered");
@@ -52,14 +52,12 @@ public class ProfileEnterLocationCommand implements Command<Long> {
             });
     }
 
-    @Transactional
     public void saveLocation(Long chatId, Double latitude, Double longitude){
         log.info("Saving location started. Data: chatId = " + chatId + ", latitude = " + latitude + ", longitude = " + longitude);
-        Optional<BotUser> botUser = botUserService.findBotUserInCacheByChatId(chatId);
+        Optional<BotUser> botUser = cacheManager.findBotUserByChatId(chatId);
         botUser.ifPresentOrElse(existedBotUser -> {
                 Point newLocation = new GeometryFactory().createPoint(new Coordinate(latitude, longitude));
                 existedBotUser.setLocation(newLocation);
-                botUserService.updateBotUserInCacheByChatId(chatId, existedBotUser);
             },
             () ->  log.error("User with chatId = " + chatId + " was not found in cache repository"));
     }

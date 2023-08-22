@@ -3,12 +3,11 @@ package com.denysenko.citymonitorbot.commands.impl;
 import com.denysenko.citymonitorbot.commands.Command;
 import com.denysenko.citymonitorbot.commands.impl.profile.ProfileEnterNameCommand;
 import com.denysenko.citymonitorbot.models.BotUser;
-import com.denysenko.citymonitorbot.services.BotUserService;
 import com.denysenko.citymonitorbot.services.TelegramService;
+import com.denysenko.citymonitorbot.services.entity.BotUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -27,7 +26,6 @@ public class StartCommand implements Command <Long>{
     private static final String NOT_REGISTERED_USER_MESSAGE = "Введіть свої особисті дані для реєстрації";
 
     @Override
-    @Transactional
     public void execute(Long chatId) {
         log.info("Executing start command: chatId = " + chatId);
         telegramService.sendMessage(chatId, BASIC_MESSAGE, null);

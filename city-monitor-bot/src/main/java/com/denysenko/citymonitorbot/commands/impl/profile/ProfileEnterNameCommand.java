@@ -4,12 +4,12 @@ import com.denysenko.citymonitorbot.commands.Command;
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.models.BotUser;
-import com.denysenko.citymonitorbot.services.BotUserService;
+import com.denysenko.citymonitorbot.services.CacheManager;
+import com.denysenko.citymonitorbot.services.entity.BotUserService;
 import com.denysenko.citymonitorbot.services.TelegramService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
@@ -28,6 +28,7 @@ public class ProfileEnterNameCommand implements Command<Long> {
 
     private final BotUserService botUserService;
     private final TelegramService telegramService;
+    private final CacheManager cacheManager;
 
     private static final String NOT_ACTIVE_USER_MESSAGE = "Ваше ім''я - {0}? Якщо ні, змініть відправивши нове";
     private static final String NOT_REGISTERED_USER_MESSAGE = "Як до вас звертатися? Напишіть своє ім'я";
@@ -36,10 +37,9 @@ public class ProfileEnterNameCommand implements Command<Long> {
     private static final Pattern NAME_PATTERN = Pattern.compile("[a-zA-Zа-яА-я]");
 
     @Override
-    @Transactional
     public void execute(Long chatId) {
         log.info("Entering name command started: chatId = " + chatId);
-        botUserService.updateBotStateByChatId(chatId, BotStates.EDITING_PROFILE_NAME);
+        cacheManager.updateBotStateByChatId(chatId, BotStates.EDITING_PROFILE_NAME);
         Optional<BotUser> botUser = botUserService.findBotUserByChatId(chatId);
         botUser.ifPresentOrElse(notActiveUser -> {
                 log.info("User with chatId = " + chatId + " has already registered");
@@ -51,7 +51,7 @@ public class ProfileEnterNameCommand implements Command<Long> {
                 log.info("User with chatId = " + chatId + " isn't registered - new User");
                 telegramService.sendMessage(chatId, NOT_REGISTERED_USER_MESSAGE, null);
             });
-        botUserService.updateBotUserInCacheByChatId(chatId, botUser.orElse(new BotUser(chatId)));
+        cacheManager.saveBotUserByChatId(chatId, botUser.orElse(new BotUser(chatId)));
     }
 
     private ReplyKeyboardMarkup createNextStepKeyboard(){
@@ -65,7 +65,6 @@ public class ProfileEnterNameCommand implements Command<Long> {
         return keyboardBuilder.build();
     }
 
-    @Transactional
     public void saveUserName(Long chatId, String name){
         log.info("Saving user name: chatId = " + chatId + ", name = " + name);
         Matcher matcher = NAME_PATTERN.matcher(name);
@@ -77,10 +76,10 @@ public class ProfileEnterNameCommand implements Command<Long> {
             }
             return;
         }
-        Optional<BotUser> botUser = botUserService.findBotUserInCacheByChatId(chatId);
+        Optional<BotUser> botUser = cacheManager.findBotUserByChatId(chatId);
         botUser.ifPresentOrElse(existedBotUser -> {
             existedBotUser.setName(name);
-            botUserService.updateBotUserInCacheByChatId(chatId, existedBotUser);
+            cacheManager.saveBotUserByChatId(chatId, existedBotUser);
         },
         () -> log.error("User with chatId = " + chatId + " was not found in cache repository"));
     }

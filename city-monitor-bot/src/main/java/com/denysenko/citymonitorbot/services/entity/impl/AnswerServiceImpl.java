@@ -1,10 +1,11 @@
-package com.denysenko.citymonitorbot.services;
+package com.denysenko.citymonitorbot.services.entity.impl;
 
 import com.denysenko.citymonitorbot.models.Answer;
 import com.denysenko.citymonitorbot.repositories.hibernate.AnswerRepository;
+import com.denysenko.citymonitorbot.services.entity.AnswerService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
@@ -13,10 +14,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 @Validated
-public class AnswerService {
+@Transactional(readOnly = true)
+public class AnswerServiceImpl implements AnswerService {
 
     private final AnswerRepository answerRepository;
 
+    @Transactional
     public void saveAnswer(@NotNull Answer answer){
         answerRepository.save(answer);
     }

@@ -13,8 +13,8 @@ import com.denysenko.citymonitorbot.commands.impl.profile.ProfileMenuCommand;
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.handlers.Handler;
-import com.denysenko.citymonitorbot.services.AppealService;
-import com.denysenko.citymonitorbot.services.BotUserService;
+import com.denysenko.citymonitorbot.services.CacheManager;
+import com.denysenko.citymonitorbot.services.entity.BotUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -38,13 +38,14 @@ public class ReplyButtonHandler implements Handler {
     private final ProfileEnterPhoneNumberCommand profileEnterPhoneNumberCommand;
     private final ProfileEnterLocationCommand profileEnterLocationCommand;
     private final ProfileMenuCommand profileMenuCommand;
-    private final BotUserService botUserService;
-    private final AppealService appealService;
     private final SaveAppealCommand saveAppealCommand;
     private final MainMenuCommand mainMenuCommand;
     private final StopCommand stopCommand;
     private final AppealEnterDescriptionCommand appealEnterDescriptionCommand;
     private final AppealEnterLocationCommand appealEnterLocationCommand;
+
+    private final BotUserService botUserService;
+    private final CacheManager cacheManager;
 
     private Map<BotStates, ImmutablePair<Consumer, Consumer>> sequenceCommandMap;
 
@@ -80,7 +81,7 @@ public class ReplyButtonHandler implements Handler {
         Message message = update.getMessage();
         String text = message.getText();
         Long chatId = message.getChatId();
-        Optional<BotStates> botUserState = botUserService.findBotStateByChatId(chatId);
+        Optional<BotStates> botUserState = cacheManager.findBotStateByChatId(chatId);
 
         if(botUserState.isPresent()){
             BotStates botState = botUserState.get();
@@ -109,21 +110,21 @@ public class ReplyButtonHandler implements Handler {
         if(text.equalsIgnoreCase(Commands.START_COMMAND.getTitle()) || text.equalsIgnoreCase(Commands.COMEBACK_COMMAND.getTitle())){
             startCommand.execute(chatId);
         }else if(text.equalsIgnoreCase(Commands.NEXT_STEP_COMMAND.getTitle())) {
-            BotStates botUserState = botUserService.findBotStateByChatId(chatId).get();
+            BotStates botUserState = cacheManager.findBotStateByChatId(chatId).get();
             log.info("next bot state = " + botUserState.getTitle());
             sequenceCommandMap.get(botUserState).getRight().accept(chatId);
         }else if(text.equalsIgnoreCase(Commands.PREVIOUS_STEP_COMMAND.getTitle())){
-            BotStates botUserState = botUserService.findBotStateByChatId(chatId).get();
+            BotStates botUserState = cacheManager.findBotStateByChatId(chatId).get();
             sequenceCommandMap.get(botUserState).getLeft().accept(chatId);
         }else if(text.equalsIgnoreCase(Commands.PROFILE_COMMAND.getTitle())){
             profileMenuCommand.execute(chatId);
         }else if(text.equalsIgnoreCase(Commands.SEND_APPEAL_COMMAND.getTitle())){
-            appealService.createEmptyAppealInCache(chatId);
+            cacheManager.createEmptyAppeal(chatId);
             appealEnterDescriptionCommand.execute(chatId);
         }else if(text.equalsIgnoreCase(Commands.CANCEL_GENERAL_COMMAND.getTitle())){
-            BotStates botUserState = botUserService.findBotStateByChatId(chatId).get();
+            BotStates botUserState = cacheManager.findBotStateByChatId(chatId).get();
             if(botUserState.equals(BotStates.APPEAL_ENTERING_DESCRIPTION) || botUserState.equals(BotStates.APPEAL_ENTERING_LOCATION) || botUserState.equals(BotStates.APPEAL_ATTACHING_FILES)){
-                appealService.removeAppealByChatIdFromCache(chatId);
+                cacheManager.removeAppealByChatId(chatId);
             }
             mainMenuCommand.execute(chatId);
         }else if(text.equalsIgnoreCase(Commands.SAVE_APPEAL_COMMAND.getTitle())){

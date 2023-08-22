@@ -4,8 +4,7 @@ import com.denysenko.citymonitorbot.commands.Command;
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.models.Appeal;
-import com.denysenko.citymonitorbot.services.AppealService;
-import com.denysenko.citymonitorbot.services.BotUserService;
+import com.denysenko.citymonitorbot.services.CacheManager;
 import com.denysenko.citymonitorbot.services.TelegramService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -13,7 +12,6 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
@@ -27,17 +25,15 @@ import static org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.K
 @Component
 public class AppealEnterLocationCommand implements Command<Long> {
 
-    private final BotUserService botUserService;
     private final TelegramService telegramService;
-    private final AppealService appealService;
+    private final CacheManager cacheManager;
 
     private static final String MESSAGE = "Тут ви можете прикріпити геолокацію";
 
     @Override
-    @Transactional
     public void execute(Long chatId) {
         log.info("Entering location for appeal started: chatId = " + chatId);
-        botUserService.updateBotStateByChatId(chatId, BotStates.APPEAL_ENTERING_LOCATION);
+        cacheManager.updateBotStateByChatId(chatId, BotStates.APPEAL_ENTERING_LOCATION);
         ReplyKeyboardMarkup replyKeyboardMarkup = createKeyboard();
         telegramService.sendMessage(chatId, MESSAGE, replyKeyboardMarkup);
     }
@@ -57,15 +53,13 @@ public class AppealEnterLocationCommand implements Command<Long> {
         return keyboardBuilder.build();
     }
 
-    @Transactional
     public void saveLocation(Long chatId, Double latitude, Double longitude){
         log.info("Saving location started: chatId = " + chatId + ", latitude = " + latitude + ", longitude = " + longitude);
 
-        Optional<Appeal> appeal = appealService.findAppealInCacheByChatId(chatId);
+        Optional<Appeal> appeal = cacheManager.findAppealByChatId(chatId);
         appeal.ifPresentOrElse(existedAppeal -> {
              Point locationPoint = new GeometryFactory().createPoint(new Coordinate(latitude, longitude));
              existedAppeal.setLocationPoint(locationPoint);
-             appealService.updateAppealInCacheByChatId(chatId, existedAppeal);
         },
         () -> log.error("Appeal for user with chatId = " + chatId + " was not found in repository"));
     }
