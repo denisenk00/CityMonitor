@@ -34,7 +34,7 @@ public class Appeal {
 
     @Setter(AccessLevel.PRIVATE)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "appeal")
-    private List<File> files = new LinkedList<>();
+    private List<AppealFile> files = new LinkedList<>();
 
     @PrePersist
     protected void onCreate(){
@@ -42,7 +42,7 @@ public class Appeal {
         postDate = LocalDateTime.now();
     }
 
-    public void addFile(File file){
+    public void addFile(AppealFile file){
         file.setAppeal(this);
         files.add(file);
     }

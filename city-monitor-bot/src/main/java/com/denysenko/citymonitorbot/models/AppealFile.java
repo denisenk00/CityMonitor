@@ -11,8 +11,8 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "FILES")
-public class File {
+@Table(name = "APPEAL_FILES")
+public class AppealFile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "file_id")
@@ -27,7 +27,7 @@ public class File {
     @JoinColumn(name = "appeal_id")
     private Appeal appeal;
 
-    public File(String name, String fileID) {
+    public AppealFile(String name, String fileID) {
         this.name = name;
         this.fileID = fileID;
     }

@@ -4,7 +4,7 @@ import com.denysenko.citymonitorbot.commands.Command;
 import com.denysenko.citymonitorbot.enums.BotStates;
 import com.denysenko.citymonitorbot.enums.Commands;
 import com.denysenko.citymonitorbot.models.Appeal;
-import com.denysenko.citymonitorbot.models.File;
+import com.denysenko.citymonitorbot.models.AppealFile;
 import com.denysenko.citymonitorbot.services.CacheManager;
 import com.denysenko.citymonitorbot.services.TelegramService;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +50,7 @@ public class AppealAttachFilesCommand implements Command<Long> {
 
     public void saveFile(Long chatId, String name, String fileId){
         log.info("Saving file started: chatId = " + chatId + ", name = " + name + ", fileId + " + fileId);
-        File file = new File(name, fileId);
+        AppealFile file = new AppealFile(name, fileId);
 
         Optional<Appeal> appeal = cacheManager.findAppealByChatId(chatId);
         appeal.ifPresentOrElse(existedAppeal -> {
