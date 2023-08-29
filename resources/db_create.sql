@@ -107,15 +107,24 @@ CREATE TABLE RESULTS(
 CREATE TABLE FILES(
                       file_id Integer GENERATED ALWAYS AS IDENTITY,
                       name VARCHAR(200),
-                      tg_file_id VARCHAR(150) UNIQUE,
                       file_object OID,
-                      appeal_id INTEGER,
                       quiz_id INTEGER,
                       PRIMARY KEY (file_id)
 );
+
+--Table APPEAL_FILES
+
+CREATE TABLE APPEAL_FILES(
+                      file_id Integer GENERATED ALWAYS AS IDENTITY,
+                      name VARCHAR(200),
+                      tg_file_id VARCHAR(150) UNIQUE,
+                      appeal_id INTEGER,
+                      PRIMARY KEY (file_id)
+);
+
 -- Create foreign keys (relationships) section -------------------------------------------------
 
-ALTER TABLE FILES ADD CONSTRAINT file_appeal_fk FOREIGN KEY (appeal_id) REFERENCES APPEALS (appeal_id) ON DELETE CASCADE;
+ALTER TABLE APPEAL_FILES ADD CONSTRAINT file_appeal_fk FOREIGN KEY (appeal_id) REFERENCES APPEALS (appeal_id) ON DELETE CASCADE;
 
 ALTER TABLE POLYGONS ADD CONSTRAINT polygon_layout_fk FOREIGN KEY (layout_id) REFERENCES LAYOUTS (layout_id) ON DELETE CASCADE;
 
@@ -137,6 +146,16 @@ ALTER TABLE FILES ADD CONSTRAINT file_quiz_fk FOREIGN KEY (quiz_id) REFERENCES Q
 
 ALTER TABLE ANSWERS ADD CONSTRAINT  answer_quiz_fk FOREIGN KEY (quiz_id) REFERENCES QUIZZES ON DELETE CASCADE;
 
+CREATE INDEX users_username_idx ON users (username);
+CREATE INDEX polygons_layout_idx ON polygons (layout_id);
+CREATE INDEX quizzes_layout_idx ON quizzes (layout_id);
+CREATE INDEX options_quiz_idx ON options (quiz_id);
+CREATE INDEX answers_quiz_idx ON answers (quiz_id);
+CREATE INDEX appeals_status_idx ON appeals (status);
+CREATE INDEX appeals_local_idx ON appeals (local_id);
+CREATE INDEX results_options_idx ON results (option_id);
+CREATE INDEX files_quiz_idx ON files (quiz_id);
+CREATE INDEX apealfiles_appeals_idx ON appeal_files (appeal_id);
 
 INSERT INTO USERS VALUES (DEFAULT, 'sysadm', '$2y$12$fa1H8AwmY42d0B3nBAusLOvOdk7O1GGPOKBhkmonqvLCMAM8IszAy', 'SUPER_ADMIN', 'ACTIVE');
 

@@ -1,10 +1,8 @@
 package com.denysenko.citymonitorweb.services.converters.impl;
 
-import com.denysenko.citymonitorweb.enums.LayoutStatus;
 import com.denysenko.citymonitorweb.models.entities.Polygon;
 import com.denysenko.citymonitorweb.models.dto.LayoutDTO;
 import com.denysenko.citymonitorweb.models.entities.Layout;
-import com.denysenko.citymonitorweb.repositories.hibernate.LayoutRepository;
 import com.denysenko.citymonitorweb.services.converters.EntityDTOConverter;
 
 import lombok.RequiredArgsConstructor;
@@ -26,31 +24,22 @@ import java.util.*;
 @Service
 public class LayoutEntityToDTOConverter implements EntityDTOConverter<Layout, LayoutDTO> {
 
-    private final LayoutRepository layoutRepository;
-
     @Override
     public Layout convertDTOToEntity(LayoutDTO layoutDTO) throws ConversionFailedException {
         try {
-            Layout layout;
-            if (layoutDTO.getId() != null) {
-                Optional<Layout> layoutOptional = layoutRepository.findById(layoutDTO.getId());
-                layout = layoutOptional.orElse(new Layout());
-            } else {
-                layout = new Layout();
-            }
+            Layout layout = new Layout();
 
             layout.setId(layoutDTO.getId());
             layout.setName(layoutDTO.getName());
 
             if (layoutDTO.getStatus() != null) {
-                layout.setStatus(LayoutStatus.getByTitle(layoutDTO.getStatus()));
+                layout.setStatus(layoutDTO.getStatus());
             }
 
             String geoJson = layoutDTO.getPolygonsGeoJson();
 
             GeoJSONReader geoJSONReader = new GeoJSONReader();
             FeatureCollection featureCollection = (FeatureCollection) GeoJSONFactory.create(geoJson);
-            List<Polygon> oldPolygonEntities = layout.getPolygons();
             List<Polygon> newPolygonEntities = new LinkedList<>();
 
             for (Feature feature : featureCollection.getFeatures()) {
@@ -63,8 +52,8 @@ public class LayoutEntityToDTOConverter implements EntityDTOConverter<Layout, La
                 Polygon polygonEntity = new Polygon(id, title, polygon, layout);
                 newPolygonEntities.add(polygonEntity);
             }
-            oldPolygonEntities.removeAll(newPolygonEntities);
-            oldPolygonEntities.addAll(newPolygonEntities);
+
+            newPolygonEntities.forEach(polygon -> layout.addPolygon(polygon));
 
             return layout;
         }catch (Exception e){
@@ -75,12 +64,10 @@ public class LayoutEntityToDTOConverter implements EntityDTOConverter<Layout, La
     @Override
     public LayoutDTO convertEntityToDTO(Layout layout) throws ConversionFailedException {
         try {
-            LayoutDTO.LayoutDTOBuilder layoutDTOBuilder = LayoutDTO.builder();
-            layoutDTOBuilder.id(layout.getId())
-                    .name(layout.getName());
-
-            Optional.ofNullable(layout.getStatus()).ifPresent(
-                    s -> layoutDTOBuilder.status(s.getTitle()));
+            LayoutDTO layoutDTO = new LayoutDTO();
+            layoutDTO.setId(layout.getId());
+            layoutDTO.setName(layout.getName());
+            layoutDTO.setStatus(layout.getStatus());
 
             String polygonsGeoJson;
             GeoJSONWriter geoJSONWriter = new GeoJSONWriter();
@@ -99,10 +86,9 @@ public class LayoutEntityToDTOConverter implements EntityDTOConverter<Layout, La
             }
             FeatureCollection featureCollection = new FeatureCollection(featureList.toArray(new Feature[featureList.size()]));
             polygonsGeoJson = featureCollection.toString();
+            layoutDTO.setPolygonsGeoJson(polygonsGeoJson);
 
-            layoutDTOBuilder.polygonsGeoJson(polygonsGeoJson);
-
-            return layoutDTOBuilder.build();
+            return layoutDTO;
         }catch (Exception e){
             throw new ConversionFailedException(TypeDescriptor.forObject(layout), TypeDescriptor.valueOf(Layout.class), null, e);
         }

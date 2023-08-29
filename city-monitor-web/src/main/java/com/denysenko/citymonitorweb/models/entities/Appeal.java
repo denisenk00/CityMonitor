@@ -1,8 +1,8 @@
 package com.denysenko.citymonitorweb.models.entities;
 
 import com.denysenko.citymonitorweb.enums.AppealStatus;
-//import com.vividsolutions.jts.geom.Point;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.locationtech.jts.geom.Point;
 
 import javax.persistence.*;
@@ -23,7 +23,7 @@ public class Appeal {
     @Column(name = "appeal_id")
     private Long id;
     @JoinColumn(name = "local_id")
-    @OneToOne
+    @ManyToOne
     private Local local;
     @Column(name = "text")
     private String text;
@@ -35,10 +35,10 @@ public class Appeal {
     @Column(name = "point")
     private Point locationPoint;
 
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "appeal_id", nullable = false)
-    private List<File> files = new LinkedList<>();
+    @Setter(AccessLevel.PRIVATE)
+    @BatchSize(size = 100)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "appeal")
+    private List<AppealFile> files = new LinkedList<>();
 
 }
 

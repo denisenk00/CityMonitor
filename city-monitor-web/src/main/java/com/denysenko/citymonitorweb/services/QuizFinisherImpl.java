@@ -39,7 +39,6 @@ public class QuizFinisherImpl implements QuizFinisher {
         quizService.setQuizStatusById(quiz.getId(), QuizStatus.FINISHED);
     }
 
-    @Transactional
     @Override
     public void schedule(Quiz quiz) {
         log.info("scheduling quiz finish with id = " + quiz.getId());

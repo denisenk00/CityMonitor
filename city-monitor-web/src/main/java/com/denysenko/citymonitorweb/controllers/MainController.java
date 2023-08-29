@@ -4,15 +4,12 @@ import com.denysenko.citymonitorweb.exceptions.AccessRestrictedException;
 import com.denysenko.citymonitorweb.exceptions.IncorrectPasswordException;
 import com.denysenko.citymonitorweb.exceptions.InputValidationException;
 import com.denysenko.citymonitorweb.exceptions.RestException;
-import com.denysenko.citymonitorweb.models.dto.QuizDTO;
+import com.denysenko.citymonitorweb.models.dto.QuizPreviewDTO;
 import com.denysenko.citymonitorweb.models.dto.UserDTO;
-import com.denysenko.citymonitorweb.models.entities.Quiz;
 import com.denysenko.citymonitorweb.models.entities.User;
-import com.denysenko.citymonitorweb.services.converters.impl.QuizEntityToDTOConverter;
-import com.denysenko.citymonitorweb.services.converters.impl.UserEntityToDTOConverter;
 import com.denysenko.citymonitorweb.services.entity.AppealService;
 import com.denysenko.citymonitorweb.services.entity.QuizService;
-import com.denysenko.citymonitorweb.services.entity.UserServicee;
+import com.denysenko.citymonitorweb.services.entity.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.http.HttpStatus;
@@ -32,10 +29,8 @@ import java.util.List;
 public class MainController {
 
     private final QuizService quizService;
-    private final QuizEntityToDTOConverter quizConverter;
     private final AppealService appealService;
-    private final UserServicee userService;
-    private final UserEntityToDTOConverter userConverter;
+    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
     @ModelAttribute("unreadAppealsCnt")
@@ -45,9 +40,8 @@ public class MainController {
 
     @GetMapping("/")
     public String index(Model model){
-        List<Quiz> lastQuizzes = quizService.getLast10Quizzes();
-        List<QuizDTO> quizDTOs = quizConverter.convertListsEntityToDTO(lastQuizzes);
-        model.addAttribute("quizzes", quizDTOs);
+        List<QuizPreviewDTO> lastQuizzes = quizService.getLast10QuizzesPreviews();
+        model.addAttribute("quizzes", lastQuizzes);
         return "index";
     }
 
@@ -97,8 +91,7 @@ public class MainController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         log.info("Opening profile page for: " + username);
-        User user = userService.getUserByUsername(username);
-        UserDTO userDTO = userConverter.convertEntityToDTO(user);
+        UserDTO userDTO = userService.getUserDTOByUsername(username);
         model.addAttribute("user", userDTO);
         return "myProfile";
     }

@@ -2,14 +2,10 @@ package com.denysenko.citymonitorweb.models.entities;
 
 import com.denysenko.citymonitorweb.enums.LayoutStatus;
 import lombok.*;
-import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "LAYOUTS")
@@ -31,12 +27,18 @@ public class Layout {
     @Enumerated(EnumType.STRING)
     private LayoutStatus status;
 
-    @OneToMany(mappedBy = "layout", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)//, fetch = FetchType.LAZY)
+    @Setter(AccessLevel.PRIVATE)
+    @OneToMany(mappedBy = "layout", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Polygon> polygons = new LinkedList<>();
 
     @PrePersist
     void onCreate(){
         status = LayoutStatus.AVAILABLE;
+    }
+
+    public void addPolygon(Polygon polygon){
+        polygon.setLayout(this);
+        polygons.add(polygon);
     }
 
 }

@@ -30,11 +30,11 @@
                 <tbody>
                 <tr class="clickable-row" th:id="${'tr_' + layout.id}" th:data-href="${'/layouts/' + layout.id}" th:each="layout : ${layouts.page}">
                     <td><t th:text="${layout.name}"></t></td>
-                    <td><t class="statusValue" th:text="${layout.status}"></t></td>
+                    <td><t class="statusValue" th:text="${layout.status.getTitle()}"></t></td>
                     <td>
                         <button type="button" class="btn btn-primary submit-btn mb-2 changeAvailabilityBtn"
-                                th:text="${layout.status != 'Застарілий' ? 'Позначити як застарілий' : 'Позначити як доступний для використання'}"
-                                th:value="${layout.status == 'Застарілий' ? 'set_active' : 'set_deprecated'}"
+                                th:text="${layout.status.name() != 'DEPRECATED' ? 'Позначити як застарілий' : 'Позначити як доступний для використання'}"
+                                th:value="${layout.status.name() == 'DEPRECATED' ? 'set_active' : 'set_deprecated'}"
                                 th:data-id="${layout.id}"></button>
                     </td>
                 </tr>

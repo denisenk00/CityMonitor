@@ -9,12 +9,14 @@ import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedList;
 import java.util.List;
 
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class LocalServiceImpl implements LocalService {
 
     private final LocalRepository localRepository;

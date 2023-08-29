@@ -3,9 +3,10 @@ package com.denysenko.citymonitorweb.services.entity.impl;
 import com.denysenko.citymonitorweb.enums.UserAccountStatus;
 import com.denysenko.citymonitorweb.enums.UserRole;
 import com.denysenko.citymonitorweb.exceptions.EntityNotFoundException;
+import com.denysenko.citymonitorweb.models.dto.UserDTO;
 import com.denysenko.citymonitorweb.models.entities.User;
 import com.denysenko.citymonitorweb.repositories.hibernate.UserRepository;
-import com.denysenko.citymonitorweb.services.entity.UserServicee;
+import com.denysenko.citymonitorweb.services.entity.UserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.data.domain.Page;
@@ -13,10 +14,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
-public class UserServiceImpl implements UserServicee {
+@Transactional(readOnly = true)
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -32,16 +35,22 @@ public class UserServiceImpl implements UserServicee {
     }
 
     @Override
+    public UserDTO getUserDTOByUsername(String username) {
+        return userRepository.findDTOByUsername(username).orElseThrow(() -> new EntityNotFoundException("Не вдалось знайти користувача з username = " + username));
+    }
+
+    @Override
+    @Transactional
     public void saveUser(User user){
         userRepository.save(user);
     }
 
-    public Page<User> getPageOfUsers(int pageNumber, int size) {
+    @Override
+    public Page<UserDTO> getPageOfUsersDTO(int pageNumber, int size) {
         if (pageNumber < 1 || size < 1)
             throw new IllegalArgumentException("Номер сторінки та кількість елементів мають бути більшими за нуль.");
-
         PageRequest request = PageRequest.of(pageNumber - 1, size, Sort.by(Sort.Direction.ASC, "username"));
-        Page<User> usersPage = userRepository.findAll(request);
+        Page<UserDTO> usersPage = userRepository.findAllUserDTOBy(request);
         return usersPage;
     }
 
@@ -49,31 +58,32 @@ public class UserServiceImpl implements UserServicee {
         return userRepository.existsByUsername(username);
     }
 
+    @Transactional
     public void updateUserAccountStatus(String username, UserAccountStatus status){
         User user = getUserByUsername(username);
         user.setUserAccountStatus(status);
-        userRepository.save(user);
     }
+    @Transactional
     public void updateUserRole(String username, UserRole role){
         User user = getUserByUsername(username);
         user.setRole(role);
-        userRepository.save(user);
     }
 
+    @Transactional
     public String createUser(String username, UserRole userRole){
         String generatedPassword = RandomStringUtils.randomAlphanumeric(15);
         String encodedPassword = passwordEncoder.encode(generatedPassword);
         User user = new User(username, encodedPassword, userRole);
-        saveUser(user);
+        userRepository.save(user);
         return generatedPassword;
     }
 
+    @Transactional
     public String resetUserPassword(String username){
         String generatedPassword = RandomStringUtils.randomAlphanumeric(15);
         String encodedPassword = passwordEncoder.encode(generatedPassword);
         User user = getUserByUsername(username);
         user.setPassword(encodedPassword);
-        saveUser(user);
         return generatedPassword;
     }
 }

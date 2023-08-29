@@ -36,11 +36,11 @@
                     <tbody>
                     <tr class="clickable-row" th:id="${'tr_' + quiz.id}" th:data-href="${'/quizzes/' + quiz.id}" th:each="quiz : ${quizzes}">
                         <td><t th:text="${quiz.title}"></t></td>
-                        <td><t th:text="${quiz.layoutDTO.name}"></t></td>
+                        <td><t th:text="${quiz.layout.name}"></t></td>
                         <td><t th:text="${#temporals.format(quiz.startDate, 'dd-MM-yyyy HH:mm:ss')}"></t></td>
                         <td><t th:text="${#temporals.format(quiz.endDate, 'dd-MM-yyyy HH:mm:ss')}"></t></td>
-                        <td><t class="statusValue" th:text="${quiz.status}"></t></td>
-                        <td th:if="${quiz.status == 'В процесі'}" sec:authorize="hasAuthority('quizzes:write')">
+                        <td><t class="statusValue" th:text="${quiz.status.getTitle()}"></t></td>
+                        <td th:if="${quiz.status.name() == 'IN_PROGRESS'}" sec:authorize="hasAuthority('quizzes:write')">
                             <button class="btn btn-primary submit-btn finishQuizBtn" th:data-id="${quiz.id}">Завершити</button>
                         </td>
                     </tr>

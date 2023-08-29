@@ -5,7 +5,6 @@ import com.denysenko.citymonitorweb.models.entities.File;
 import com.denysenko.citymonitorweb.repositories.hibernate.FileRepository;
 import com.denysenko.citymonitorweb.services.converters.EntityDTOConverter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Service;
@@ -30,7 +29,6 @@ public class FileEntityToDTOConverter implements EntityDTOConverter<File, FileDT
             }
             file.setId(fileDTO.getId());
             file.setContent(fileDTO.getContent());
-            file.setFileID(fileDTO.getTgFileId());
             file.setName(fileDTO.getName());
             file.setContent(fileDTO.getContent());
             return file;
@@ -45,7 +43,6 @@ public class FileEntityToDTOConverter implements EntityDTOConverter<File, FileDT
             return FileDTO.builder()
                     .id(file.getId())
                     .name(file.getName())
-                    .tgFileId(file.getFileID())
                     .content(file.getContent())
                     .build();
         }catch (Exception e){

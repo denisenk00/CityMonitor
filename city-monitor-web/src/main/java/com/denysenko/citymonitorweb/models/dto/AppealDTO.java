@@ -1,32 +1,31 @@
 package com.denysenko.citymonitorweb.models.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.denysenko.citymonitorweb.enums.AppealStatus;
+import org.locationtech.jts.geom.Point;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class AppealDTO {
-    private Long id;
-    private String text;
-    private String status;
-    private LocalDTO local;
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime postDate;
-    private LocationPointDTO locationPointDTO;
-    private List<FileDTO> fileDTOs;
 
+public interface AppealDTO {
+    Long getId();
+    String getText();
+    AppealStatus getStatus();
+    LocalDTO getLocal();
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    LocalDateTime getPostDate();
+    Point getLocationPoint();
+    List<AppealFileDTO> getFiles();
+
+
+    interface LocalDTO {
+        String getName();
+        String getPhone();
+    }
+
+    interface AppealFileDTO {
+        Long getId();
+        String getName();
+        String getTgFileId();
+    }
 }

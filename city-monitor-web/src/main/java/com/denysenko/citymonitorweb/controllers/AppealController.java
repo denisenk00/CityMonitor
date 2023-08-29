@@ -5,19 +5,20 @@ import com.denysenko.citymonitorweb.exceptions.EntityNotFoundException;
 import com.denysenko.citymonitorweb.exceptions.InputValidationException;
 import com.denysenko.citymonitorweb.exceptions.RestException;
 import com.denysenko.citymonitorweb.models.dto.AppealDTO;
-import com.denysenko.citymonitorweb.models.entities.Appeal;
-import com.denysenko.citymonitorweb.services.converters.impl.AppealEntityToDTOConverter;
 import com.denysenko.citymonitorweb.services.entity.AppealService;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
+import java.util.AbstractMap;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -26,7 +27,6 @@ import java.util.Set;
 public class AppealController {
 
     private final AppealService appealService;
-    private final AppealEntityToDTOConverter appealConverter;
     @Value("${citymonitor.googlemaps.apikey}")
     private String GOOGLE_MAPS_API_KEY;
 
@@ -58,8 +58,8 @@ public class AppealController {
         if (pageNumber < 1 || pageSize < 1)
             throw new InputValidationException("Номер сторінки та її розмір має бути більше нуля. Поточні значення: pageNumber = " + pageNumber + ", pageSize = " + pageSize);
 
-        Page<Appeal> appeals = appealService.getPageByStatuses(pageNumber, pageSize, statusSet);
-        Page<AppealDTO> appealDTOs = appeals.map(appeal -> appealConverter.convertEntityToDTO(appeal));
+        Page<AppealDTO> appealDTOs = appealService.getPageByStatuses(pageNumber, pageSize, statusSet);
+
         model.addAttribute("tab", tabName);
         model.addAttribute("appeals", appealDTOs);
         model.addAttribute("page", pageNumber);
@@ -99,5 +99,28 @@ public class AppealController {
             throw new RestException(e.getMessage(), e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.ok().body("{\"msg\":\"success\"}");
+    }
+
+    @GetMapping("/file/{id}")
+    @ResponseBody
+    @PreAuthorize("hasAnyAuthority('appeals:read')")
+    public ResponseEntity<byte[]> downloadAppealFile(@PathVariable(name = "id") long fileId) {
+
+        AbstractMap.SimpleImmutableEntry<String, byte[]> fileNameWithContent = appealService.getAppealFileContent(fileId);
+        String name = fileNameWithContent.getKey();
+        byte[] resource = fileNameWithContent.getValue();
+
+        ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                .filename(name, StandardCharsets.UTF_8)
+                .build();
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentDisposition(contentDisposition);
+
+        return ResponseEntity.ok()
+                .headers(httpHeaders)
+                .contentLength(resource.length)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
     }
 }

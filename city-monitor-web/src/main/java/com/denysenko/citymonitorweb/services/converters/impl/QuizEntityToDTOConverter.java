@@ -1,14 +1,10 @@
 package com.denysenko.citymonitorweb.services.converters.impl;
 
-import com.denysenko.citymonitorweb.enums.QuizStatus;
 import com.denysenko.citymonitorweb.models.dto.LayoutDTO;
 import com.denysenko.citymonitorweb.models.dto.QuizDTO;
 import com.denysenko.citymonitorweb.models.entities.Quiz;
-import com.denysenko.citymonitorweb.repositories.hibernate.QuizRepository;
 import com.denysenko.citymonitorweb.services.converters.EntityDTOConverter;
-import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Service;
@@ -22,34 +18,23 @@ public class QuizEntityToDTOConverter implements EntityDTOConverter<Quiz, QuizDT
     private final FileEntityToDTOConverter fileConverter;
     private final OptionEntityToDTOConverter optionConverter;
     private final LayoutEntityToDTOConverter layoutConverter;
-    private final QuizRepository quizRepository;
-
 
     @Override
     public Quiz convertDTOToEntity(QuizDTO quizDTO) {
         try {
-            Quiz quiz;
-            if (quizDTO.getId() != null) {
-                Optional<Quiz> quizOptional = quizRepository.findById(quizDTO.getId());
-                quiz = quizOptional.orElse(new Quiz());
-            } else {
-                quiz = new Quiz();
-            }
-
+            Quiz quiz = new Quiz();
             quiz.setId(quizDTO.getId());
             quiz.setTitle(quizDTO.getTitle());
             quiz.setDescription(quizDTO.getDescription());
-            quiz.setFiles(fileConverter.convertListsDTOToEntity(quizDTO.getFileDTOs()));
-            quiz.setOptions(optionConverter.convertListsDTOToEntity(quizDTO.getOptionDTOs()));
             quiz.setStartDate(quizDTO.getStartDate());
             quiz.setEndDate(quizDTO.getEndDate());
+            quiz.setStatus(quizDTO.getStatus());
 
-            if (Optional.ofNullable(quizDTO.getStatus()).isPresent()) {
-                QuizStatus status = QuizStatus.getByTitle(quizDTO.getStatus());
-                quiz.setStatus(status);
-            }
-            Optional.ofNullable(quizDTO.getLayoutDTO())
-                    .ifPresent(layoutDTO -> quiz.setLayout(layoutConverter.convertDTOToEntity(layoutDTO)));
+            optionConverter.convertListsDTOToEntity(quizDTO.getOptionDTOs())
+                    .forEach(option -> quiz.addOption(option));
+
+            fileConverter.convertListsDTOToEntity(quizDTO.getFileDTOs())
+                    .forEach(file -> quiz.addFile(file));
 
             return quiz;
         }catch (Exception e){
@@ -68,10 +53,9 @@ public class QuizEntityToDTOConverter implements EntityDTOConverter<Quiz, QuizDT
                     .fileDTOs(fileConverter.convertListsEntityToDTO(quiz.getFiles()))
                     .optionDTOs(optionConverter.convertListsEntityToDTO(quiz.getOptions()))
                     .startDate(quiz.getStartDate())
-                    .endDate(quiz.getEndDate());
+                    .endDate(quiz.getEndDate())
+                    .status(quiz.getStatus());
 
-            Optional.ofNullable(quiz.getStatus())
-                    .ifPresent(quizStatus -> quizDTOBuilder.status(quizStatus.getTitle()));
             Optional.ofNullable(quiz.getLayout()).ifPresent(layout -> {
                 LayoutDTO layoutDTO = layoutConverter.convertEntityToDTO(layout);
                 quizDTOBuilder.layoutDTO(layoutDTO);

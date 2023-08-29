@@ -1,5 +1,6 @@
 package com.denysenko.citymonitorweb.models.dto;
 
+import com.denysenko.citymonitorweb.enums.QuizStatus;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -23,7 +24,7 @@ public class QuizDTO {
     @NotEmpty(message = "Опис опитування не може бути пустим")
     @Length(min = 30, max = 1000, message = "Мінімальна кількість символів - 30, максимальна - 1000")
     private String description;
-    private String status;
+    private QuizStatus status;
     private boolean startImmediate;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @FutureOrPresent(message = "Дата початку опитування не може бути в минулому")

@@ -64,7 +64,7 @@
                 </div>
                 <div id="list-appeal-div">
                     <ul class="appeals">
-                        <li class="appeal" th:classappend="${appeal.status == 'Непрочитано' ? 'unread' : ''}" th:data-id="${appeal.id}" th:each="appeal : ${appeals.getContent()}">
+                        <li class="appeal" th:classappend="${appeal.status.name() == 'UNREAD' ? 'unread' : ''}" th:data-id="${appeal.id}" th:each="appeal : ${appeals.getContent()}">
                             <div class="actions">
                                 <span class="action"><input class="appeal-checkbox" type="checkbox"></span>
                             </div>
@@ -104,13 +104,13 @@
                             </tr>
                             <tr>
                                 <td class="name" >Статус</td>
-                                <td class="value appeal-status" th:text="${appeal.status}"></td>
+                                <td class="value appeal-status" th:text="${appeal.status.getTitle()}"></td>
                             </tr>
-                            <tr th:if="${appeal.fileDTOs.size() > 0}">
+                            <tr th:if="${appeal.files.size() > 0}">
                                 <td class="name">Прикріплені файли</td>
                                 <td>
-                                    <div th:each="file : ${appeal.fileDTOs}">
-                                        <a th:text="${file.name}" th:href="${'/files/tgFile/' + file.tgFileId}"></a>
+                                    <div th:each="file : ${appeal.files}">
+                                        <a th:text="${file.name}" th:href="${'/appeals/file/' + file.id}"></a>
                                     </div>
                                 </td>
                             </tr>
@@ -119,10 +119,10 @@
                         <div class="mb-5" >
                             <p th:text="${appeal.text}"></p>
                         </div>
-                        <div class="location mb-3" th:if="${appeal.locationPointDTO != null}">
+                        <div class="location mb-3" th:if="${appeal.locationPoint != null}">
                             <div class="map" style="height: 500px"></div>
-                            <input class="latitude" type="hidden" th:value="${appeal.locationPointDTO.latitude}">
-                            <input class="longitude" type="hidden" th:value="${appeal.locationPointDTO.longitude}">
+                            <input class="latitude" type="hidden" th:value="${appeal.locationPoint.getY()}">
+                            <input class="longitude" type="hidden" th:value="${appeal.locationPoint.getX()}">
                         </div>
                     </div>
             </main>

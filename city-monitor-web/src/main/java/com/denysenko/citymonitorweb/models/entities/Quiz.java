@@ -1,10 +1,8 @@
 package com.denysenko.citymonitorweb.models.entities;
 
 import com.denysenko.citymonitorweb.enums.QuizStatus;
-import com.denysenko.citymonitorweb.models.entities.File;
-import com.denysenko.citymonitorweb.models.entities.Layout;
-import com.denysenko.citymonitorweb.models.entities.Option;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -20,6 +18,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class Quiz {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,15 +36,16 @@ public class Quiz {
     @Column(name = "end_date")
     private LocalDateTime endDate;
     @JoinColumn(name = "layout_id")
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Layout layout;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "quiz_id", nullable = false)
+    @Setter(AccessLevel.PRIVATE)
+    @BatchSize(size = 100)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "quiz")
     private List<File> files = new LinkedList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "quiz_id", nullable = false)
+    @Setter(AccessLevel.PRIVATE)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "quiz")
     private List<Option> options = new LinkedList<>();
 
     @PrePersist
@@ -56,5 +56,15 @@ public class Quiz {
         }else {
             status = QuizStatus.PLANNED;
         }
+    }
+
+    public void addFile(File file){
+        file.setQuiz(this);
+        this.files.add(file);
+    }
+
+    public void addOption(Option option){
+        option.setQuiz(this);
+        this.options.add(option);
     }
 }

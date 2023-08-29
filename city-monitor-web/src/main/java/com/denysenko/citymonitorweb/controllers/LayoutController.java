@@ -7,9 +7,8 @@ import com.denysenko.citymonitorweb.exceptions.RestException;
 import com.denysenko.citymonitorweb.models.domain.paging.Paged;
 import com.denysenko.citymonitorweb.models.domain.paging.Paging;
 import com.denysenko.citymonitorweb.models.dto.LayoutDTO;
-import com.denysenko.citymonitorweb.models.entities.Layout;
-import com.denysenko.citymonitorweb.models.entities.Quiz;
-import com.denysenko.citymonitorweb.services.converters.impl.LayoutEntityToDTOConverter;
+import com.denysenko.citymonitorweb.models.dto.LayoutPreviewDTO;
+import com.denysenko.citymonitorweb.models.dto.QuizPreviewDTO;
 import com.denysenko.citymonitorweb.services.entity.AppealService;
 import com.denysenko.citymonitorweb.services.entity.LayoutService;
 import com.denysenko.citymonitorweb.services.entity.QuizService;
@@ -42,7 +41,6 @@ public class LayoutController {
 
     private final LayoutService layoutService;
     private final QuizService quizService;
-    private final LayoutEntityToDTOConverter layoutConverter;
     private final AppealService appealService;
 
     @ModelAttribute("unreadAppealsCnt")
@@ -64,8 +62,7 @@ public class LayoutController {
     @PostMapping("/")
     @PreAuthorize("hasAuthority('layouts:write')")
     public String saveLayout(@Valid @ModelAttribute("layout") LayoutDTO layoutDTO){
-        Layout layout = layoutConverter.convertDTOToEntity(layoutDTO);
-        layoutService.saveLayout(layout);
+        layoutService.saveLayout(layoutDTO);
         return "redirect:/";
     }
 
@@ -77,9 +74,8 @@ public class LayoutController {
         if (pageNumber < 1 || pageSize < 1)
             throw new InputValidationException("Номер сторінки та її розмір має бути більше нуля. Поточні значення: pageNumber = " + pageNumber + ", pageSize = " + pageSize);
 
-        Page<Layout> layoutPage = layoutService.getPageOfLayouts(pageNumber, pageSize);
-        Page<LayoutDTO> dtoPage = layoutPage.map(layout -> layoutConverter.convertEntityToDTO(layout));
-        Paged<LayoutDTO> paged = new Paged(dtoPage, Paging.of(dtoPage.getTotalPages(), pageNumber, pageSize));
+        Page<LayoutPreviewDTO> layoutPage = layoutService.getPageOfLayouts(pageNumber, pageSize);
+        Paged<LayoutPreviewDTO> paged = new Paged(layoutPage, Paging.of(layoutPage.getTotalPages(), pageNumber, pageSize));
 
         model.addAttribute("layouts", paged);
         return "layouts/layouts";
@@ -88,21 +84,21 @@ public class LayoutController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('layouts:read')")
     public String layoutPage(@PathVariable(name = "id") long id, Model model){
-        Layout layout;
+        LayoutDTO layoutDTO;
         try {
-             layout = layoutService.getLayoutById(id);
+             layoutDTO = layoutService.getLayoutDTOById(id);
         }catch (EntityNotFoundException e){
             throw new InputValidationException(e.getMessage(), e);
         }
+        List<QuizPreviewDTO> quizList = quizService.findQuizzesPreviewsByLayoutId(layoutDTO.getId());
 
-        LayoutDTO layoutDTO = layoutConverter.convertEntityToDTO(layout);
-        List<Quiz> quizList = quizService.findQuizzesByLayoutId(layout.getId());
         model.addAttribute("mapCenterLat", mapCenterLat);
         model.addAttribute("mapCenterLng", mapCenterLng);
         model.addAttribute("mapZoom", mapZoom);
         model.addAttribute("googlemaps_apikey", GOOGLE_MAPS_API_KEY);
         model.addAttribute("layout", layoutDTO);
         model.addAttribute("quizzes", quizList);
+
         return "layouts/layout";
     }
 

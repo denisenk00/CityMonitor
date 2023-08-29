@@ -26,7 +26,7 @@
             <tbody>
                 <tr>
                     <td class="name">Статус</td>
-                    <td id="statusValue" class="value" th:text="${layout.status}"></td>
+                    <td id="statusValue" class="value" th:text="${layout.status.getTitle()}"></td>
                 </tr>
                 <tr th:if="${not #lists.isEmpty(quizzes)}">
                     <td class="name">Використовується в</td>
@@ -41,8 +41,8 @@
         <input hidden id="layoutId" th:value="${layout.id}">
         <div class="my-4">
             <button type="button" class="btn btn-primary submit-btn mb-2" id="changeAvailabilityBtn"
-                    th:text="${layout.status != 'Застарілий' ? 'Позначити як застарілий' : 'Позначити як доступний для використання'}"
-                    th:value="${layout.status == 'Застарілий' ? 'set_active' : 'set_deprecated'}"></button>
+                    th:text="${layout.status.name() != 'DEPRECATED' ? 'Позначити як застарілий' : 'Позначити як доступний для використання'}"
+                    th:value="${layout.status.name() == 'DEPRECATED' ? 'set_active' : 'set_deprecated'}"></button>
             <br><br>
             <button type="button" th:disabled="${not #lists.isEmpty(quizzes)}" class="btn btn-primary submit-btn mb-2" id="delete">Видалити</button>
         </div>

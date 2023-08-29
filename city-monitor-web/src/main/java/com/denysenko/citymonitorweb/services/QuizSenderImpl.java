@@ -29,7 +29,6 @@ public class QuizSenderImpl implements QuizSender {
 
     private Map<Long, Timer> scheduledTasks = new HashMap<>();
 
-    @Transactional
     @Override
     public void schedule(Quiz quiz) {
         log.info("Scheduling quiz with id = " + quiz.getId());

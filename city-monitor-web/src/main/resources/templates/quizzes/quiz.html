@@ -36,7 +36,7 @@
                 </tr>
                 <tr>
                     <td class="name">Статус</td>
-                    <td class="value" th:text="${quiz.status}"></td>
+                    <td class="value" th:text="${quiz.status.getTitle()}"></td>
                 </tr>
                 <tr>
                     <td class="name">Початок опитування</td>
@@ -65,10 +65,10 @@
         </table>
         <input hidden id="quizId" th:value="${quiz.id}">
         <div class="my-4">
-            <button id="finishQuizBtn" class="btn btn-primary submit-btn" th:if="${quiz.status == 'В процесі'}">Завершити</button>
-            <button id="deleteQuizBtn" class="btn btn-primary submit-btn" th:if="${quiz.status != 'В процесі'}">Видалити</button>
+            <button id="finishQuizBtn" class="btn btn-primary submit-btn" th:if="${quiz.status.name() == 'IN_PROGRESS'}">Завершити</button>
+            <button id="deleteQuizBtn" class="btn btn-primary submit-btn" th:if="${quiz.status.name() != 'IN_PROGRESS'}">Видалити</button>
         </div>
-        <div th:if="${quiz.status == 'Завершено'}" class="my-5">
+        <div th:if="${quiz.status.name() == 'FINISHED'}" class="my-5">
             <h3>Результати опитування</h3>
             <div id="general-statistics-chart" class="chart"></div>
             <p><b>Результати згідно до районів:</b></p>

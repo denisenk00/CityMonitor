@@ -18,7 +18,8 @@ public class Option {
     private Long id;
     @Column(name = "title")
     private String title;
-    @Column(name = "quiz_id", insertable = false, updatable = false)
-    private Long quizId;
+    @JoinColumn(name = "quiz_id")
+    @ManyToOne
+    private Quiz quiz;
 
 }
