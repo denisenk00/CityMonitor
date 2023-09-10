@@ -19,7 +19,8 @@ import java.util.*;
 @Service
 public class QuizFinisherImpl implements QuizFinisher {
 
-    private Map<Long, Timer> scheduledTasks = new HashMap<>();
+    private Map<Long, FinishQuizTask> scheduledTasks = new HashMap<>();
+    private final Timer timer = new Timer();
 
     private final QuizService quizService;
     private final ResultService resultService;
@@ -43,19 +44,19 @@ public class QuizFinisherImpl implements QuizFinisher {
     public void schedule(Quiz quiz) {
         log.info("scheduling quiz finish with id = " + quiz.getId());
         FinishQuizTask finishQuizTask = new FinishQuizTask(quiz, this);
-        Timer timer = new Timer();
         Calendar calendar = Calendar.getInstance();
         calendar.set(quiz.getEndDate().getYear(), quiz.getEndDate().getMonthValue() - 1, quiz.getEndDate().getDayOfMonth(),
                 quiz.getEndDate().getHour(), quiz.getEndDate().getMinute(), quiz.getEndDate().getSecond());
         timer.schedule(finishQuizTask, calendar.getTime());
-        scheduledTasks.put(quiz.getId(), timer);
+        scheduledTasks.put(quiz.getId(), finishQuizTask);
     }
 
     public void removeScheduledFinish(Long quizId){
         log.info("removing quiz finish from scheduled if exists: id = " + quizId);
-        Timer timer = scheduledTasks.get(quizId);
-        if(timer != null){
-            timer.cancel();
+        FinishQuizTask task = scheduledTasks.get(quizId);
+        if(task != null){
+            task.cancel();
+            timer.purge();
             scheduledTasks.remove(quizId);
         }
     }

@@ -27,19 +27,19 @@ public class QuizSenderImpl implements QuizSender {
     private final LocalService localService;
     private final QuizService quizService;
 
-    private Map<Long, Timer> scheduledTasks = new HashMap<>();
+    private Map<Long, SendQuizTask> scheduledTasks = new HashMap<>();
+    private final Timer timer = new Timer();
 
     @Override
     public void schedule(Quiz quiz) {
         log.info("Scheduling quiz with id = " + quiz.getId());
         SendQuizTask sendQuizTask = new SendQuizTask(quiz, this);
-        Timer timer = new Timer();
         Calendar calendar = Calendar.getInstance();
         calendar.set(quiz.getStartDate().getYear(), quiz.getStartDate().getMonthValue() - 1, quiz.getStartDate().getDayOfMonth(),
                 quiz.getStartDate().getHour(), quiz.getStartDate().getMinute(), quiz.getStartDate().getSecond());
         timer.schedule(sendQuizTask, calendar.getTime());
         log.info("calendar = " + calendar.getTime().toString());
-        scheduledTasks.put(quiz.getId(), timer);
+        scheduledTasks.put(quiz.getId(), sendQuizTask);
         log.info("Quiz with id = " + quiz.getId() + " scheduled successfully");
     }
 
@@ -76,9 +76,10 @@ public class QuizSenderImpl implements QuizSender {
 
     public void removeScheduledSending(Long quizId){
         log.info("removing quiz from scheduled with id = " + quizId + " if exists");
-        Timer timer = scheduledTasks.get(quizId);
-        if(timer != null){
-            timer.cancel();
+        SendQuizTask task = scheduledTasks.get(quizId);
+        if(task != null){
+            task.cancel();
+            timer.purge();
             scheduledTasks.remove(quizId);
         }
     }
