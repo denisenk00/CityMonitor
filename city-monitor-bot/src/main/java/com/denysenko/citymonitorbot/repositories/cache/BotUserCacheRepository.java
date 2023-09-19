@@ -6,11 +6,12 @@ import org.springframework.stereotype.Repository;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 public class BotUserCacheRepository {
 
-    private final Map<Long, BotUser> cachedUsers = new HashMap<>();
+    private final Map<Long, BotUser> cachedUsers = new ConcurrentHashMap<>(1000);
 
     public Optional<BotUser> findBotUserByChatId(Long chatId){
         return Optional.ofNullable(cachedUsers.get(chatId));

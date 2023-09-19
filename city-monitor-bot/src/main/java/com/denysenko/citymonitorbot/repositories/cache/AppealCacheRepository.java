@@ -6,11 +6,12 @@ import org.springframework.stereotype.Repository;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 public class AppealCacheRepository {
 
-    private final Map<Long, Appeal> cachedAppeals = new HashMap<>();
+    private final Map<Long, Appeal> cachedAppeals = new ConcurrentHashMap<>(1000);
 
     public Optional<Appeal> findAppealByChatId(Long chatId){
         return Optional.ofNullable(cachedAppeals.get(chatId));
