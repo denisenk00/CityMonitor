@@ -13,6 +13,12 @@ services:
       - 'POSTGRES_DB=CityMonitorDB'
     volumes:
       - ./resources/db_create.sql:/docker-entrypoint-initdb.d/db_create.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready", "-d", "CityMonitorDB" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
   admin-panel:
     build:
@@ -32,7 +38,8 @@ services:
       - 'GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}'
       - 'TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}'
     depends_on:
-      - postgresql
+      postgresql:
+        condition: service_healthy
 
   telegram-bot:
     build:
@@ -47,4 +54,5 @@ services:
       - 'TELEGRAM_BOT_USERNAME=${TELEGRAM_BOT_USERNAME}'
       - 'TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}'
     depends_on:
-      - postgresql
+      postgresql:
+        condition: service_healthy
