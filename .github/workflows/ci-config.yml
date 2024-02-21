@@ -48,6 +48,7 @@ jobs:
           context: city-monitor-web
           file: Dockerfile
           push: true
+          tags: denisenk00/city-monitor-web:latest
 
       - name: Build and push city-monitor-bot
         uses: docker/build-push-action@v4
@@ -55,3 +56,4 @@ jobs:
           context: city-monitor-bot
           file: Dockerfile
           push: true
+          tags: denisenk00/city-monitor-bot:latest
