@@ -7,9 +7,9 @@ services:
     ports:
       - '5432:5432'
     environment:
-      - 'POSTGRES_ROOT_PASSWORD=postgres'
-      - 'POSTGRES_USER=postgres'
-      - 'POSTGRES_PASSWORD=postgres'
+      - 'POSTGRES_ROOT_PASSWORD=${DATABASE_ROOT_PASSWORD}'
+      - 'POSTGRES_USER=${DATABASE_USER}'
+      - 'POSTGRES_PASSWORD=${DATABASE_PASSWORD}'
       - 'POSTGRES_DB=CityMonitorDB'
     volumes:
       - ./resources/db_create.sql:/docker-entrypoint-initdb.d/db_create.sql
@@ -23,10 +23,14 @@ services:
     ports:
       - '8088:8085'
     environment:
-      - 'DATABASE_URL=jdbc:postgresql://postgresql:5432/CityMonitorDB'
-      - 'DATABASE_USERNAME=postgres'
-      - 'DATABASE_PASSWORD=postgres'
-      - 'TZ=Europe/Kiev'
+      - 'DATABASE_URL=${DATABASE_URL}'
+      - 'DATABASE_USER=${DATABASE_USER}'
+      - 'DATABASE_PASSWORD=${DATABASE_PASSWORD}'
+      - 'TZ=${TIME_ZONE}'
+      - 'MAP_START_POSITION_LATITUDE=${MAP_START_POSITION_LATITUDE}'
+      - 'MAP_START_POSITION_LONGITUDE=${MAP_START_POSITION_LONGITUDE}'
+      - 'GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}'
+      - 'TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}'
     depends_on:
       - postgresql
 
@@ -36,9 +40,11 @@ services:
       dockerfile: Dockerfile
     container_name: city-monitor-bot
     environment:
-      - 'DATABASE_URL=jdbc:postgresql://postgresql:5432/CityMonitorDB'
-      - 'DATABASE_USERNAME=postgres'
-      - 'DATABASE_PASSWORD=postgres'
-      - 'TZ=Europe/Kiev'
+      - 'DATABASE_URL=${DATABASE_URL}'
+      - 'DATABASE_USER=${DATABASE_USER}'
+      - 'DATABASE_PASSWORD=${DATABASE_PASSWORD}'
+      - 'TZ=${TIME_ZONE}'
+      - 'TELEGRAM_BOT_USERNAME=${TELEGRAM_BOT_USERNAME}'
+      - 'TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}'
     depends_on:
       - postgresql
