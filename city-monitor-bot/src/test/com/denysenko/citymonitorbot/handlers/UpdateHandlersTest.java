@@ -18,65 +18,96 @@ import com.denysenko.citymonitorbot.handlers.impl.*;
 import com.denysenko.citymonitorbot.services.CacheManager;
 import com.denysenko.citymonitorbot.services.TelegramService;
 import com.denysenko.citymonitorbot.services.entity.BotUserService;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.mockito.Spy;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.telegram.telegrambots.meta.api.objects.*;
 
+import java.util.LinkedHashSet;
 import java.util.Optional;
 
 import static com.denysenko.citymonitorbot.util.InstanceHelper.*;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UpdateHandlersTest {
-    @Autowired
+
     private SuperUpdateHandler superUpdateHandler;
-    @SpyBean
+    @Spy
+    @InjectMocks
     private ReplyButtonHandler replyButtonHandler;
-    @SpyBean
+    @Spy
+    @InjectMocks
     private TextHandler textHandler;
-    @SpyBean
+    @Spy
+    @InjectMocks
     private LocationHandler locationHandler;
-    @SpyBean
+    @Spy
+    @InjectMocks
     private ContactHandler contactHandler;
-    @SpyBean
+    @Spy
+    @InjectMocks
     private CallBackHandler callBackHandler;
-    @SpyBean
+    @Spy
+    @InjectMocks
     private ChatMemberHandler chatMemberHandler;
-    @SpyBean
+    @Spy
+    @InjectMocks
     private FileHandler fileHandler;
-    @MockBean
+    @Mock
     private StartCommand startCommand;
-    @MockBean
+    @Mock
     private StopCommand stopCommand;
-    @MockBean
+    @Mock
     private ProfileEnterNameCommand profileEnterNameCommand;
-    @MockBean
+    @Mock
     private ProfileEnterPhoneNumberCommand profileEnterPhoneNumberCommand;
-    @MockBean
+    @Mock
     private ProfileEnterLocationCommand profileEnterLocationCommand;
-    @MockBean
+    @Mock
     private SaveAnswerCommand saveAnswerCommand;
-    @MockBean
+    @Mock
     private MainMenuCommand mainMenuCommand;
-    @MockBean
+    @Mock
     private CacheManager cacheManager;
-    @MockBean
+    @Mock
     private BotUserService botUserService;
-    @MockBean
+    @Mock
     private TelegramService telegramService;
-    @MockBean
+    @Mock
     private AppealEnterDescriptionCommand appealEnterDescriptionCommand;
-    @MockBean
+    @Mock
     private AppealEnterLocationCommand appealEnterLocationCommand;
-    @MockBean
+    @Mock
     private AppealAttachFilesCommand appealAttachFilesCommand;
+
+    @BeforeEach
+    public void resetMocks(){
+        Mockito.reset(replyButtonHandler, textHandler, locationHandler, contactHandler, callBackHandler, chatMemberHandler,
+                fileHandler, startCommand, stopCommand, profileEnterNameCommand, profileEnterLocationCommand, profileEnterNameCommand,
+                profileEnterPhoneNumberCommand, saveAnswerCommand, mainMenuCommand, cacheManager, botUserService,
+                telegramService, appealEnterDescriptionCommand, appealEnterLocationCommand, appealAttachFilesCommand);
+    }
+
+    @BeforeAll
+    public void setUp(){
+        var set = new LinkedHashSet();
+        set.add(locationHandler);
+        set.add(replyButtonHandler);
+        set.add(fileHandler);
+        set.add(chatMemberHandler);
+        set.add(contactHandler);
+        set.add(callBackHandler);
+        set.add(textHandler);
+        superUpdateHandler =  new SuperUpdateHandler(set);
+    }
 
     @Test
     void handleStartCommand() {
