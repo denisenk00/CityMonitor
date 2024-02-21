@@ -11,14 +11,11 @@ Java 18, Spring Boot 2.7 (JPA, Security, Web, Validation, Thymeleaf), Hibernate 
 
 ## How to deploy with docker
 
-Firstly you need to fill in google maps and telegram settings in application.properties file in both modules.
-Then go to the project root folder and execute such commands:
+Firstly you need to fulfill environment properties in variables.env file.
+Then go to the project root folder and execute such command:
 
 ```
-docker build -t city-monitor-bot city-monitor-bot/
-docker build -t city-monitor-web city-monitor-web/
-
-docker-compose -f docker-compose.yml up -d
+docker-compose -f docker-compose.yml --env-file ./variables.env  up -d
 ```
 
 Default credentials: sysadm/sysadm
