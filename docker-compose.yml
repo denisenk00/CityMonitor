@@ -15,7 +15,9 @@ services:
       - ./resources/db_create.sql:/docker-entrypoint-initdb.d/db_create.sql
 
   admin-panel:
-    image: city-monitor-web
+    build:
+      context: city-monitor-web
+      dockerfile: Dockerfile
     container_name: city-monitor-web
     restart: always
     ports:
@@ -29,7 +31,9 @@ services:
       - postgresql
 
   telegram-bot:
-    image: city-monitor-bot
+    build:
+      context: city-monitor-bot
+      dockerfile: Dockerfile
     container_name: city-monitor-bot
     environment:
       - 'DATABASE_URL=jdbc:postgresql://postgresql:5432/CityMonitorDB'
