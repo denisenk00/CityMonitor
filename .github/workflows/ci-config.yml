@@ -20,8 +20,29 @@ jobs:
           java-version: '18'
           distribution: 'temurin'
           cache: maven
+
+      - name: Build
+        run: mvn --batch-mode -DskipTests package
+
       - name: run tests
-        run: mvn test
+        run: mvn --batch-mode -Dmaven.test.failure.ignore=true test
+
+      - name: Report city-monitor-bot
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Maven Tests
+          path: ./city-monitor-bot/target/surefire-reports/*.xml
+          reporter: java-junit
+          fail-on-error: true
+      - name: Report city-monitor-web
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Maven Tests
+          path: ./city-monitor-web/target/surefire-reports/*.xml
+          reporter: java-junit
+          fail-on-error: true
 
   docker-build:
     runs-on: ubuntu-latest
