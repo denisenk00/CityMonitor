@@ -127,6 +127,14 @@
                     <configLocation>../sun_checks.xml</configLocation>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <configuration>
+                    <xmlOutput>true</xmlOutput>
+                    <failOnError>false</failOnError>
+                </configuration>
+            </plugin>
         </plugins>
         <testSourceDirectory>${project.basedir}/src/test</testSourceDirectory>
     </build>

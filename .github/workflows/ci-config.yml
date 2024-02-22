@@ -22,11 +22,15 @@ jobs:
           cache: maven
 
       - name: Build
-        run: mvn --batch-mode -DskipTests verify checkstyle:checkstyle
+        run: mvn --batch-mode -DskipTests verify checkstyle:checkstyle spotbugs:spotbugs
 
       - uses: jwgmeligmeyling/checkstyle-github-action@master
         with:
           path: '**/checkstyle-result.xml'
+
+      - uses: jwgmeligmeyling/spotbugs-github-action@master
+        with:
+          path: '**/spotbugsXml.xml'
 
       - name: run tests
         run: mvn --batch-mode -Dmaven.test.failure.ignore=true test
