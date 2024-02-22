@@ -27,17 +27,17 @@ public class LocalServiceImpl implements LocalService {
         List<Long> filteredChatIds = new LinkedList<>();
         allLocals.forEach(local -> {
             Point locationPoint = local.getLocation();
-            if(layoutContainsPoint(layout, locationPoint)){
+            if (layoutContainsPoint(layout, locationPoint)) {
                 filteredChatIds.add(local.getChatId());
             }
         });
         return filteredChatIds;
     }
 
-    private boolean layoutContainsPoint(Layout layout, Point point){
-        for(Polygon polygon : layout.getPolygons()){
+    private boolean layoutContainsPoint(Layout layout, Point point) {
+        for (Polygon polygon : layout.getPolygons()) {
             org.locationtech.jts.geom.Polygon jtsPolygon = polygon.getPolygon();
-            if(jtsPolygon.contains(point)) return true;
+            if (jtsPolygon.contains(point)) return true;
         }
         return false;
     }

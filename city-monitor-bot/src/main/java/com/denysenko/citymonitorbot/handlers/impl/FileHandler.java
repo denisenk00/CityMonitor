@@ -24,15 +24,15 @@ public class FileHandler implements Handler {
     @Override
     public boolean isApplicable(Update update) {
         Message message = null;
-        if(update.hasMessage()){
+        if (update.hasMessage()) {
             message = update.getMessage();
-            if(!(message.hasPhoto() || message.hasDocument() || message.hasVideo() || message.hasAudio()))
+            if (!(message.hasPhoto() || message.hasDocument() || message.hasVideo() || message.hasAudio()))
                 return false;
         } else return false;
 
         Long chatId = message.getChatId();
         Optional<BotStates> botUserState = cacheManager.findBotStateByChatId(chatId);
-        if(botUserState.isPresent()){
+        if (botUserState.isPresent()) {
             BotStates botState = botUserState.get();
             return botState.equals(BotStates.APPEAL_ATTACHING_FILES);
         } else return false;
@@ -45,21 +45,21 @@ public class FileHandler implements Handler {
         log.info("Handled by FileHandler: updateId = " + update.getUpdateId() + ", chatId = " + chatId.toString());
         String name = null;
         String fileID = null;
-        if(message.hasPhoto()){
+        if (message.hasPhoto()) {
             List<PhotoSize> photos = message.getPhoto();
-            PhotoSize photoSize = photos.get(photos.size()-1);
+            PhotoSize photoSize = photos.get(photos.size() - 1);
             name = photoSize.getFilePath();
-            if(name == null) name = "someImage_" + RandomStringUtils.randomNumeric(3) + ".jpeg";
+            if (name == null) name = "someImage_" + RandomStringUtils.randomNumeric(3) + ".jpeg";
             fileID = photoSize.getFileId();
-        } else if(message.hasDocument()){
+        } else if (message.hasDocument()) {
             Document document = message.getDocument();
             name = document.getFileName();
             fileID = document.getFileId();
-        } else if(message.hasVideo()){
+        } else if (message.hasVideo()) {
             Video video = message.getVideo();
             name = video.getFileName();
             fileID = video.getFileId();
-        } else if(message.hasAudio()){
+        } else if (message.hasAudio()) {
             Audio audio = message.getAudio();
             name = audio.getFileName();
             fileID = audio.getFileId();

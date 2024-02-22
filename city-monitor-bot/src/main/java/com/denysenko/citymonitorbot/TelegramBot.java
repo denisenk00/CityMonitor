@@ -3,7 +3,6 @@ package com.denysenko.citymonitorbot;
 import com.denysenko.citymonitorbot.handlers.SuperUpdateHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -36,7 +35,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         return botToken;
     }
     @PostConstruct
-    private void startBot(){
+    private void startBot() {
         try {
             log.info("Registering bot..");
             new TelegramBotsApi(DefaultBotSession.class).registerBot(this);

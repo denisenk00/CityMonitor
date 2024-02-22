@@ -24,7 +24,7 @@ public class Answer {
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
-    public Answer(Long localId, Long optionId, Quiz quiz){
+    public Answer(Long localId, Long optionId, Quiz quiz) {
         this.localId = localId;
         this.optionId = optionId;
         this.quiz = quiz;

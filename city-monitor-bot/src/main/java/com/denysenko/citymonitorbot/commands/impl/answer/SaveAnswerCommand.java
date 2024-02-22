@@ -25,21 +25,21 @@ public class SaveAnswerCommand implements Command<Long> {
     private final QuizService quizService;
 
     @Transactional
-    public void saveAnswer(Long chatId, Long quizId, Long optionId){
+    public void saveAnswer(Long chatId, Long quizId, Long optionId) {
         final String UNAVAILABLE_QUIZ_MESSAGE = "Це опитування вже завершено. Чекаємо на вашу участь в наступних!";
         BotUser botUser = botUserService.getBotUserByChatId(chatId);
         Long userId = botUser.getBotUserId();
 
-        if(!quizService.existsById(quizId))
+        if (!quizService.existsById(quizId))
             throw new NotAllowedQuizStatusException(UNAVAILABLE_QUIZ_MESSAGE);
 
         Quiz quiz = quizService.getQuizById(quizId);
-        if(quiz.getStatus().equals("FINISHED"))
+        if (quiz.getStatus().equals("FINISHED"))
             throw new NotAllowedQuizStatusException(UNAVAILABLE_QUIZ_MESSAGE);
 
         Optional<Answer> oldAnswerOpt = answerService.findAnswerByQuizIdAndUserId(quizId, userId);
         oldAnswerOpt.ifPresentOrElse((oldAnswer) -> {
-            if(!oldAnswer.getOptionId().equals(optionId)){
+            if (!oldAnswer.getOptionId().equals(optionId)) {
                 oldAnswer.setOptionId(optionId);
                 answerService.saveAnswer(oldAnswer);
             }
@@ -51,5 +51,5 @@ public class SaveAnswerCommand implements Command<Long> {
     }
 
     @Override
-    public void execute(Long chatId) {}
+    public void execute(Long chatId) { }
 }

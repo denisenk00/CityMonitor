@@ -40,8 +40,9 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public Page<QuizPreviewDTO> getPageOfQuizzesPreviews(int pageNumber, int size){
-        if(pageNumber < 1 || size < 1) throw new IllegalArgumentException("Номер сторінки та кількість елементів мають бути більшими за нуль.");
+    public Page<QuizPreviewDTO> getPageOfQuizzesPreviews(int pageNumber, int size) {
+        if (pageNumber < 1 || size < 1)
+            throw new IllegalArgumentException("Номер сторінки та кількість елементів мають бути більшими за нуль.");
 
         PageRequest request = PageRequest.of(pageNumber - 1, size, Sort.by(Sort.Direction.DESC, "startDate"));
         Page<QuizPreviewDTO> quizzesPage = quizRepository.findAllPreviewsBy(request);
@@ -50,7 +51,7 @@ public class QuizServiceImpl implements QuizService {
 
     @Transactional
     @Override
-    public Quiz saveQuizWithLayout(QuizDTO quizDTO, Long layoutId){
+    public Quiz saveQuizWithLayout(QuizDTO quizDTO, Long layoutId) {
         Layout layout = layoutService.getFullLayoutById(layoutId);
         layout.setStatus(LayoutStatus.IN_USE);
 
@@ -61,7 +62,7 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public Quiz getById(Long id){
+    public Quiz getById(Long id) {
         Optional<Quiz> optionalQuiz = quizRepository.findById(id);
         return optionalQuiz.orElseThrow(() -> new EntityNotFoundException("Не вдалось знайти опитування з id = " + id));
     }
@@ -86,13 +87,12 @@ public class QuizServiceImpl implements QuizService {
     @Transactional
     public void setQuizStatusById(Long id, QuizStatus quizStatus) {
         Optional<Quiz> quizOptional = quizRepository.findById(id);
-        quizOptional.ifPresentOrElse((q)->{
-            q.setStatus(quizStatus);
-        }, ()-> new EntityNotFoundException("Не вдалось знайти опитування з id = " + id));
+        quizOptional.ifPresentOrElse((q) -> q.setStatus(quizStatus),
+                () -> new EntityNotFoundException("Не вдалось знайти опитування з id = " + id));
     }
 
     @Transactional
-    public void deleteQuizById(Long quizId){
+    public void deleteQuizById(Long quizId) {
         log.info("deleting quiz with id = " + quizId);
         quizRepository.deleteById(quizId);
         log.info("quiz with id = " + quizId + " was deleted successfully");

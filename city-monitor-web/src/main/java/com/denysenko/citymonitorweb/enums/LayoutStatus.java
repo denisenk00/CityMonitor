@@ -8,7 +8,7 @@ public enum LayoutStatus {
 
     private String title;
 
-    LayoutStatus(String title){
+    LayoutStatus(String title) {
         this.title = title;
     }
 
@@ -17,8 +17,8 @@ public enum LayoutStatus {
     }
 
     public static LayoutStatus getByTitle(String title) {
-        for (LayoutStatus status : values()){
-            if(status.getTitle().equals(title)) return status;
+        for (LayoutStatus status : values()) {
+            if (status.getTitle().equals(title)) return status;
         }
         throw new EnumConstantNotPresentException(LayoutStatus.class, title);
     }

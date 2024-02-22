@@ -72,7 +72,7 @@ public class GlobalExceptionHandler {
             HttpMessageNotWritableException.class, MethodArgumentNotValidException.class, MissingServletRequestPartException.class,
             BindException.class, NoHandlerFoundException.class, AsyncRequestTimeoutException.class,
             MethodArgumentTypeMismatchException.class})
-    public String handleSpringException(Exception ex, Model model){
+    public String handleSpringException(Exception ex, Model model) {
         HttpStatus status = null;
         if (ex instanceof HttpRequestMethodNotSupportedException) {
             status = HttpStatus.METHOD_NOT_ALLOWED;
@@ -104,7 +104,7 @@ public class GlobalExceptionHandler {
             status = HttpStatus.NOT_FOUND;
         } else if (ex instanceof AsyncRequestTimeoutException) {
             status = HttpStatus.SERVICE_UNAVAILABLE;
-        } else if (ex instanceof MethodArgumentTypeMismatchException){
+        } else if (ex instanceof MethodArgumentTypeMismatchException) {
             status = HttpStatus.BAD_REQUEST;
         }
         ex.printStackTrace();

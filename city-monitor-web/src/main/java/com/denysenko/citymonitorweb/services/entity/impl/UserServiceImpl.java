@@ -25,23 +25,26 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public User getUserById(Long id){
-        return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Не вдалось знайти користувача з id = " + id));
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Не вдалось знайти користувача з id = " + id));
     }
 
     @Override
-    public User getUserByUsername(String username){
-        return userRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("Не вдалось знайти користувача з username = " + username));
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("Не вдалось знайти користувача з username = " + username));
     }
 
     @Override
     public UserDTO getUserDTOByUsername(String username) {
-        return userRepository.findDTOByUsername(username).orElseThrow(() -> new EntityNotFoundException("Не вдалось знайти користувача з username = " + username));
+        return userRepository.findDTOByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("Не вдалось знайти користувача з username = " + username));
     }
 
     @Override
     @Transactional
-    public void saveUser(User user){
+    public void saveUser(User user) {
         userRepository.save(user);
     }
 
@@ -54,23 +57,23 @@ public class UserServiceImpl implements UserService {
         return usersPage;
     }
 
-    public boolean userWithUsernameExists(String username){
+    public boolean userWithUsernameExists(String username) {
         return userRepository.existsByUsername(username);
     }
 
     @Transactional
-    public void updateUserAccountStatus(String username, UserAccountStatus status){
+    public void updateUserAccountStatus(String username, UserAccountStatus status) {
         User user = getUserByUsername(username);
         user.setUserAccountStatus(status);
     }
     @Transactional
-    public void updateUserRole(String username, UserRole role){
+    public void updateUserRole(String username, UserRole role) {
         User user = getUserByUsername(username);
         user.setRole(role);
     }
 
     @Transactional
-    public String createUser(String username, UserRole userRole){
+    public String createUser(String username, UserRole userRole) {
         String generatedPassword = RandomStringUtils.randomAlphanumeric(15);
         String encodedPassword = passwordEncoder.encode(generatedPassword);
         User user = new User(username, encodedPassword, userRole);
@@ -79,7 +82,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    public String resetUserPassword(String username){
+    public String resetUserPassword(String username) {
         String generatedPassword = RandomStringUtils.randomAlphanumeric(15);
         String encodedPassword = passwordEncoder.encode(generatedPassword);
         User user = getUserByUsername(username);

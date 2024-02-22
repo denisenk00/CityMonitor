@@ -53,7 +53,7 @@ public class AppealEnterLocationCommand implements Command<Long> {
         return keyboardBuilder.build();
     }
 
-    public void saveLocation(Long chatId, Double latitude, Double longitude){
+    public void saveLocation(Long chatId, Double latitude, Double longitude) {
         log.info("Saving location started: chatId = " + chatId + ", latitude = " + latitude + ", longitude = " + longitude);
 
         Optional<Appeal> appeal = cacheManager.findAppealByChatId(chatId);

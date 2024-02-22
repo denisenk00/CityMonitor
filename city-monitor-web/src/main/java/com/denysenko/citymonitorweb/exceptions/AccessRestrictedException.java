@@ -1,6 +1,6 @@
 package com.denysenko.citymonitorweb.exceptions;
 
-public class AccessRestrictedException extends RuntimeException{
+public class AccessRestrictedException extends RuntimeException {
     public AccessRestrictedException() {
     }
 

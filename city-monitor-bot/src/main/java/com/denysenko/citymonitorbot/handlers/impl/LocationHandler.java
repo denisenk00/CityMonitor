@@ -29,11 +29,11 @@ public class LocationHandler implements Handler {
 
     @Override
     public boolean isApplicable(Update update) {
-        if(!update.hasMessage() || !update.getMessage().hasLocation()) return false;
+        if (!update.hasMessage() || !update.getMessage().hasLocation()) return false;
         Message message = update.getMessage();
         Long chatId = message.getChatId();
         Optional<BotStates> botUserState = cacheManager.findBotStateByChatId(chatId);
-        if(botUserState.isPresent()){
+        if (botUserState.isPresent()) {
             BotStates botState = botUserState.get();
             return botState.equals(BotStates.EDITING_PROFILE_LOCATION) || botState.equals(BotStates.APPEAL_ENTERING_LOCATION);
         } else return false;
@@ -47,11 +47,11 @@ public class LocationHandler implements Handler {
 
         Location location = message.getLocation();
         BotStates botUserState = cacheManager.findBotStateByChatId(chatId).get();
-        if(botUserState.equals(BotStates.EDITING_PROFILE_LOCATION)){
+        if (botUserState.equals(BotStates.EDITING_PROFILE_LOCATION)) {
             profileEnterLocationCommand.saveLocation(chatId, location.getLongitude(), location.getLatitude());
             botUserService.saveToDBAndCleanCache(chatId);
             mainMenuCommand.execute(chatId);
-        }else if(botUserState.equals(BotStates.APPEAL_ENTERING_LOCATION)){
+        } else if (botUserState.equals(BotStates.APPEAL_ENTERING_LOCATION)) {
             appealEnterLocationCommand.saveLocation(chatId, location.getLongitude(), location.getLatitude());
         }
     }

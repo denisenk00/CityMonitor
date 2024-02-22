@@ -47,14 +47,14 @@ public class ProfileEnterNameCommand implements Command<Long> {
                 ReplyKeyboardMarkup keyboardMarkup = createNextStepKeyboard();
                 telegramService.sendMessage(chatId, MessageFormat.format(NOT_ACTIVE_USER_MESSAGE, oldName), keyboardMarkup);
             },
-            ()->{
+            () -> {
                 log.info("User with chatId = " + chatId + " isn't registered - new User");
                 telegramService.sendMessage(chatId, NOT_REGISTERED_USER_MESSAGE, null);
             });
         cacheManager.saveBotUserByChatId(chatId, botUser.orElse(new BotUser(chatId)));
     }
 
-    private ReplyKeyboardMarkup createNextStepKeyboard(){
+    private ReplyKeyboardMarkup createNextStepKeyboard() {
         ReplyKeyboardMarkup.ReplyKeyboardMarkupBuilder keyboardBuilder = ReplyKeyboardMarkup.builder();
         keyboardBuilder.resizeKeyboard(true);
         keyboardBuilder.selective(true);
@@ -65,13 +65,13 @@ public class ProfileEnterNameCommand implements Command<Long> {
         return keyboardBuilder.build();
     }
 
-    public void saveUserName(Long chatId, String name){
+    public void saveUserName(Long chatId, String name) {
         log.info("Saving user name: chatId = " + chatId + ", name = " + name);
         Matcher matcher = NAME_PATTERN.matcher(name);
         if (!matcher.find() || name.length() > 75) {
-            if(botUserService.userIsRegistered(chatId)){
+            if (botUserService.userIsRegistered(chatId)) {
                 telegramService.sendMessage(chatId, INCORRECT_NAME_MESSAGE, createNextStepKeyboard());
-            }else {
+            } else {
                 telegramService.sendMessage(chatId, INCORRECT_NAME_MESSAGE, null);
             }
             return;

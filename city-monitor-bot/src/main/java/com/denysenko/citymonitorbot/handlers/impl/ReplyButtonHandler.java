@@ -50,7 +50,7 @@ public class ReplyButtonHandler implements Handler {
     private Map<BotStates, ImmutablePair<Consumer, Consumer>> sequenceCommandMap;
 
     @PostConstruct
-    private void configureCommandSequences(){
+    private void configureCommandSequences() {
         sequenceCommandMap = new HashMap<>();
         sequenceCommandMap.put(
                 BotStates.EDITING_PROFILE_NAME,
@@ -63,7 +63,7 @@ public class ReplyButtonHandler implements Handler {
         sequenceCommandMap.put(
                 BotStates.EDITING_PROFILE_LOCATION,
                 new ImmutablePair((Consumer<Long>) profileEnterPhoneNumberCommand::execute,
-                        (Consumer<Long>)(Long chatId) -> {
+                        (Consumer<Long>) (Long chatId) -> {
                             botUserService.saveToDBAndCleanCache(chatId);
                             mainMenuCommand.execute(chatId);
                         }
@@ -77,13 +77,13 @@ public class ReplyButtonHandler implements Handler {
 
     @Override
     public boolean isApplicable(Update update) {
-        if(!update.hasMessage() || !update.getMessage().hasText()) return false;
+        if (!update.hasMessage() || !update.getMessage().hasText()) return false;
         Message message = update.getMessage();
         String text = message.getText();
         Long chatId = message.getChatId();
         Optional<BotStates> botUserState = cacheManager.findBotStateByChatId(chatId);
 
-        if(botUserState.isPresent()){
+        if (botUserState.isPresent()) {
             BotStates botState = botUserState.get();
             return (text.equals(Commands.NEXT_STEP_COMMAND.getTitle()) && sequenceCommandMap.containsKey(botState))
                     || (text.equals(Commands.PREVIOUS_STEP_COMMAND.getTitle()) && sequenceCommandMap.containsKey(botState))
@@ -95,7 +95,7 @@ public class ReplyButtonHandler implements Handler {
                     || (text.equals(Commands.SAVE_APPEAL_COMMAND.getTitle()) && botState.equals(BotStates.APPEAL_ENTERING_LOCATION))
                     || (text.equals(Commands.STOP_BOT_COMMAND.getTitle()) && botState.equals(BotStates.PROFILE_MENU))
                     || (text.equals(Commands.EDIT_PROFILE_COMMAND.getTitle()) && botState.equals(BotStates.PROFILE_MENU));
-        }else {
+        } else {
             return text.startsWith(Commands.START_COMMAND.getTitle()) || text.equalsIgnoreCase(Commands.COMEBACK_COMMAND.getTitle());
         }
     }
@@ -107,32 +107,34 @@ public class ReplyButtonHandler implements Handler {
         log.info("Update handled by ReplyButtonHandler: updateId = " + update.getUpdateId() + ", chatId = " + chatId.toString());
         String text = message.getText();
 
-        if(text.equalsIgnoreCase(Commands.START_COMMAND.getTitle()) || text.equalsIgnoreCase(Commands.COMEBACK_COMMAND.getTitle())){
+        if (text.equalsIgnoreCase(Commands.START_COMMAND.getTitle()) || text.equalsIgnoreCase(Commands.COMEBACK_COMMAND.getTitle())) {
             startCommand.execute(chatId);
-        }else if(text.equalsIgnoreCase(Commands.NEXT_STEP_COMMAND.getTitle())) {
+        } else if (text.equalsIgnoreCase(Commands.NEXT_STEP_COMMAND.getTitle())) {
             BotStates botUserState = cacheManager.findBotStateByChatId(chatId).get();
             log.info("next bot state = " + botUserState.getTitle());
             sequenceCommandMap.get(botUserState).getRight().accept(chatId);
-        }else if(text.equalsIgnoreCase(Commands.PREVIOUS_STEP_COMMAND.getTitle())){
+        } else if (text.equalsIgnoreCase(Commands.PREVIOUS_STEP_COMMAND.getTitle())) {
             BotStates botUserState = cacheManager.findBotStateByChatId(chatId).get();
             sequenceCommandMap.get(botUserState).getLeft().accept(chatId);
-        }else if(text.equalsIgnoreCase(Commands.PROFILE_COMMAND.getTitle())){
+        } else if (text.equalsIgnoreCase(Commands.PROFILE_COMMAND.getTitle())) {
             profileMenuCommand.execute(chatId);
-        }else if(text.equalsIgnoreCase(Commands.SEND_APPEAL_COMMAND.getTitle())){
+        } else if (text.equalsIgnoreCase(Commands.SEND_APPEAL_COMMAND.getTitle())) {
             cacheManager.createEmptyAppeal(chatId);
             appealEnterDescriptionCommand.execute(chatId);
-        }else if(text.equalsIgnoreCase(Commands.CANCEL_GENERAL_COMMAND.getTitle())){
+        } else if (text.equalsIgnoreCase(Commands.CANCEL_GENERAL_COMMAND.getTitle())) {
             BotStates botUserState = cacheManager.findBotStateByChatId(chatId).get();
-            if(botUserState.equals(BotStates.APPEAL_ENTERING_DESCRIPTION) || botUserState.equals(BotStates.APPEAL_ENTERING_LOCATION) || botUserState.equals(BotStates.APPEAL_ATTACHING_FILES)){
+            if (botUserState.equals(BotStates.APPEAL_ENTERING_DESCRIPTION)
+                    || botUserState.equals(BotStates.APPEAL_ENTERING_LOCATION)
+                    || botUserState.equals(BotStates.APPEAL_ATTACHING_FILES)) {
                 cacheManager.removeAppealByChatId(chatId);
             }
             mainMenuCommand.execute(chatId);
-        }else if(text.equalsIgnoreCase(Commands.SAVE_APPEAL_COMMAND.getTitle())){
+        } else if (text.equalsIgnoreCase(Commands.SAVE_APPEAL_COMMAND.getTitle())) {
             saveAppealCommand.execute(chatId);
             mainMenuCommand.execute(chatId);
-        }else if(text.equalsIgnoreCase(Commands.STOP_BOT_COMMAND.getTitle())){
+        } else if (text.equalsIgnoreCase(Commands.STOP_BOT_COMMAND.getTitle())) {
             stopCommand.execute(chatId);
-        }else if(text.equalsIgnoreCase(Commands.EDIT_PROFILE_COMMAND.getTitle())){
+        } else if (text.equalsIgnoreCase(Commands.EDIT_PROFILE_COMMAND.getTitle())) {
             profileEnterNameCommand.execute(chatId);
         }
     }

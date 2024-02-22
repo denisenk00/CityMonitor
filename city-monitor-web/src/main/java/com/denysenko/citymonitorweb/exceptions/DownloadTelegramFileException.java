@@ -2,7 +2,7 @@ package com.denysenko.citymonitorweb.exceptions;
 
 
 public class DownloadTelegramFileException extends RuntimeException {
-    String telegramFileId;
+    private String telegramFileId;
 
     public DownloadTelegramFileException(String telegramFileId) {
         this.telegramFileId = telegramFileId;

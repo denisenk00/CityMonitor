@@ -37,17 +37,17 @@ public class Appeal {
     private List<AppealFile> files = new LinkedList<>();
 
     @PrePersist
-    protected void onCreate(){
+    protected void onCreate() {
         status = "UNREAD";
         postDate = LocalDateTime.now();
     }
 
-    public void addFile(AppealFile file){
+    public void addFile(AppealFile file) {
         file.setAppeal(this);
         files.add(file);
     }
 
-    public Appeal(Long botUserId){
+    public Appeal(Long botUserId) {
         this.botUserId = botUserId;
     }
 

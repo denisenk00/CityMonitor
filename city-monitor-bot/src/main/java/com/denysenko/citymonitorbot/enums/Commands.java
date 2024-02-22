@@ -1,7 +1,7 @@
 package com.denysenko.citymonitorbot.enums;
 
 public enum Commands {
-    START_COMMAND ("/start"),
+    START_COMMAND("/start"),
     PROFILE_COMMAND("\uD83D\uDC64 Профіль"),
     EDIT_PROFILE_COMMAND("\uD83D\uDD27 Редагувати"),
     STOP_BOT_COMMAND("\uD83D\uDEAB Вимкнути"),
@@ -14,11 +14,11 @@ public enum Commands {
 
     private String title;
 
-    Commands(String title){
+    Commands(String title) {
         this.title = title;
     }
 
-    public String getTitle(){
+    public String getTitle() {
         return title;
     }
 }

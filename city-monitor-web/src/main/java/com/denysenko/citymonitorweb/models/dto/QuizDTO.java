@@ -43,8 +43,8 @@ public class QuizDTO {
     private List<OptionDTO> optionDTOs = new LinkedList<>();
 
     @AssertTrue(message = "Період проведення опитування вказано невірно")
-    public boolean isQuizPeriodOnCreationCorrect(){
-            if(!startImmediate && Objects.isNull(startDate)) return false;
+    public boolean isQuizPeriodOnCreationCorrect() {
+            if (!startImmediate && Objects.isNull(startDate)) return false;
             return (startImmediate && endDate.isAfter(LocalDateTime.now()))
                     || (startDate.isAfter(LocalDateTime.now()) && startDate.isBefore(endDate));
     }

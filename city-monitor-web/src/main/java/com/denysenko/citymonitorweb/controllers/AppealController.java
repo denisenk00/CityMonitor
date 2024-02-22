@@ -18,7 +18,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
-import java.util.AbstractMap;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -53,11 +52,14 @@ public class AppealController {
             statusSet = Set.of(AppealStatus.PROCESSED);
         } else if (tabName.equalsIgnoreCase("TRASH")) {
             statusSet = Set.of(AppealStatus.TRASH);
-        } else throw new InputValidationException("Таби з назвою '" + tabName + "' не існує");
+        } else {
+            throw new InputValidationException("Таби з назвою '" + tabName + "' не існує");
+        }
 
-        if (pageNumber < 1 || pageSize < 1)
-            throw new InputValidationException("Номер сторінки та її розмір має бути більше нуля. Поточні значення: pageNumber = " + pageNumber + ", pageSize = " + pageSize);
-
+        if (pageNumber < 1 || pageSize < 1) {
+            throw new InputValidationException("Номер сторінки та її розмір має бути більше нуля."
+                    + " Поточні значення: pageNumber = " + pageNumber + ", pageSize = " + pageSize);
+        }
         Page<AppealDTO> appealDTOs = appealService.getPageByStatuses(pageNumber, pageSize, statusSet);
 
         model.addAttribute("tab", tabName);
@@ -75,7 +77,7 @@ public class AppealController {
         try {
             AppealStatus appealStatus = AppealStatus.valueOf(status);
             appealService.updateStatusById(id, appealStatus);
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             throw new RestException("Неприйнятний статус: " + status, e, HttpStatus.BAD_REQUEST);
         } catch (EntityNotFoundException e) {
             throw new RestException(e.getMessage(), e, HttpStatus.BAD_REQUEST);
@@ -87,11 +89,12 @@ public class AppealController {
 
     @PatchMapping("/changeStatuses")
     @PreAuthorize("hasAuthority('appeals:write')")
-    public ResponseEntity changeStatus(@RequestParam(name = "ids") Set<String> ids, @RequestParam(name = "status") String status) {
+    public ResponseEntity changeStatus(@RequestParam(name = "ids") Set<String> ids,
+                                       @RequestParam(name = "status") String status) {
         try {
             AppealStatus appealStatus = AppealStatus.valueOf(status);
             ids.forEach(id -> appealService.updateStatusById(Long.valueOf(id), appealStatus));
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             throw new RestException("Неприйнятний статус: " + status, e, HttpStatus.BAD_REQUEST);
         } catch (EntityNotFoundException e) {
             throw new RestException(e.getMessage(), e, HttpStatus.BAD_REQUEST);
@@ -106,7 +109,7 @@ public class AppealController {
     @PreAuthorize("hasAnyAuthority('appeals:read')")
     public ResponseEntity<byte[]> downloadAppealFile(@PathVariable(name = "id") long fileId) {
 
-        AbstractMap.SimpleImmutableEntry<String, byte[]> fileNameWithContent = appealService.getAppealFileContent(fileId);
+        var fileNameWithContent = appealService.getAppealFileContent(fileId);
         String name = fileNameWithContent.getKey();
         byte[] resource = fileNameWithContent.getValue();
 

@@ -1,6 +1,6 @@
 package com.denysenko.citymonitorweb.exceptions;
 
-public class InputValidationException extends RuntimeException{
+public class InputValidationException extends RuntimeException {
     public InputValidationException() {
     }
 

@@ -21,12 +21,12 @@ public class QuizServiceImpl implements QuizService {
 
     private final QuizRepository quizRepository;
 
-    public Quiz getQuizById(@NotNull Long quizId){
+    public Quiz getQuizById(@NotNull Long quizId) {
         return quizRepository.findById(quizId)
                 .orElseThrow(() -> new EntityNotFoundException("Quiz with id = " + quizId + " was not found"));
     }
 
-    public boolean existsById(@NotNull Long quizId){
+    public boolean existsById(@NotNull Long quizId) {
         return quizRepository.existsById(quizId);
     }
 }

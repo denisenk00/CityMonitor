@@ -2,7 +2,6 @@ package com.denysenko.citymonitorweb.configurations;
 
 import com.denysenko.citymonitorweb.services.security.SecurityUserServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -25,7 +24,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private final SecurityUserServiceImpl securityUserServiceImpl;
 
     @Bean
-    public PasswordEncoder bCryptPasswordEncoder(){
+    public PasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder(12);
     }
 
@@ -54,12 +53,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     }
 
-    protected void configureGlobal(AuthenticationManagerBuilder auth){
+    protected void configureGlobal(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(daoAuthenticationProvider());
     }
 
     @Bean
-    protected DaoAuthenticationProvider daoAuthenticationProvider(){
+    protected DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setPasswordEncoder(bCryptPasswordEncoder());
         daoAuthenticationProvider.setUserDetailsService(securityUserServiceImpl);

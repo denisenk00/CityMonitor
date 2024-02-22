@@ -16,7 +16,7 @@ public class OptionEntityToDTOConverter implements EntityDTOConverter<Option, Op
                     .id(optionDTO.getId())
                     .title(optionDTO.getTitle())
                     .build();
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ConversionFailedException(TypeDescriptor.forObject(optionDTO), TypeDescriptor.valueOf(Option.class), null, e);
         }
     }
@@ -28,7 +28,7 @@ public class OptionEntityToDTOConverter implements EntityDTOConverter<Option, Op
                     .id(option.getId())
                     .title(option.getTitle())
                     .build();
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ConversionFailedException(TypeDescriptor.forObject(option), TypeDescriptor.valueOf(Option.class), null, e);
         }
     }

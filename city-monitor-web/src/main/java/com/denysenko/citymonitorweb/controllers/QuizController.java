@@ -58,7 +58,7 @@ public class QuizController {
     private final QuizFinisher quizFinisher;
 
     @ModelAttribute("unreadAppealsCnt")
-    public long getCountOfUnreadAppeals(){
+    public long getCountOfUnreadAppeals() {
         return appealService.countOfUnreadAppeals();
     }
 
@@ -66,10 +66,11 @@ public class QuizController {
     @PreAuthorize("hasAnyAuthority('quizzes:read')")
     public String quizzesPage(Model model,
                               @RequestParam(name = "page", defaultValue = "1", required = false) int pageNumber,
-                              @RequestParam(name = "size", defaultValue = "30", required = false) int pageSize){
+                              @RequestParam(name = "size", defaultValue = "30", required = false) int pageSize) {
         log.info("Getting quizzes page with parameters: page = " + pageNumber + ", size = " + pageSize);
         if (pageNumber < 1 || pageSize < 1)
-            throw new InputValidationException("Номер сторінки та її розмір має бути більше нуля. Поточні значення: pageNumber = " + pageNumber + ", pageSize = " + pageSize);
+            throw new InputValidationException("Номер сторінки та її розмір має бути більше нуля." +
+                    " Поточні значення: pageNumber = " + pageNumber + ", pageSize = " + pageSize);
 
         Page<QuizPreviewDTO> quizzesPage = quizService.getPageOfQuizzesPreviews(pageNumber, pageSize);
         Paged<QuizPreviewDTO> paged = new Paged(quizzesPage, Paging.of(quizzesPage.getTotalPages(), pageNumber, pageSize));
@@ -86,13 +87,13 @@ public class QuizController {
         QuizDTO quizDTO;
         try {
             quizDTO = quizService.getFullDTOById(id);
-        }catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             throw new InputValidationException(e.getMessage(), e);
         }
 
         model.addAttribute("quiz", quizDTO);
 
-        if(quizDTO.getStatus().equals(QuizStatus.FINISHED)){
+        if (quizDTO.getStatus().equals(QuizStatus.FINISHED)) {
             model.addAttribute("mapCenterLat", mapCenterLat);
             model.addAttribute("mapCenterLng", mapCenterLng);
             model.addAttribute("mapZoom", mapZoom);
@@ -110,7 +111,7 @@ public class QuizController {
     @GetMapping("/new")
     @PreAuthorize("hasAnyAuthority('quizzes:write')")
     public String newQuiz(@ModelAttribute(name = "quiz") QuizDTO quiz, @ModelAttribute(name = "files") List<MultipartFile> files,
-                          @ModelAttribute(name = "selectedLayoutId") String layoutId, Model model){
+                          @ModelAttribute(name = "selectedLayoutId") String layoutId, Model model) {
         log.info("Getting newQuiz page..");
         quiz.setStartImmediate(true);
         quiz.setOptionDTOs(List.of(new OptionDTO(), new OptionDTO()));
@@ -123,16 +124,16 @@ public class QuizController {
     @PreAuthorize("hasAnyAuthority('quizzes:write')")
     public String saveQuiz(@Valid @ModelAttribute("quiz") QuizDTO quizDTO,
                            @ModelAttribute("files") List<MultipartFile> files,
-                           @ModelAttribute(name = "selectedLayoutId") Long layoutId){
+                           @ModelAttribute(name = "selectedLayoutId") Long layoutId) {
         log.info("Saving new quiz with parameters: quizDTO = " + quizDTO.toString() + "\nfiles = " + files.toString()
                 + "\nselected layoutId = " + layoutId);
-        if(files.size() > 0 && !files.get(0).isEmpty()) {
+        if (files.size() > 0 && !files.get(0).isEmpty()) {
             List<FileDTO> fileDTOs = mFileConverter.convertListOfMultipartFileToDTO(files);
             quizDTO.setFileDTOs(fileDTOs);
         }
         LayoutStatus layoutStatus = layoutService.getStatusById(layoutId);
 
-        if(layoutStatus.equals(LayoutStatus.DEPRECATED)){
+        if (layoutStatus.equals(LayoutStatus.DEPRECATED)) {
             log.error("Found DEPRECATED layout by provided layoutId");
             throw new InputValidationException("Обраний макет має статус 'Застарілий' і через це не може бути використаний для опитування.");
         }
@@ -142,10 +143,10 @@ public class QuizController {
 
         log.info("Quiz successfully saved to database");
 
-        if(quizDTO.isStartImmediate()){
+        if (quizDTO.isStartImmediate()) {
             quizSender.sendImmediate(quiz);
             log.info("Quiz was sent to appropriate locals successfully");
-        }else {
+        } else {
             quizSender.schedule(quiz);
             log.info("Quiz sending was successfully scheduled");
         }
@@ -158,7 +159,7 @@ public class QuizController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('quizzes:write')")
-    public ResponseEntity removeQuiz(@PathVariable Long id){
+    public ResponseEntity removeQuiz(@PathVariable Long id) {
         try {
             log.info("Removing quiz started: id = " + id.toString());
             Quiz quiz = quizService.getById(id);
@@ -168,9 +169,9 @@ public class QuizController {
             layoutService.markLayoutAsActual(quiz.getLayout().getId());
             log.info("Quiz with id = " + id + " removed successfully");
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"msg\":\"success\"}");
-        }catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             throw new RestException(e.getMessage(), e, HttpStatus.BAD_REQUEST);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RestException(e.getMessage(), e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -184,9 +185,9 @@ public class QuizController {
             quizFinisher.finishImmediate(quiz);
             log.info("Quiz with id " + id + " finished successfully");
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"msg\":\"success\"}");
-        }catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             throw new RestException(e.getMessage(), e, HttpStatus.BAD_REQUEST);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RestException(e.getMessage(), e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

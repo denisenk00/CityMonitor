@@ -22,7 +22,8 @@ public class SaveAppealCommand implements Command<Long> {
     private final CacheManager cacheManager;
     private final BotUserService botUserService;
 
-    private static final String SUCCESS_SENDING_APPEAL_MESSAGE = "Ваше звернення збережено та буде оброблено найближчим часом. Наш працівник обов'язково зв'яжеться з вами якщо буде потреба";
+    private static final String SUCCESS_SENDING_APPEAL_MESSAGE = "Ваше звернення збережено та буде оброблено найближчим часом." +
+            " Наш працівник обов'язково зв'яжеться з вами якщо буде потреба";
 
     @Override
     public void execute(Long chatId) {
@@ -31,11 +32,10 @@ public class SaveAppealCommand implements Command<Long> {
         cachedAppeal.ifPresentOrElse(existedAppeal -> {
              Long botUserId = botUserService.getBotUserByChatId(chatId).getBotUserId();
              existedAppeal.setBotUserId(botUserId);
-             
              appealService.saveAppeal(existedAppeal);
              cacheManager.removeAppealByChatId(chatId);
              telegramService.sendMessage(chatId, SUCCESS_SENDING_APPEAL_MESSAGE, null);
         },
-        ()->log.error("Appeal for user with chatId = " + chatId + " was not found in cache repository"));
+        () -> log.error("Appeal for user with chatId = " + chatId + " was not found in cache repository"));
     }
 }

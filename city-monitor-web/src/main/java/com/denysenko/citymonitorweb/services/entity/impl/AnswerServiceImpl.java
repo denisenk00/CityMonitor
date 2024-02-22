@@ -16,12 +16,12 @@ public class AnswerServiceImpl implements AnswerService {
 
     private final AnswerRepository answerRepository;
 
-    public List<Answer> getAnswersByQuizId(Long quizId){
+    public List<Answer> getAnswersByQuizId(Long quizId) {
         return answerRepository.findAllByOptionQuizId(quizId);
     }
 
     @Transactional
-    public void deleteAnswersByQuizId(Long quizId){
+    public void deleteAnswersByQuizId(Long quizId) {
         answerRepository.deleteAllByOptionQuizId(quizId);
     }
 

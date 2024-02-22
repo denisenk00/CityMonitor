@@ -56,7 +56,7 @@ public class LayoutEntityToDTOConverter implements EntityDTOConverter<Layout, La
             newPolygonEntities.forEach(polygon -> layout.addPolygon(polygon));
 
             return layout;
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ConversionFailedException(TypeDescriptor.forObject(layoutDTO), TypeDescriptor.valueOf(Layout.class), null, e);
         }
     }
@@ -89,7 +89,7 @@ public class LayoutEntityToDTOConverter implements EntityDTOConverter<Layout, La
             layoutDTO.setPolygonsGeoJson(polygonsGeoJson);
 
             return layoutDTO;
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ConversionFailedException(TypeDescriptor.forObject(layout), TypeDescriptor.valueOf(Layout.class), null, e);
         }
     }

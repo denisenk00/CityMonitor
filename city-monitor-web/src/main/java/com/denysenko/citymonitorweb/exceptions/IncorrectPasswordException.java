@@ -1,6 +1,6 @@
 package com.denysenko.citymonitorweb.exceptions;
 
-public class IncorrectPasswordException extends RuntimeException{
+public class IncorrectPasswordException extends RuntimeException {
     public IncorrectPasswordException() {
     }
 

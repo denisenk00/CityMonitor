@@ -6,7 +6,7 @@ public interface ResultDTO {
     Long getPolygonId();
     Integer getAnswersCount();
 
-    public interface ReadOptionDTO {
+    interface ReadOptionDTO {
         Long getId();
         String getTitle();
     }

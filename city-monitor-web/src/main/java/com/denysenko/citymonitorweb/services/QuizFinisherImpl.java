@@ -51,10 +51,10 @@ public class QuizFinisherImpl implements QuizFinisher {
         scheduledTasks.put(quiz.getId(), finishQuizTask);
     }
 
-    public void removeScheduledFinish(Long quizId){
+    public void removeScheduledFinish(Long quizId) {
         log.info("removing quiz finish from scheduled if exists: id = " + quizId);
         FinishQuizTask task = scheduledTasks.get(quizId);
-        if(task != null){
+        if (task != null) {
             task.cancel();
             timer.purge();
             scheduledTasks.remove(quizId);

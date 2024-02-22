@@ -14,29 +14,29 @@ import java.util.Set;
 @Log4j
 @RequiredArgsConstructor
 @Service
-public class ResultsGeneratorImpl implements ResultsGenerator{
+public class ResultsGeneratorImpl implements ResultsGenerator {
 
     private final AnswerService answerService;
 
-    public Set<Result> generateResultsOfQuiz(Quiz quiz){
+    public Set<Result> generateResultsOfQuiz(Quiz quiz) {
         log.info("generating result of quiz id = " + quiz.getId());
         Set<Result> results = new HashSet<>();
         List<Polygon> polygons = quiz.getLayout().getPolygons();
         List<Option> options = quiz.getOptions();
         List<Answer> answers = answerService.getAnswersByQuizId(quiz.getId());
 
-        for(Polygon polygon : polygons){
-            for(Option option : options){
+        for (Polygon polygon : polygons) {
+            for (Option option : options) {
                 results.add(new Result(option, polygon, 0));
             }
         }
 
-        for(Answer answer : answers){
-            for(Result result : results){
+        for (Answer answer : answers) {
+            for (Result result : results) {
                 Option answerOption = answer.getOption();
                 Point localPoint = answer.getLocal().getLocation();
 
-                if(answerOption.getId().equals(result.getOption().getId()) && result.getPolygon().getPolygon().contains(localPoint)){
+                if (answerOption.getId().equals(result.getOption().getId()) && result.getPolygon().getPolygon().contains(localPoint)) {
                     result.setAnswersCount(result.getAnswersCount() + 1);
                 }
             }

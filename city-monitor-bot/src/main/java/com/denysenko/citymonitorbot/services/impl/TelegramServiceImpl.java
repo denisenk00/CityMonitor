@@ -31,15 +31,15 @@ public class TelegramServiceImpl extends DefaultAbsSender implements TelegramSer
     }
 
     @Override
-    public void sendMessage(Long chatId, String text, ReplyKeyboardMarkup replyKeyboardMarkup){
+    public void sendMessage(Long chatId, String text, ReplyKeyboardMarkup replyKeyboardMarkup) {
         SendMessage.SendMessageBuilder messageBuilder = SendMessage.builder()
                 .chatId(String.valueOf(chatId));
-        if(text == null){
+        if (text == null) {
             messageBuilder.text(Strings.EMPTY);
-        }else {
+        } else {
             messageBuilder.text(text.trim());
         }
-        if(replyKeyboardMarkup != null){
+        if (replyKeyboardMarkup != null) {
             messageBuilder.replyMarkup(replyKeyboardMarkup);
         }
         try {
@@ -52,7 +52,7 @@ public class TelegramServiceImpl extends DefaultAbsSender implements TelegramSer
     }
 
     @Override
-    public void sendLocation(Long chatId, Double latitude, Double longitude){
+    public void sendLocation(Long chatId, Double latitude, Double longitude) {
         SendLocation.SendLocationBuilder locationBuilder = SendLocation.builder();
         locationBuilder.latitude(longitude);
         locationBuilder.longitude(latitude);
@@ -67,7 +67,7 @@ public class TelegramServiceImpl extends DefaultAbsSender implements TelegramSer
     }
 
     @Override
-    public void sendAnswerCallbackQuery(String callbackQueryId, String alertMessage){
+    public void sendAnswerCallbackQuery(String callbackQueryId, String alertMessage) {
         AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery();
         answerCallbackQuery.setCallbackQueryId(callbackQueryId);
         answerCallbackQuery.setText(alertMessage);

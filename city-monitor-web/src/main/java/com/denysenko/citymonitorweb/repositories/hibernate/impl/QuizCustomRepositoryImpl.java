@@ -33,7 +33,7 @@ public class QuizCustomRepositoryImpl implements QuizCustomRepository {
             " where q in ?1";
 
 
-    public Quiz getQuizWithOptionsAndFullLayoutById(Long id){
+    public Quiz getQuizWithOptionsAndFullLayoutById(Long id) {
 
         Quiz quiz = em.createQuery(QUERY_GET_QUIZ_WITH_FULL_LAYOUT, Quiz.class)
                 .setParameter(1, id)
@@ -48,7 +48,7 @@ public class QuizCustomRepositoryImpl implements QuizCustomRepository {
         return quiz;
     }
 
-    public Quiz getFullQuizById(Long id){
+    public Quiz getFullQuizById(Long id) {
 
         Quiz quiz = em.createQuery(QUERY_GET_QUIZ_WITH_FULL_LAYOUT, Quiz.class)
                 .setParameter(1, id)

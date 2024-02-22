@@ -54,30 +54,30 @@ public class QuizSenderImpl implements QuizSender {
 
         try {
             telegramService.sendQuizToChats(chatIDs, quiz);
-        } catch (TelegramApiValidationException e){
+        } catch (TelegramApiValidationException e) {
             log.warn("Exception raised", e);
-        } catch (TelegramApiRequestException e){
+        } catch (TelegramApiRequestException e) {
             log.warn("Exception raised:", e);
             int code = e.getErrorCode();
-            if(code == 420 || code == 406 || code == 404 || code == 400){
+            if (code == 420 || code == 406 || code == 404 || code == 400) {
                 throw new SendQuizException(e.getMessage(), e, quiz, chatIDs);
             }
-        }catch (TelegramApiException | InterruptedException e) {
+        } catch (TelegramApiException | InterruptedException e) {
             String reason = "Помилка при надсиланні даних до Telegram API";
             throw new SendQuizException(reason, e, quiz, chatIDs);
         }
         log.info("Sent quiz id = " + quiz.getId() + " successfully");
         log.info("current status = " + quiz.getStatus() + ", " + !quiz.getStatus().equals(QuizStatus.IN_PROGRESS));
-        if(!quiz.getStatus().equals(QuizStatus.IN_PROGRESS)) {
+        if (!quiz.getStatus().equals(QuizStatus.IN_PROGRESS)) {
             quizService.setQuizStatusById(quiz.getId(), QuizStatus.IN_PROGRESS);
             log.info("Status of quiz id = " + quiz.getId() + " changed to IN_PROGRESS");
         }
     }
 
-    public void removeScheduledSending(Long quizId){
+    public void removeScheduledSending(Long quizId) {
         log.info("removing quiz from scheduled with id = " + quizId + " if exists");
         SendQuizTask task = scheduledTasks.get(quizId);
-        if(task != null){
+        if (task != null) {
             task.cancel();
             timer.purge();
             scheduledTasks.remove(quizId);

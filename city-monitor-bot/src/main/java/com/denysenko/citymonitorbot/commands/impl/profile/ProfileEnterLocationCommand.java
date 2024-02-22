@@ -30,8 +30,10 @@ public class ProfileEnterLocationCommand implements Command<Long> {
     private final BotUserService botUserService;
     private final CacheManager cacheManager;
 
-    private static final String NOT_ACTIVE_USER_MESSAGE = "Ваше поточне місце проживання наведено зверху, для його зміни відправте нове або натисніть кнопку";
-    private static final String NOT_REGISTERED_USER_MESSAGE = "Поділіться своїм місцем проживання, натиснувши кнопку або відправивши вручну";
+    private static final String NOT_ACTIVE_USER_MESSAGE = "Ваше поточне місце проживання наведено зверху," +
+            " для його зміни відправте нове або натисніть кнопку";
+    private static final String NOT_REGISTERED_USER_MESSAGE = "Поділіться своїм місцем проживання," +
+            " натиснувши кнопку або відправивши вручну";
 
     @Override
     public void execute(Long chatId) {
@@ -45,14 +47,14 @@ public class ProfileEnterLocationCommand implements Command<Long> {
                 telegramService.sendLocation(chatId, locationPoint.getX(), locationPoint.getY());
                 telegramService.sendMessage(chatId, NOT_ACTIVE_USER_MESSAGE, keyboardMarkup);
             },
-            ()->{
+            () -> {
                 log.info("User with chatId = " + chatId + " isn't registered - new User");
                 ReplyKeyboardMarkup keyboardMarkup = createKeyboard(false);
                 telegramService.sendMessage(chatId, NOT_REGISTERED_USER_MESSAGE, keyboardMarkup);
             });
     }
 
-    public void saveLocation(Long chatId, Double latitude, Double longitude){
+    public void saveLocation(Long chatId, Double latitude, Double longitude) {
         log.info("Saving location started. Data: chatId = " + chatId + ", latitude = " + latitude + ", longitude = " + longitude);
         Optional<BotUser> botUser = cacheManager.findBotUserByChatId(chatId);
         botUser.ifPresentOrElse(existedBotUser -> {

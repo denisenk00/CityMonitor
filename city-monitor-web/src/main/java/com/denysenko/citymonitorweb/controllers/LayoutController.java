@@ -44,14 +44,14 @@ public class LayoutController {
     private final AppealService appealService;
 
     @ModelAttribute("unreadAppealsCnt")
-    public long getCountOfUnreadAppeals(){
+    public long getCountOfUnreadAppeals() {
         return appealService.countOfUnreadAppeals();
     }
 
 
     @GetMapping("/new")
     @PreAuthorize("hasAuthority('layouts:write')")
-    public String newLayout(@ModelAttribute("layout") LayoutDTO layoutDTO,  Model model){
+    public String newLayout(@ModelAttribute("layout") LayoutDTO layoutDTO,  Model model) {
         model.addAttribute("mapCenterLat", mapCenterLat);
         model.addAttribute("mapCenterLng", mapCenterLng);
         model.addAttribute("mapZoom", mapZoom);
@@ -61,7 +61,7 @@ public class LayoutController {
 
     @PostMapping("/")
     @PreAuthorize("hasAuthority('layouts:write')")
-    public String saveLayout(@Valid @ModelAttribute("layout") LayoutDTO layoutDTO){
+    public String saveLayout(@Valid @ModelAttribute("layout") LayoutDTO layoutDTO) {
         layoutService.saveLayout(layoutDTO);
         return "redirect:/";
     }
@@ -72,7 +72,8 @@ public class LayoutController {
                           @RequestParam(name = "page", defaultValue = "1", required = false) int pageNumber,
                           @RequestParam(name = "size", defaultValue = "30", required = false) int pageSize) {
         if (pageNumber < 1 || pageSize < 1)
-            throw new InputValidationException("Номер сторінки та її розмір має бути більше нуля. Поточні значення: pageNumber = " + pageNumber + ", pageSize = " + pageSize);
+            throw new InputValidationException("Номер сторінки та її розмір має бути більше нуля." +
+                    " Поточні значення: pageNumber = " + pageNumber + ", pageSize = " + pageSize);
 
         Page<LayoutPreviewDTO> layoutPage = layoutService.getPageOfLayouts(pageNumber, pageSize);
         Paged<LayoutPreviewDTO> paged = new Paged(layoutPage, Paging.of(layoutPage.getTotalPages(), pageNumber, pageSize));
@@ -83,11 +84,11 @@ public class LayoutController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('layouts:read')")
-    public String layoutPage(@PathVariable(name = "id") long id, Model model){
+    public String layoutPage(@PathVariable(name = "id") long id, Model model) {
         LayoutDTO layoutDTO;
         try {
              layoutDTO = layoutService.getLayoutDTOById(id);
-        }catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             throw new InputValidationException(e.getMessage(), e);
         }
         List<QuizPreviewDTO> quizList = quizService.findQuizzesPreviewsByLayoutId(layoutDTO.getId());
@@ -104,18 +105,18 @@ public class LayoutController {
 
     @PatchMapping("/{id}/changeAvailability")
     @PreAuthorize("hasAuthority('layouts:write')")
-    public ResponseEntity changeLayoutAvailability(@PathVariable(name = "id") long id, @RequestParam(name = "deprecated") boolean isDeprecated){
+    public ResponseEntity changeLayoutAvailability(@PathVariable(name = "id") long id,
+                                                   @RequestParam(name = "deprecated") boolean isDeprecated) {
         LayoutStatus newStatus;
         try {
-            if(isDeprecated){
+            if(isDeprecated) {
                 newStatus = layoutService.markLayoutAsDeprecated(id);
-            }
-            else{
+            } else {
                 newStatus = layoutService.markLayoutAsActual(id);
             }
-        }catch (EntityNotFoundException e){
+        }catch (EntityNotFoundException e) {
             throw new RestException(e.getMessage(), e, HttpStatus.BAD_REQUEST);
-        }catch (Exception e){
+        }catch (Exception e) {
             throw new RestException(e.getMessage(), e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -125,10 +126,10 @@ public class LayoutController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('layouts:write')")
-    public ResponseEntity deleteLayout(@PathVariable(name = "id") long id){
+    public ResponseEntity deleteLayout(@PathVariable(name = "id") long id) {
         try {
             layoutService.deleteLayout(id);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RestException(e.getMessage(), e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"msg\":\"success\"}");

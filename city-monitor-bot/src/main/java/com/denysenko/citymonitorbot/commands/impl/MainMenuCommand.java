@@ -30,7 +30,7 @@ public class MainMenuCommand implements Command<Long> {
         telegramService.sendMessage(chatId, "Головне меню:", createMainMenuKeyboard());
     }
 
-    private ReplyKeyboardMarkup createMainMenuKeyboard(){
+    private ReplyKeyboardMarkup createMainMenuKeyboard() {
         ReplyKeyboardMarkup.ReplyKeyboardMarkupBuilder keyboardBuilder = ReplyKeyboardMarkup.builder();
         keyboardBuilder.resizeKeyboard(true);
         keyboardBuilder.selective(true);

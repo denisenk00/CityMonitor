@@ -31,11 +31,11 @@ public class TextHandler implements Handler {
 
     @Override
     public boolean isApplicable(Update update) {
-        if(!update.hasMessage() || !update.getMessage().hasText()) return false;
+        if (!update.hasMessage() || !update.getMessage().hasText()) return false;
         Message message = update.getMessage();
         Long chatId = message.getChatId();
         Optional<BotStates> botUserState = cacheManager.findBotStateByChatId(chatId);
-        if(botUserState.isPresent()){
+        if (botUserState.isPresent()) {
             BotStates botState = botUserState.get();
             return botState.equals(BotStates.EDITING_PROFILE_NAME) || botState.equals(BotStates.EDITING_PROFILE_PHONE)
                     || botState.equals(BotStates.APPEAL_ENTERING_DESCRIPTION);
@@ -49,13 +49,13 @@ public class TextHandler implements Handler {
         log.info("Update handled by TextHandler: updateId = " + update.getUpdateId() + ", chatId = " + chatId.toString());
         BotStates botState = cacheManager.findBotStateByChatId(chatId).get();
 
-        if(botState.equals(BotStates.EDITING_PROFILE_NAME)){
+        if (botState.equals(BotStates.EDITING_PROFILE_NAME)) {
             profileEnterNameCommand.saveUserName(chatId, message.getText());
             profileEnterPhoneNumberCommand.execute(chatId);
-        }else if(botState.equals(BotStates.EDITING_PROFILE_PHONE)){
+        } else if (botState.equals(BotStates.EDITING_PROFILE_PHONE)) {
             profileEnterPhoneNumberCommand.savePhoneNumber(chatId, message.getText());
             profileEnterLocationCommand.execute(chatId);
-        }else if(botState.equals(BotStates.APPEAL_ENTERING_DESCRIPTION)){
+        } else if (botState.equals(BotStates.APPEAL_ENTERING_DESCRIPTION)) {
             appealEnterDescriptionCommand.saveDescription(chatId, message.getText());
             appealAttachFilesCommand.execute(chatId);
         }

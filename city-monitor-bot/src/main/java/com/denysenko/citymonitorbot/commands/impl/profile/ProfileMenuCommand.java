@@ -30,7 +30,7 @@ public class ProfileMenuCommand implements Command<Long> {
         telegramService.sendMessage(chatId, "Управління профілем:", createProfileMenuKeyboard());
     }
 
-    private ReplyKeyboardMarkup createProfileMenuKeyboard(){
+    private ReplyKeyboardMarkup createProfileMenuKeyboard() {
         ReplyKeyboardMarkup.ReplyKeyboardMarkupBuilder keyboardBuilder = ReplyKeyboardMarkup.builder();
         keyboardBuilder.resizeKeyboard(true);
         keyboardBuilder.selective(true);
@@ -39,7 +39,9 @@ public class ProfileMenuCommand implements Command<Long> {
                 builder().text(Commands.EDIT_PROFILE_COMMAND.getTitle()).build(),
                 builder().text(Commands.CANCEL_GENERAL_COMMAND.getTitle()).build()
         )));
-        keyboardBuilder.keyboardRow(new KeyboardRow(Arrays.asList(builder().text(Commands.STOP_BOT_COMMAND.getTitle()).build())));
+        keyboardBuilder.keyboardRow(
+                new KeyboardRow(Arrays.asList(builder().text(Commands.STOP_BOT_COMMAND.getTitle()).build()))
+        );
         return keyboardBuilder.build();
     }
 }

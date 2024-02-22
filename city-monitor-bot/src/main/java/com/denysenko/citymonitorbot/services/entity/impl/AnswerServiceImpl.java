@@ -20,11 +20,11 @@ public class AnswerServiceImpl implements AnswerService {
     private final AnswerRepository answerRepository;
 
     @Transactional
-    public void saveAnswer(@NotNull Answer answer){
+    public void saveAnswer(@NotNull Answer answer) {
         answerRepository.save(answer);
     }
 
-    public Optional<Answer> findAnswerByQuizIdAndUserId(@NotNull Long quizId, @NotNull Long userId){
+    public Optional<Answer> findAnswerByQuizIdAndUserId(@NotNull Long quizId, @NotNull Long userId) {
         return answerRepository.findByQuizIdAndLocalId(quizId, userId);
     }
 

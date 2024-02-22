@@ -27,7 +27,7 @@ public class ChatMemberHandler implements Handler {
         log.info("Update handled by ChatMemberHandler: updateID = " + update.getUpdateId());
         ChatMemberUpdated chatMemberUpdated = update.getMyChatMember();
         String newStatus = chatMemberUpdated.getNewChatMember().getStatus();
-        if(newStatus.equals("kicked")) {
+        if (newStatus.equals("kicked")) {
             log.info("User kicked the bot from chat");
             Long chatId = chatMemberUpdated.getFrom().getId();
             cacheManager.removeBotStateByChatId(chatId);

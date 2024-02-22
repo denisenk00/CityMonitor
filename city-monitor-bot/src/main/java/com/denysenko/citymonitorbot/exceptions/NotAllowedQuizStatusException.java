@@ -1,6 +1,6 @@
 package com.denysenko.citymonitorbot.exceptions;
 
-public class NotAllowedQuizStatusException extends RuntimeException{
+public class NotAllowedQuizStatusException extends RuntimeException {
     public NotAllowedQuizStatusException() {
     }
 

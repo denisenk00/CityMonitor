@@ -25,8 +25,10 @@ public class AppealEnterDescriptionCommand implements Command<Long> {
     private final TelegramService telegramService;
     private final CacheManager cacheManager;
 
-    private static final String MESSAGE = "Почнемо з тексту.. Опишіть детально проблему або іншу мету цього звернення (до 2000 символів)";
-    private static final String TEXT_SIZE_OVERFLOW = "Перевищено максимальну кількість символів. Для прикріплення великого обсягу інформації скористайтесь файлом";
+    private static final String MESSAGE = "Почнемо з тексту.. Опишіть детально проблему або іншу мету " +
+            "цього звернення (до 2000 символів)";
+    private static final String TEXT_SIZE_OVERFLOW = "Перевищено максимальну кількість символів. " +
+            "Для прикріплення великого обсягу інформації скористайтесь файлом";
 
     @Override
     public void execute(Long chatId) {
@@ -47,9 +49,9 @@ public class AppealEnterDescriptionCommand implements Command<Long> {
     }
 
 
-    public void saveDescription(Long chatId, String text){
+    public void saveDescription(Long chatId, String text) {
         log.info("Saving description started: chatId = " + chatId + "text = " + text);
-        if(text.length() > 2000){
+        if(text.length() > 2000) {
             telegramService.sendMessage(chatId, TEXT_SIZE_OVERFLOW, null);
             return;
         }

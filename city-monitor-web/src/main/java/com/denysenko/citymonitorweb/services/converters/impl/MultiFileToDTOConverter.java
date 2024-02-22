@@ -1,7 +1,6 @@
 package com.denysenko.citymonitorweb.services.converters.impl;
 
 import com.denysenko.citymonitorweb.models.dto.FileDTO;
-import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
@@ -23,7 +22,7 @@ public class MultiFileToDTOConverter {
                     .name(multipartFile.getOriginalFilename())
                     .content(multipartFile.getBytes())
                     .build();
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ConversionFailedException(TypeDescriptor.forObject(multipartFile), TypeDescriptor.valueOf(FileDTO.class), null, e);
         }
     }
@@ -35,8 +34,10 @@ public class MultiFileToDTOConverter {
                 fileList.add(convertMultipartFileToDTO(mFile));
             });
             return fileList;
-        }catch (Exception e){
-            throw new ConversionFailedException(TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(MultipartFile.class)), TypeDescriptor.valueOf(FileDTO.class), null, e);
+        } catch (Exception e) {
+            throw new ConversionFailedException(
+                    TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(MultipartFile.class)),
+                    TypeDescriptor.valueOf(FileDTO.class), null, e);
         }
 
     }

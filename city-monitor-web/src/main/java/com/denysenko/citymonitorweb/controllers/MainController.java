@@ -39,15 +39,15 @@ public class MainController {
     }
 
     @GetMapping("/")
-    public String index(Model model){
+    public String index(Model model) {
         List<QuizPreviewDTO> lastQuizzes = quizService.getLast10QuizzesPreviews();
         model.addAttribute("quizzes", lastQuizzes);
         return "index";
     }
 
     @GetMapping("/login")
-    public String login(@RequestParam(value = "error", required = false) boolean loginError, Model model){
-        if(loginError){
+    public String login(@RequestParam(value = "error", required = false) boolean loginError, Model model) {
+        if (loginError) {
             String failedLoginMessage = "Ім'я користувача або пароль не вірні. Спробуйте ще раз";
             model.addAttribute("error", failedLoginMessage);
         }
@@ -57,37 +57,41 @@ public class MainController {
     @PatchMapping("/myprofile/changePassword")
     public ResponseEntity changePassword(@RequestParam("username") String username,
                                                        @RequestParam("oldPassword") String oldPassword,
-                                                       @RequestParam("newPassword") String newPassword){
+                                                       @RequestParam("newPassword") String newPassword) {
         log.info("changing password called for username = " + username);
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String sessionUsername = auth.getName();
 
-            if(!username.equals(sessionUsername)) throw new AccessRestrictedException("Ви не маєте доступу до профілю: " + username);
+            if (!username.equals(sessionUsername))
+                throw new AccessRestrictedException("Ви не маєте доступу до профілю: " + username);
 
             User user = userService.getUserByUsername(username);
 
-            if(!passwordEncoder.matches(oldPassword, user.getPassword())) throw new IncorrectPasswordException("Невірний старий пароль.");
+            if (!passwordEncoder.matches(oldPassword, user.getPassword()))
+                throw new IncorrectPasswordException("Невірний старий пароль.");
 
             String passwPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,20}$";
 
-            if(!newPassword.matches(passwPattern)) throw new InputValidationException("Пароль повинен мати від 8 до 20 символів та містити як мінімум одну цифру, одну велику букву, одну маленьку букву.");
+            if (!newPassword.matches(passwPattern))
+                throw new InputValidationException("Пароль повинен мати від 8 до 20 символів та містити як мінімум одну цифру," +
+                        " одну велику букву, одну маленьку букву.");
 
             user.setPassword(passwordEncoder.encode(newPassword));
             userService.saveUser(user);
 
-        }catch (AccessRestrictedException e){
+        } catch (AccessRestrictedException e) {
             throw new RestException(e.getMessage(), e, HttpStatus.FORBIDDEN);
-        }catch (InputValidationException | IncorrectPasswordException e) {
+        } catch (InputValidationException | IncorrectPasswordException e) {
             throw new RestException(e.getMessage(), e, HttpStatus.BAD_REQUEST);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RestException(e.getMessage(), e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.ok().body("{\"msg\":\"success\"}");
     }
 
     @GetMapping("/myprofile")
-    public String profilePage(Model model){
+    public String profilePage(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         log.info("Opening profile page for: " + username);

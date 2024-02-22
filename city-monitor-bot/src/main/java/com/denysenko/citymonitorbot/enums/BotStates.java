@@ -12,7 +12,7 @@ public enum BotStates {
 
     private String title;
 
-    BotStates(String title){
+    BotStates(String title) {
         this.title = title;
     }
     public String getTitle() {

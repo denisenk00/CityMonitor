@@ -26,13 +26,11 @@ public class CallBackHandler implements Handler {
 
     @Override
     public boolean isApplicable(Update update) {
-        if(!update.hasCallbackQuery()) return false;
+        if (!update.hasCallbackQuery()) return false;
         CallbackQuery callbackQuery = update.getCallbackQuery();
         Long id = callbackQuery.getFrom().getId();
         Optional<BotStates> botUserState = cacheManager.findBotStateByChatId(id);
-        if(botUserState.isPresent()){
-            return true;
-        } else return false;
+        return botUserState.isPresent();
     }
 
     @Override
@@ -41,13 +39,13 @@ public class CallBackHandler implements Handler {
         CallbackQuery callbackQuery = update.getCallbackQuery();
         String data = callbackQuery.getData();
         Long chatId = callbackQuery.getFrom().getId();
-        if(data.startsWith("answer:")){
-            String [] parameters = data.replace("answer:", "").split(",");
+        if (data.startsWith("answer:")) {
+            String[] parameters = data.replace("answer:", "").split(",");
             Long quizId = Long.valueOf(parameters[0].split("=")[1]);
             Long optionId = Long.valueOf(parameters[1].split("=")[1]);
             try {
                 saveAnswerCommand.saveAnswer(chatId, quizId, optionId);
-            }catch (NotAllowedQuizStatusException e){
+            } catch (NotAllowedQuizStatusException e) {
                 log.warn("Quiz " + quizId + " has already finished. Saving answers in unavailable");
                 telegramService.sendAnswerCallbackQuery(callbackQuery.getId(), e.getMessage());
             }

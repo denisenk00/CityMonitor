@@ -13,13 +13,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
-public class FileServiceImpl implements FileService{
+public class FileServiceImpl implements FileService {
 
     private final FileRepository fileRepository;
 
-    public File getFileByID(Long id){
+    public File getFileByID(Long id) {
         Optional<com.denysenko.citymonitorweb.models.entities.File> fileOpt = fileRepository.findById(id);
-        return fileOpt.orElseThrow(()-> new EntityNotFoundException("Не вдалось знайти файл з id = " + id));
+        return fileOpt.orElseThrow(() -> new EntityNotFoundException("Не вдалось знайти файл з id = " + id));
     }
 
 }

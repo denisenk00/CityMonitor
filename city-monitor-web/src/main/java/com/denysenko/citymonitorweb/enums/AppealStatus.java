@@ -10,7 +10,7 @@ public enum AppealStatus {
 
     private String title;
 
-    AppealStatus(String title){
+    AppealStatus(String title) {
         this.title = title;
     }
 

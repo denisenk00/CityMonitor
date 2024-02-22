@@ -2,7 +2,6 @@ package com.denysenko.citymonitorweb.models.domain.async;
 
 import com.denysenko.citymonitorweb.models.entities.Quiz;
 import com.denysenko.citymonitorweb.services.QuizSender;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.TimerTask;
 

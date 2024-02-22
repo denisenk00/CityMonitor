@@ -24,7 +24,8 @@ public class StopCommand implements Command<Long> {
     private final TelegramService telegramService;
     private final CacheManager cacheManager;
 
-    private static final String STOP_MESSAGE = "Ваш профіль деактивовано. Ви більше не будете отримувати опитування і тим самим впливати на прийняття важливих для вас рішень. Якщо надумаєте - ми на вас завжди чекаємо!";
+    private static final String STOP_MESSAGE = "Ваш профіль деактивовано. Ви більше не будете отримувати опитування " +
+            "і тим самим впливати на прийняття важливих для вас рішень. Якщо надумаєте - ми на вас завжди чекаємо!";
 
     @Override
     public void execute(Long chatId) {
@@ -34,11 +35,13 @@ public class StopCommand implements Command<Long> {
         telegramService.sendMessage(chatId, STOP_MESSAGE, createStoppedBotKeyboard());
     }
 
-    private ReplyKeyboardMarkup createStoppedBotKeyboard(){
+    private ReplyKeyboardMarkup createStoppedBotKeyboard() {
         ReplyKeyboardMarkup.ReplyKeyboardMarkupBuilder keyboardBuilder = ReplyKeyboardMarkup.builder();
         keyboardBuilder.resizeKeyboard(true);
         keyboardBuilder.selective(true);
-        keyboardBuilder.keyboardRow(new KeyboardRow(Arrays.asList(builder().text(Commands.COMEBACK_COMMAND.getTitle()).build())));
+        keyboardBuilder.keyboardRow(
+                new KeyboardRow(Arrays.asList(builder().text(Commands.COMEBACK_COMMAND.getTitle()).build()))
+        );
         return keyboardBuilder.build();
     }
 

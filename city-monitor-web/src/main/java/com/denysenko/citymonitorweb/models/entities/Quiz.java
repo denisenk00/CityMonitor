@@ -49,21 +49,21 @@ public class Quiz {
     private List<Option> options = new LinkedList<>();
 
     @PrePersist
-    void onCreate(){
-        if(Objects.isNull(startDate)){
+    void onCreate() {
+        if (Objects.isNull(startDate)) {
             startDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
             status = QuizStatus.IN_PROGRESS;
-        }else {
+        } else {
             status = QuizStatus.PLANNED;
         }
     }
 
-    public void addFile(File file){
+    public void addFile(File file) {
         file.setQuiz(this);
         this.files.add(file);
     }
 
-    public void addOption(Option option){
+    public void addOption(Option option) {
         option.setQuiz(this);
         this.options.add(option);
     }

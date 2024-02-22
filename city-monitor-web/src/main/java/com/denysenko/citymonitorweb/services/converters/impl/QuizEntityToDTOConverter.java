@@ -37,7 +37,7 @@ public class QuizEntityToDTOConverter implements EntityDTOConverter<Quiz, QuizDT
                     .forEach(file -> quiz.addFile(file));
 
             return quiz;
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ConversionFailedException(TypeDescriptor.forObject(quizDTO), TypeDescriptor.valueOf(Quiz.class), null, e);
         }
     }
@@ -62,7 +62,7 @@ public class QuizEntityToDTOConverter implements EntityDTOConverter<Quiz, QuizDT
             });
 
             return quizDTOBuilder.build();
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ConversionFailedException(TypeDescriptor.forObject(quiz), TypeDescriptor.valueOf(QuizDTO.class), null, e);
         }
     }

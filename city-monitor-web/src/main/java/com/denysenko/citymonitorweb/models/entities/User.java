@@ -35,8 +35,8 @@ public class User {
     private UserAccountStatus userAccountStatus;
 
     @PrePersist
-    void onCreate(){
-        if(Objects.isNull(userAccountStatus)){
+    void onCreate() {
+        if (Objects.isNull(userAccountStatus)) {
             userAccountStatus = UserAccountStatus.ACTIVE;
         }
     }

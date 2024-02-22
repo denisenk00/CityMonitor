@@ -46,7 +46,7 @@ public class TelegramServiceImpl extends DefaultAbsSender implements TelegramSer
 
         InlineKeyboardMarkup.InlineKeyboardMarkupBuilder replyKeyboardBuilder = InlineKeyboardMarkup.builder();
 
-        for(Option option : quiz.getOptions()){
+        for (Option option : quiz.getOptions()) {
             InlineKeyboardButton button = new InlineKeyboardButton();
             button.setText(option.getTitle());
             button.setCallbackData("answer:quiz_id=" + quiz.getId() + ",option_id=" + option.getId());
@@ -57,7 +57,7 @@ public class TelegramServiceImpl extends DefaultAbsSender implements TelegramSer
         messageBuilder.replyMarkup(replyKeyboardBuilder.build());
         List<SendDocument> sendDocumentList = new LinkedList<>();
 
-        for(File file : quiz.getFiles()){
+        for (File file : quiz.getFiles()) {
             InputFile inputFile = new InputFile();
             inputFile.setMedia(new ByteArrayInputStream(file.getContent()), file.getName());
             SendDocument sendDocument = SendDocument.builder()

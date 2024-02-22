@@ -48,7 +48,7 @@ public class AppealAttachFilesCommand implements Command<Long> {
         return keyboardBuilder.build();
     }
 
-    public void saveFile(Long chatId, String name, String fileId){
+    public void saveFile(Long chatId, String name, String fileId) {
         log.info("Saving file started: chatId = " + chatId + ", name = " + name + ", fileId + " + fileId);
         AppealFile file = new AppealFile(name, fileId);
 

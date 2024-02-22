@@ -31,12 +31,12 @@ public class LayoutServiceImpl implements LayoutService {
     @Override
     public LayoutDTO getLayoutDTOById(Long id) {
         Layout layout = layoutRepository.findById(id)
-                .orElseThrow(()-> new EntityNotFoundException("Не вдалось знайти макет з id = " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Не вдалось знайти макет з id = " + id));
         return layoutEntityToDTOConverter.convertEntityToDTO(layout);
     }
 
     @Override
-    public Layout getFullLayoutById(Long id){
+    public Layout getFullLayoutById(Long id) {
         return layoutRepository.getLayoutWithPolygonsBy(id);
     }
 
@@ -53,7 +53,9 @@ public class LayoutServiceImpl implements LayoutService {
 
     @Override
     public Page<LayoutPreviewDTO> getPageOfLayouts(int pageNumber, int size) {
-        if(pageNumber < 1 || size < 1) throw new IllegalArgumentException("Номер сторінки та її розмір має бути більше нуля. Поточні значення: pageNumber = " + pageNumber + ", size = " + size);
+        if (pageNumber < 1 || size < 1)
+            throw new IllegalArgumentException("Номер сторінки та її розмір має бути більше нуля." +
+                    " Поточні значення: pageNumber = " + pageNumber + ", size = " + size);
 
         PageRequest request = PageRequest.of(pageNumber - 1, size, Sort.by(Sort.Direction.ASC, "name"));
         Page<LayoutPreviewDTO> layoutPage = layoutRepository.findAllPreviewsBy(request);
@@ -72,18 +74,18 @@ public class LayoutServiceImpl implements LayoutService {
     }
 
     @Transactional
-    public LayoutStatus markLayoutAsDeprecated(Long layoutId){
+    public LayoutStatus markLayoutAsDeprecated(Long layoutId) {
         setLayoutStatusById(layoutId, LayoutStatus.DEPRECATED);
         return LayoutStatus.DEPRECATED;
     }
 
     @Transactional
-    public LayoutStatus markLayoutAsActual(Long layoutId){
+    public LayoutStatus markLayoutAsActual(Long layoutId) {
         LayoutStatus newStatus;
-        if(quizRepository.existsByLayoutId(layoutId)){
+        if (quizRepository.existsByLayoutId(layoutId)) {
             setLayoutStatusById(layoutId, LayoutStatus.IN_USE);
             newStatus = LayoutStatus.IN_USE;
-        }else {
+        } else {
             setLayoutStatusById(layoutId, LayoutStatus.AVAILABLE);
             newStatus = LayoutStatus.AVAILABLE;
         }
@@ -92,12 +94,11 @@ public class LayoutServiceImpl implements LayoutService {
 
     private void setLayoutStatusById(Long id, LayoutStatus layoutStatus) {
         Optional<Layout> layoutOptional = layoutRepository.findById(id);
-        layoutOptional.ifPresentOrElse((l)-> {
-            l.setStatus(layoutStatus);
-        }, () -> new EntityNotFoundException("Не вдалось знайти макет з id = " + id));
+        layoutOptional.ifPresentOrElse(l -> l.setStatus(layoutStatus),
+                () -> new EntityNotFoundException("Не вдалось знайти макет з id = " + id));
     }
 
-    public LayoutStatus getStatusById(Long id){
+    public LayoutStatus getStatusById(Long id) {
         return layoutRepository.getLayoutStatusById(id);
     }
 

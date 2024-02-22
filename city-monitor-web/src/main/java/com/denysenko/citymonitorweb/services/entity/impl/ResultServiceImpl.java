@@ -18,12 +18,12 @@ public class ResultServiceImpl implements ResultService {
     private final ResultRepository resultRepository;
 
     @Transactional
-    public void saveResults(Iterable<Result> results){
+    public void saveResults(Iterable<Result> results) {
         resultRepository.saveAll(results);
     }
 
     @Override
-    public List<ResultDTO> findResultPreviewsByQuizId(Long quizId){
+    public List<ResultDTO> findResultPreviewsByQuizId(Long quizId) {
         return resultRepository.findAllResultPreviewsByOptionQuizId(quizId);
     }
 }

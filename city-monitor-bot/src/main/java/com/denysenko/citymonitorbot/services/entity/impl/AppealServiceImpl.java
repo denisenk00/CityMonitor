@@ -19,7 +19,7 @@ public class AppealServiceImpl implements AppealService {
     private final AppealRepository appealRepository;
 
     @Transactional
-    public void saveAppeal(@NotNull Appeal appeal){
+    public void saveAppeal(@NotNull Appeal appeal) {
         appealRepository.save(appeal);
     }
 

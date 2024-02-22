@@ -36,7 +36,7 @@ public class UserController {
 
 
     @ModelAttribute("unreadAppealsCnt")
-    public long getCountOfUnreadAppeals(){
+    public long getCountOfUnreadAppeals() {
         return appealService.countOfUnreadAppeals();
     }
 
@@ -46,7 +46,8 @@ public class UserController {
                             @RequestParam(name = "page", defaultValue = "1", required = false) int pageNumber,
                             @RequestParam(name = "size", defaultValue = "30", required = false) int pageSize) {
         if (pageNumber < 1 || pageSize < 1)
-            throw new InputValidationException("Номер сторінки та її розмір має бути більше нуля. Поточні значення: pageNumber = " + pageNumber + ", pageSize = " + pageSize);
+            throw new InputValidationException("Номер сторінки та її розмір має бути більше нуля. Поточні значення:" +
+                    " pageNumber = " + pageNumber + ", pageSize = " + pageSize);
 
         Page<UserDTO> usersPage = userService.getPageOfUsersDTO(pageNumber, pageSize);
         Paged<UserDTO> paged = new Paged(usersPage, Paging.of(usersPage.getTotalPages(), pageNumber, pageSize));
@@ -60,7 +61,7 @@ public class UserController {
 
     @PreAuthorize("hasAnyAuthority('users:write')")
     @PostMapping()
-    public ResponseEntity createUser(@RequestParam("username") String username, @RequestParam("role") String role){
+    public ResponseEntity createUser(@RequestParam("username") String username, @RequestParam("role") String role) {
         String newPassword;
         try {
             if (userService.userWithUsernameExists(username))
@@ -74,17 +75,17 @@ public class UserController {
 
             newPassword = userService.createUser(username, userRole);
 
-        }catch (IllegalArgumentException | InputValidationException e){
+        } catch (IllegalArgumentException | InputValidationException e) {
             throw new RestException(e.getMessage(), e, HttpStatus.BAD_REQUEST);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RestException(e.getMessage(), e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"password\":\""+ newPassword +"\"}");
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"password\":\"" + newPassword + "\"}");
     }
 
     @PreAuthorize("hasAnyAuthority('users:write')")
     @PatchMapping("/changeAccountStatus")
-    public ResponseEntity updateUserAccountStatus(@RequestParam String username, @RequestParam String status){
+    public ResponseEntity updateUserAccountStatus(@RequestParam String username, @RequestParam String status) {
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String sessionUsername = auth.getName();
@@ -96,11 +97,11 @@ public class UserController {
 
             userService.updateUserAccountStatus(username, userAccountStatus);
 
-        } catch (AccessRestrictedException e){
+        } catch (AccessRestrictedException e) {
             throw new RestException(e.getMessage(), e, HttpStatus.FORBIDDEN);
-        } catch (IllegalArgumentException | EntityNotFoundException e){
+        } catch (IllegalArgumentException | EntityNotFoundException e) {
             throw new RestException(e.getMessage(), e, HttpStatus.BAD_REQUEST);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new RestException(e.getMessage(), e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -109,7 +110,7 @@ public class UserController {
 
     @PreAuthorize("hasAnyAuthority('users:write')")
     @PatchMapping("/changeRole")
-    public ResponseEntity updateUserRole(@RequestParam String username, @RequestParam String role){
+    public ResponseEntity updateUserRole(@RequestParam String username, @RequestParam String role) {
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String sessionUsername = auth.getName();
@@ -120,11 +121,11 @@ public class UserController {
             UserRole userRole = UserRole.valueOf(role);
             userService.updateUserRole(username, userRole);
 
-        } catch (AccessRestrictedException e){
+        } catch (AccessRestrictedException e) {
             throw new RestException(e.getMessage(), e, HttpStatus.FORBIDDEN);
-        } catch (IllegalArgumentException | EntityNotFoundException e){
+        } catch (IllegalArgumentException | EntityNotFoundException e) {
             throw new RestException(e.getMessage(), e, HttpStatus.BAD_REQUEST);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new RestException(e.getMessage(), e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -133,7 +134,7 @@ public class UserController {
 
     @PreAuthorize("hasAnyAuthority('users:write')")
     @PatchMapping("/resetPassword")
-    public ResponseEntity resetPasswordForUser(@RequestParam String username){
+    public ResponseEntity resetPasswordForUser(@RequestParam String username) {
         String newPassword;
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -144,15 +145,15 @@ public class UserController {
 
             newPassword = userService.resetUserPassword(username);
 
-        } catch (AccessRestrictedException e){
+        } catch (AccessRestrictedException e) {
             throw new RestException(e.getMessage(), e, HttpStatus.FORBIDDEN);
-        } catch (IllegalArgumentException | EntityNotFoundException e){
+        } catch (IllegalArgumentException | EntityNotFoundException e) {
             throw new RestException(e.getMessage(), e, HttpStatus.BAD_REQUEST);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new RestException(e.getMessage(), e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"password\":\""+ newPassword +"\"}");
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"password\":\"" + newPassword + "\"}");
     }
 
 

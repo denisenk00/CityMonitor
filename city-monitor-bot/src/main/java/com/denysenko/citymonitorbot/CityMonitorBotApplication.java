@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class CityMonitorBotApplication {
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         log.info("Application starting..");
         SpringApplication.run(CityMonitorBotApplication.class, args);
     }

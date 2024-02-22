@@ -6,7 +6,7 @@ public enum UserAccountStatus {
 
     private String title;
 
-    UserAccountStatus(String title){
+    UserAccountStatus(String title) {
         this.title = title;
     }
 

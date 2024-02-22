@@ -28,44 +28,44 @@ public class CacheManagerImpl implements CacheManager {
     }
 
     @Override
-    public void updateBotStateByChatId(@NotNull Long chatId, @NotNull BotStates botStates){
+    public void updateBotStateByChatId(@NotNull Long chatId, @NotNull BotStates botStates) {
         botUserStateCacheRepository.updateStateByChatId(chatId, botStates);
     }
 
     @Override
-    public void removeBotStateByChatId(@NotNull Long chatId){
+    public void removeBotStateByChatId(@NotNull Long chatId) {
         botUserStateCacheRepository.removeStateByChatId(chatId);
     }
 
     //BotUser
     @Override
-    public Optional<BotUser> findBotUserByChatId(@NotNull Long chatId){
+    public Optional<BotUser> findBotUserByChatId(@NotNull Long chatId) {
         return botUserCacheRepository.findBotUserByChatId(chatId);
     }
 
     @Override
-    public void saveBotUserByChatId(@NotNull Long chatId, @NotNull BotUser botUser){
+    public void saveBotUserByChatId(@NotNull Long chatId, @NotNull BotUser botUser) {
         botUserCacheRepository.saveBotUserByChatId(chatId, botUser);
     }
 
     @Override
-    public void removeBotUserByChatId(@NotNull Long chatId){
+    public void removeBotUserByChatId(@NotNull Long chatId) {
         botUserCacheRepository.removeBotUserByChatId(chatId);
     }
 
     //Appeals
     @Override
-    public Optional<Appeal> findAppealByChatId(@NotNull Long chatId){
+    public Optional<Appeal> findAppealByChatId(@NotNull Long chatId) {
         return appealCacheRepository.findAppealByChatId(chatId);
     }
 
     @Override
-    public void removeAppealByChatId(@NotNull Long chatId){
+    public void removeAppealByChatId(@NotNull Long chatId) {
         appealCacheRepository.removeAppealByChatId(chatId);
     }
 
     @Override
-    public void createEmptyAppeal(@NotNull Long chatId){
+    public void createEmptyAppeal(@NotNull Long chatId) {
         appealCacheRepository.saveAppealByChatId(chatId, new Appeal());
     }
 

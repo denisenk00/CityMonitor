@@ -32,11 +32,11 @@ public class Layout {
     private List<Polygon> polygons = new LinkedList<>();
 
     @PrePersist
-    void onCreate(){
+    void onCreate() {
         status = LayoutStatus.AVAILABLE;
     }
 
-    public void addPolygon(Polygon polygon){
+    public void addPolygon(Polygon polygon) {
         polygon.setLayout(this);
         polygons.add(polygon);
     }

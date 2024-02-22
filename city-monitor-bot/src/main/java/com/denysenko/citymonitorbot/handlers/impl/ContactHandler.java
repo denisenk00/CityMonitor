@@ -25,11 +25,11 @@ public class ContactHandler implements Handler {
 
     @Override
     public boolean isApplicable(Update update) {
-        if(!update.hasMessage() || !update.getMessage().hasContact()) return false;
+        if (!update.hasMessage() || !update.getMessage().hasContact()) return false;
         Message message = update.getMessage();
         Long chatId = message.getChatId();
         Optional<BotStates> botUserState = cacheManager.findBotStateByChatId(chatId);
-        if(botUserState.isPresent()){
+        if (botUserState.isPresent()) {
             BotStates botState = botUserState.get();
             return botState.equals(BotStates.EDITING_PROFILE_PHONE);
         } else return false;

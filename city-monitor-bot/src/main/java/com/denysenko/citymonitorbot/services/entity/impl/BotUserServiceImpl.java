@@ -26,41 +26,41 @@ public class BotUserServiceImpl implements BotUserService {
     private final BotUserRepository botUserRepository;
 
     @Override
-    public Optional<BotUser> findBotUserByChatId(@NotNull Long chatId){
+    public Optional<BotUser> findBotUserByChatId(@NotNull Long chatId) {
         return botUserRepository.findByChatId(chatId);
     }
 
     @Override
-    public BotUser getBotUserByChatId(@NotNull Long chatId){
+    public BotUser getBotUserByChatId(@NotNull Long chatId) {
         return botUserRepository.findByChatId(chatId)
                 .orElseThrow(() -> new EntityNotFoundException("botUser with chatId = " + chatId + " was not found"));
     }
 
     @Override
-    public boolean userIsRegistered(@NotNull Long chatId){
+    public boolean userIsRegistered(@NotNull Long chatId) {
         return botUserRepository.existsByChatId(chatId);
     }
 
     @Override
     @Transactional
-    public void saveBotUserToDB(@NotNull BotUser botUser){
+    public void saveBotUserToDB(@NotNull BotUser botUser) {
         botUserRepository.save(botUser);
     }
 
     @Override
-    public boolean existsUserByPhone(@NotBlank String phone){
+    public boolean existsUserByPhone(@NotBlank String phone) {
         return botUserRepository.existsByPhone(phone);
     }
 
     @Override
     @Transactional
-    public void deactivateBotUser(@NotNull Long chatId){
+    public void deactivateBotUser(@NotNull Long chatId) {
         botUserRepository.changeActivity(chatId, false);
     }
 
     @Override
     @Transactional
-    public void saveToDBAndCleanCache(Long chatId){
+    public void saveToDBAndCleanCache(Long chatId) {
         log.info("Saving user data to remote database and clearing caches: chatId = " + chatId);
         Optional<BotUser> cachedUser = cacheManager.findBotUserByChatId(chatId);
         cachedUser.get().setActive(true);

@@ -32,7 +32,7 @@ public class FileEntityToDTOConverter implements EntityDTOConverter<File, FileDT
             file.setName(fileDTO.getName());
             file.setContent(fileDTO.getContent());
             return file;
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ConversionFailedException(TypeDescriptor.forObject(fileDTO), TypeDescriptor.valueOf(File.class), null, e);
         }
     }
@@ -45,7 +45,7 @@ public class FileEntityToDTOConverter implements EntityDTOConverter<File, FileDT
                     .name(file.getName())
                     .content(file.getContent())
                     .build();
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ConversionFailedException(TypeDescriptor.forObject(file), TypeDescriptor.valueOf(FileDTO.class), null, e);
         }
     }

@@ -30,9 +30,12 @@ public class ProfileEnterPhoneNumberCommand implements Command<Long> {
     private final TelegramService telegramService;
     private final CacheManager cacheManager;
 
-    private static final String NOT_ACTIVE_USER_MESSAGE = "Ваш телефон - {0}? Якщо хочете змінити, введіть новий або натисніть кнопку для відправки поточного";
-    private static final String NOT_REGISTERED_USER_MESSAGE = "Введіть номер телефону або натисніть кнопку для відправки поточного, він буде використаний у разі необхідності зв'язку з вами";
-    private static final String INCORRECT_PHONE_MESSAGE = "Ви ввели невірний номер телефона, спробуйте ще раз або натисніть кнопку.";
+    private static final String NOT_ACTIVE_USER_MESSAGE = "Ваш телефон - {0}? Якщо хочете змінити, введіть новий або" +
+            " натисніть кнопку для відправки поточного";
+    private static final String NOT_REGISTERED_USER_MESSAGE = "Введіть номер телефону або натисніть кнопку для" +
+            " відправки поточного, він буде використаний у разі необхідності зв'язку з вами";
+    private static final String INCORRECT_PHONE_MESSAGE = "Ви ввели невірний номер телефона, спробуйте ще раз або" +
+            " натисніть кнопку.";
     private static final String PHONE_EXISTS_MESSAGE = "Користувач з цим номером телефона вже існує, введіть інший";
 
     private static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("^(\\s*)?(\\+)?([- _():=+]?\\d[- _():=+]?){10,14}(\\s*)?$");
@@ -48,14 +51,14 @@ public class ProfileEnterPhoneNumberCommand implements Command<Long> {
                 ReplyKeyboardMarkup keyboardMarkup = createKeyboard(true);
                 telegramService.sendMessage(chatId, MessageFormat.format(NOT_ACTIVE_USER_MESSAGE, oldPhone), keyboardMarkup);
             },
-            ()->{
+            () -> {
                 log.info("User with chatId = " + chatId + " isn't registered - new User");
                 ReplyKeyboardMarkup keyboardMarkup = createKeyboard(false);
                 telegramService.sendMessage(chatId, NOT_REGISTERED_USER_MESSAGE, keyboardMarkup);
             });
     }
 
-    public void savePhoneNumber(Long chatId, String phoneNumber){
+    public void savePhoneNumber(Long chatId, String phoneNumber) {
         log.info("Saving phone number: chatId = " + chatId + ", phoneNumber = " + phoneNumber);
         Matcher matcher = PHONE_NUMBER_PATTERN.matcher(phoneNumber);
         if (!matcher.find() || phoneNumber.length() > 13) {
@@ -63,7 +66,7 @@ public class ProfileEnterPhoneNumberCommand implements Command<Long> {
             ReplyKeyboardMarkup replyKeyboardMarkup = botUserService.userIsRegistered(chatId) ? createKeyboard(true) : createKeyboard(false);
             telegramService.sendMessage(chatId, INCORRECT_PHONE_MESSAGE, replyKeyboardMarkup);
             return;
-        } else if(botUserService.existsUserByPhone(phoneNumber)){
+        } else if (botUserService.existsUserByPhone(phoneNumber)) {
             log.info("User with such phone already exists");
             ReplyKeyboardMarkup replyKeyboardMarkup = botUserService.userIsRegistered(chatId) ? createKeyboard(true) : createKeyboard(false);
             telegramService.sendMessage(chatId, PHONE_EXISTS_MESSAGE, replyKeyboardMarkup);
@@ -87,7 +90,7 @@ public class ProfileEnterPhoneNumberCommand implements Command<Long> {
 
         KeyboardRow nextPreviousRow = new KeyboardRow();
         nextPreviousRow.add(builder().text(Commands.PREVIOUS_STEP_COMMAND.getTitle()).build());
-        if(skipStep){
+        if (skipStep) {
             nextPreviousRow.add(builder().text(Commands.NEXT_STEP_COMMAND.getTitle()).build());
         }
         keyboardBuilder.keyboardRow(nextPreviousRow);

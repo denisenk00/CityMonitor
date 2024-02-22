@@ -16,15 +16,15 @@ public enum Permission {
 
     private String title;
 
-    Permission(String title){
+    Permission(String title) {
         this.title = title;
     }
 
-    public String getTitle(){
+    public String getTitle() {
         return title;
     }
 
-    public static Set<Permission> getAll(){
+    public static Set<Permission> getAll() {
         return Arrays.stream(Permission.values()).collect(Collectors.toSet());
     }
 }
