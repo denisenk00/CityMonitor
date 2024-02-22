@@ -11,7 +11,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: cd into repo
+      - name: Upload repository
         uses: actions/checkout@v3
 
       - name: set up Java and Maven
@@ -21,14 +21,16 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Build
+      - name: Build with checkstyle and spotbugs
         run: mvn --batch-mode -DskipTests verify checkstyle:checkstyle spotbugs:spotbugs
 
-      - uses: jwgmeligmeyling/checkstyle-github-action@master
+      - name: Checkstyle report parsing
+        uses: jwgmeligmeyling/checkstyle-github-action@master
         with:
           path: '**/checkstyle-result.xml'
 
-      - uses: jwgmeligmeyling/spotbugs-github-action@master
+      - name: Spotbug report parsing
+        uses: jwgmeligmeyling/spotbugs-github-action@master
         with:
           path: '**/spotbugsXml.xml'
 
@@ -39,7 +41,7 @@ jobs:
         uses: dorny/test-reporter@v1
         if: always()
         with:
-          name: Maven Tests
+          name: Test report for city-monitor-bot
           path: ./city-monitor-bot/target/surefire-reports/*.xml
           reporter: java-junit
           fail-on-error: true
@@ -49,7 +51,7 @@ jobs:
         uses: dorny/test-reporter@v1
         if: always()
         with:
-          name: Test Report
+          name: Test Report for city-monitor-web
           path: ./city-monitor-web/target/surefire-reports/*.xml
           reporter: java-junit
           fail-on-error: true
@@ -60,7 +62,8 @@ jobs:
     needs:
       - test
     steps:
-      - uses: actions/checkout@v3
+      - name: Upload repository
+        uses: actions/checkout@v3
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
