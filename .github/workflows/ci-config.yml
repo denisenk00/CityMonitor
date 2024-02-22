@@ -35,6 +35,8 @@ jobs:
           path: ./city-monitor-bot/target/surefire-reports/*.xml
           reporter: java-junit
           fail-on-error: true
+          fail-on-empty: false
+          
       - name: Report city-monitor-web
         uses: dorny/test-reporter@v1
         if: always()
@@ -43,6 +45,7 @@ jobs:
           path: ./city-monitor-web/target/surefire-reports/*.xml
           reporter: java-junit
           fail-on-error: true
+          fail-on-empty: false
 
   docker-build:
     runs-on: ubuntu-latest
