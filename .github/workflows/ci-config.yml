@@ -22,7 +22,11 @@ jobs:
           cache: maven
 
       - name: Build
-        run: mvn --batch-mode -DskipTests package
+        run: mvn --batch-mode -DskipTests verify checkstyle:checkstyle
+
+      - uses: jwgmeligmeyling/checkstyle-github-action@master
+        with:
+          path: '**/checkstyle-result.xml'
 
       - name: run tests
         run: mvn --batch-mode -Dmaven.test.failure.ignore=true test
@@ -46,16 +50,6 @@ jobs:
           reporter: java-junit
           fail-on-error: true
           fail-on-empty: false
-
-  checkstyle:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dbelyaev/action-checkstyle@master
-        with:
-          github_token: ${{ secrets.github_token }}
-          reporter: github-pr-review
-          checkstyle_config: sun_checks.xml
 
   docker-build:
     runs-on: ubuntu-latest
